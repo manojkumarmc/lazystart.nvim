@@ -16,6 +16,7 @@
 ### How to setup
 
 * neovim 0.8.1+
+* git 2.3x +
 * Nerdfont (not a must)
 
 ```
