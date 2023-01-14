@@ -64,6 +64,7 @@ require("lazy").setup({
   "tpope/vim-repeat",
   "tpope/vim-surround",
   "lewis6991/gitsigns.nvim",
+
   {
     "windwp/nvim-autopairs",
     config = function()
@@ -108,6 +109,9 @@ vim.o.tabstop = 4 -- 4 spaces for tabs (prettier default)
 vim.o.shiftwidth = 4 -- 4 spaces for indent width
 vim.o.expandtab = true -- expand tab to spaces
 vim.o.autoindent = true -- copy indent from current line when starting new one
+
+vim.o.splitright = true
+vim.o.splitbelow = true
 
 vim.o.hlsearch = false
 
@@ -232,6 +236,16 @@ vim.keymap.set("n", "<leader>sh", require("telescope.builtin").help_tags, { desc
 vim.keymap.set("n", "<leader>sw", require("telescope.builtin").grep_string, { desc = "[S]earch current [W]ord" })
 vim.keymap.set("n", "<leader>sg", require("telescope.builtin").live_grep, { desc = "[S]earch by [G]rep" })
 vim.keymap.set("n", "<leader>sd", require("telescope.builtin").diagnostics, { desc = "[S]earch [D]iagnostics" })
+
+vim.keymap.set("n", "<leader>gs", "<cmd>Git status<cr>", { desc = "[G]it [S]tatus" })
+vim.keymap.set("n", "<leader>ga", "<cmd>Git add .<cr>", { desc = "[G]it [A]dd" })
+vim.keymap.set("n", "<leader>gl", "<cmd>Git log<cr>", { desc = "[G]it [L]og" })
+vim.keymap.set("n", "<leader>gc", "<cmd>Git commit<cr>", { desc = "[G]it [C]ommit" })
+
+local wk = require("which-key")
+wk.register({
+    ["<leader>g"] = {name = "+Git" }
+})
 
 -- [[ Configure Treesitter ]]
 -- See `:help nvim-treesitter`
