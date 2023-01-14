@@ -51,6 +51,14 @@ require("lazy").setup({
     dependencies = "nvim-treesitter",
   },
 
+  {
+    "folke/trouble.nvim",
+    dependencies = "nvim-tree/nvim-web-devicons",
+    config = function()
+      require("trouble").setup({})
+    end,
+  },
+
   "tpope/vim-fugitive",
   "tpope/vim-rhubarb",
   "tpope/vim-repeat",
@@ -62,6 +70,7 @@ require("lazy").setup({
       require("nvim-autopairs").setup({})
     end,
   },
+
   -- colorschemes
   "navarasu/onedark.nvim",
   "EdenEast/nightfox.nvim",
@@ -308,6 +317,12 @@ local on_attach = function(_, bufnr)
     end
 
     vim.keymap.set("n", keys, func, { buffer = bufnr, desc = desc })
+  end
+
+  local signs = { Error = " ", Warn = " ", Hint = " ", Info = " " }
+  for type, icon in pairs(signs) do
+    local hl = "DiagnosticSign" .. type
+    vim.fn.sign_define(hl, { text = icon, texthl = hl, numhl = hl })
   end
 
   nmap("<leader>rn", vim.lsp.buf.rename, "[R]e[n]ame")
