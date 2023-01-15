@@ -103,6 +103,14 @@ require("lazy").setup({
       require("which-key").setup({})
     end,
   },
+
+  {
+    "nvim-tree/nvim-tree.lua",
+    dependencies = {
+      "nvim-tree/nvim-web-devicons", -- optional, for file icons
+    },
+    tag = "nightly", -- optional, updated every week. (see issue #1193)
+  },
 })
 
 vim.o.tabstop = 4 -- 4 spaces for tabs (prettier default)
@@ -244,7 +252,11 @@ vim.keymap.set("n", "<leader>gc", "<cmd>Git commit<cr>", { desc = "[G]it [C]ommi
 
 local wk = require("which-key")
 wk.register({
-    ["<leader>g"] = {name = "+Git" }
+  ["<leader>g"] = { name = "Git" },
+  ["<leader>t"] = { name = "Tree Explorer"},
+  ["<leader>c"] = { name = "Code"},
+  ["<leader>w"] = { name = "Workspace"},
+  ["<leader>s"] = { name = "Search"}
 })
 
 -- [[ Configure Treesitter ]]
@@ -311,10 +323,10 @@ require("nvim-treesitter.configs").setup({
 })
 
 -- Diagnostic keymaps
-vim.keymap.set("n", "[d", vim.diagnostic.goto_prev)
-vim.keymap.set("n", "]d", vim.diagnostic.goto_next)
-vim.keymap.set("n", "<leader>e", vim.diagnostic.open_float)
-vim.keymap.set("n", "<leader>q", vim.diagnostic.setloclist)
+vim.keymap.set("n", "[d", vim.diagnostic.goto_prev, { desc = "Diagnostics next" })
+vim.keymap.set("n", "]d", vim.diagnostic.goto_next, { desc = "Diagnostics prev" })
+vim.keymap.set("n", "<leader>e", vim.diagnostic.open_float, { desc = "Diagnostics popup" })
+vim.keymap.set("n", "<leader>d", vim.diagnostic.setloclist, { desc = "[D]iagnostics List" })
 
 -- LSP settings.
 --  This function gets run when an LSP connects to a particular buffer.
@@ -339,14 +351,14 @@ local on_attach = function(_, bufnr)
     vim.fn.sign_define(hl, { text = icon, texthl = hl, numhl = hl })
   end
 
-  nmap("<leader>rn", vim.lsp.buf.rename, "[R]e[n]ame")
+  nmap("<leader>cr", vim.lsp.buf.rename, "[C]ode [R]ename")
   nmap("<leader>ca", vim.lsp.buf.code_action, "[C]ode [A]ction")
 
   nmap("gd", vim.lsp.buf.definition, "[G]oto [D]efinition")
   nmap("gr", require("telescope.builtin").lsp_references, "[G]oto [R]eferences")
   nmap("gI", vim.lsp.buf.implementation, "[G]oto [I]mplementation")
   nmap("<leader>D", vim.lsp.buf.type_definition, "Type [D]efinition")
-  nmap("<leader>ds", require("telescope.builtin").lsp_document_symbols, "[D]ocument [S]ymbols")
+  nmap("<leader>sd", require("telescope.builtin").lsp_document_symbols, "[D]ocument [S]ymbols")
   nmap("<leader>ws", require("telescope.builtin").lsp_dynamic_workspace_symbols, "[W]orkspace [S]ymbols")
 
   -- See `:help K` for why this keymap
@@ -458,3 +470,8 @@ cmp.setup({
     { name = "luasnip" },
   },
 })
+
+require("nvim-tree").setup()
+vim.keymap.set("n", "<leader>tt", "<cmd>NvimTreeToggle<cr>", { desc = "[T]ree [T]oggle" })
+vim.keymap.set("n", "<leader>tfo", "<cmd>NvimTreeFocus<cr>", { desc = "[T]ree [F]ocus" })
+vim.keymap.set("n", "<leader>tff", "<cmd>NvimTreeFindFile<cr>", { desc = "[T]ree [F]ocus" })
