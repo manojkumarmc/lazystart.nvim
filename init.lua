@@ -117,6 +117,8 @@ vim.o.tabstop = 4 -- 4 spaces for tabs (prettier default)
 vim.o.shiftwidth = 4 -- 4 spaces for indent width
 vim.o.expandtab = true -- expand tab to spaces
 vim.o.autoindent = true -- copy indent from current line when starting new one
+vim.o.cursorline = true
+
 
 vim.o.splitright = true
 vim.o.splitbelow = true
