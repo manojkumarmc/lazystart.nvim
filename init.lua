@@ -79,6 +79,7 @@ require("lazy").setup({
   "folke/tokyonight.nvim",
   "cpea2506/one_monokai.nvim",
   "nvim-tree/nvim-web-devicons",
+  "mhinz/vim-startify",
 
   "sbdchd/neoformat", -- formatter
   "nvim-lualine/lualine.nvim", -- Fancier statusline
@@ -118,7 +119,6 @@ vim.o.shiftwidth = 4 -- 4 spaces for indent width
 vim.o.expandtab = true -- expand tab to spaces
 vim.o.autoindent = true -- copy indent from current line when starting new one
 vim.o.cursorline = true
-
 
 vim.o.splitright = true
 vim.o.splitbelow = true
@@ -255,10 +255,11 @@ vim.keymap.set("n", "<leader>gc", "<cmd>Git commit<cr>", { desc = "[G]it [C]ommi
 local wk = require("which-key")
 wk.register({
   ["<leader>g"] = { name = "Git" },
-  ["<leader>t"] = { name = "Tree Explorer"},
-  ["<leader>c"] = { name = "Code"},
-  ["<leader>w"] = { name = "Workspace"},
-  ["<leader>s"] = { name = "Search"}
+  ["<leader>t"] = { name = "Tree Explorer" },
+  ["<leader>tf"] = { name = "Find" },
+  ["<leader>c"] = { name = "Code" },
+  ["<leader>w"] = { name = "Workspace" },
+  ["<leader>s"] = { name = "Search" },
 })
 
 -- [[ Configure Treesitter ]]
@@ -478,4 +479,4 @@ cmp.setup({
 require("nvim-tree").setup()
 vim.keymap.set("n", "<leader>tt", "<cmd>NvimTreeToggle<cr>", { desc = "[T]ree [T]oggle" })
 vim.keymap.set("n", "<leader>tfo", "<cmd>NvimTreeFocus<cr>", { desc = "[T]ree [F]ocus" })
-vim.keymap.set("n", "<leader>tff", "<cmd>NvimTreeFindFile<cr>", { desc = "[T]ree [F]ocus" })
+vim.keymap.set("n", "<leader>tff", "<cmd>NvimTreeFindFile<cr>", { desc = "[T]ree [F]ind File" })
