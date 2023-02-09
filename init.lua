@@ -34,6 +34,14 @@ require("lazy").setup({
     },
   },
 
+  {
+    "L3MON4D3/LuaSnip",
+    version = "<CurrentMajor>.*",
+    build = "make install_jsregexp",
+  },
+
+  { "rafamadriz/friendly-snippets" },
+
   { -- Autocompletion
     "hrsh7th/nvim-cmp",
     dependencies = { "hrsh7th/cmp-nvim-lsp", "L3MON4D3/LuaSnip", "saadparwaiz1/cmp_luasnip" },
@@ -480,3 +488,5 @@ require("nvim-tree").setup()
 vim.keymap.set("n", "<leader>tt", "<cmd>NvimTreeToggle<cr>", { desc = "[T]ree [T]oggle" })
 vim.keymap.set("n", "<leader>tfo", "<cmd>NvimTreeFocus<cr>", { desc = "[T]ree [F]ocus" })
 vim.keymap.set("n", "<leader>tff", "<cmd>NvimTreeFindFile<cr>", { desc = "[T]ree [F]ind File" })
+
+require("luasnip.loaders.from_vscode").lazy_load()
