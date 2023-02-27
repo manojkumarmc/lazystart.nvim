@@ -93,6 +93,7 @@ require("lazy").setup({
   "nvim-lualine/lualine.nvim", -- Fancier statusline
   "lukas-reineke/indent-blankline.nvim", -- Add indentation guides even on blank lines
   "numToStr/Comment.nvim", -- "gc" to comment visual regions/lines
+  "kg8m/vim-simple-align",
 
   {
     "iamcco/markdown-preview.nvim",
@@ -274,7 +275,21 @@ wk.register({
 -- See `:help nvim-treesitter`
 require("nvim-treesitter.configs").setup({
   -- Add languages to be installed here that you want installed for treesitter
-  ensure_installed = { "c", "cpp", "go", "lua", "python", "rust", "typescript", "help", "vim" , "svelte", "javascript", "css", "markdown"},
+  ensure_installed = {
+    "c",
+    "cpp",
+    "go",
+    "lua",
+    "python",
+    "rust",
+    "typescript",
+    "help",
+    "vim",
+    "svelte",
+    "javascript",
+    "css",
+    "markdown",
+  },
 
   highlight = { enable = true },
   indent = { enable = true, disable = { "python" } },
