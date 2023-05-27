@@ -123,6 +123,22 @@ require("lazy").setup({
     },
     tag = "nightly", -- optional, updated every week. (see issue #1193)
   },
+
+ {
+    "akinsho/toggleterm.nvim",
+    version = '*',
+    config = function()
+        require("toggleterm").setup({
+            open_mapping = [[<c-\>]],
+            direction = 'float',
+            shade_terminals = true,
+            shading_factor = '75',
+            shell = vim.o.shell,
+            start_in_insert = true,
+        })
+    end,
+ },
+
 })
 
 vim.o.tabstop = 4 -- 4 spaces for tabs (prettier default)
@@ -419,6 +435,7 @@ local servers = {
   gopls = {},
   pyright = {},
   rust_analyzer = {},
+  ruff = {},
   tsserver = {},
   sumneko_lua = {
     Lua = {
