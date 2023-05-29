@@ -152,6 +152,8 @@ require("lazy").setup({
         end,
   },
 
+  {"simrat39/rust-tools.nvim"},
+
 })
 
 vim.o.tabstop = 4 -- 4 spaces for tabs (prettier default)
@@ -601,7 +603,8 @@ vim.api.nvim_set_hl(0, "blue",   { fg = "#3d59a1" })
 vim.api.nvim_set_hl(0, "green",  { fg = "#9ece6a" }) 
 vim.api.nvim_set_hl(0, "yellow", { fg = "#FFFF00" }) 
 vim.api.nvim_set_hl(0, "orange", { fg = "#f09000" }) 
-vim.fn.sign_define('DapBreakpoint',          { text='', texthl='blue',   linehl='DapBreakpoint', numhl='DapBreakpoint' })
+vim.api.nvim_set_hl(0, "red",    { fg = "#FF0000" }) 
+vim.fn.sign_define('DapBreakpoint',          { text='', texthl='red',    linehl='DapBreakpoint', numhl='DapBreakpoint' })
 vim.fn.sign_define('DapBreakpointCondition', { text='ﳁ', texthl='blue',   linehl='DapBreakpoint', numhl='DapBreakpoint' })
 vim.fn.sign_define('DapBreakpointRejected',  { text='', texthl='orange', linehl='DapBreakpoint', numhl='DapBreakpoint' })
 vim.fn.sign_define('DapStopped',             { text='', texthl='green',  linehl='DapBreakpoint', numhl='DapBreakpoint' })
@@ -664,3 +667,40 @@ dap.configurations.python = {
   },
 }
 
+
+dap.adapters.codelldb = {
+  type = 'server',
+  port = "${port}",
+  executable = {
+    command = '/Users/mkmc/.local/share/nvim/mason/bin/codelldb',
+    args = {"--port", "${port}"},
+  }
+}
+
+dap.configurations.rust = {
+  {
+    name = "Rust debug",
+    type = "codelldb",
+    request = "launch",
+    -- program = function()
+    --   return vim.fn.input('Path to executable: ', vim.fn.getcwd() .. '/target/debug/', 'file')
+    -- end,
+    program = "${workspaceFolder}/target/debug/${workspaceFolderBasename}",
+    cwd = '${workspaceFolder}',
+    -- stopOnEntry = true,
+    stopOnEntry = false,
+  },
+}
+
+
+-- local rt = require("rust-tools")
+-- rt.setup({
+--   server = {
+--     on_attach = function(_, bufnr)
+--       -- Hover actions
+--       vim.keymap.set("n", "<C-space>", rt.hover_actions.hover_actions, { buffer = bufnr })
+--       -- Code action groups
+--       vim.keymap.set("n", "<Leader>a", rt.code_action_group.code_action_group, { buffer = bufnr })
+--     end,
+--   },
+-- })
