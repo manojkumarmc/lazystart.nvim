@@ -20,7 +20,7 @@ require("lazy").setup({
     { "folke/neoconf.nvim",  cmd = "Neoconf" },
 
     {
-    -- LSP Configuration & Plugins
+        -- LSP Configuration & Plugins
         "neovim/nvim-lspconfig",
         dependencies = {
             -- Automatically install LSPs to stdpath for neovim
@@ -41,18 +41,22 @@ require("lazy").setup({
         "L3MON4D3/LuaSnip",
         version = "<CurrentMajor>.*",
         build = "make install_jsregexp",
+        dependencies = {
+            "rafamadriz/friendly-snippets",
+            config = function()
+                require("luasnip.loaders.from_vscode").lazy_load()
+            end,
+        },
     },
 
-    { "rafamadriz/friendly-snippets" },
-
     {
-    -- Autocompletion
+        -- Autocompletion
         "hrsh7th/nvim-cmp",
         dependencies = { "hrsh7th/cmp-nvim-lsp", "L3MON4D3/LuaSnip", "saadparwaiz1/cmp_luasnip" },
     },
 
     {
-    -- Highlight, edit, and navigate code
+        -- Highlight, edit, and navigate code
         "nvim-treesitter/nvim-treesitter",
         build = function()
             pcall(require("nvim-treesitter.install").update({ with_sync = true }))
@@ -60,7 +64,7 @@ require("lazy").setup({
     },
 
     {
-    -- Additional text objects via treesitter
+        -- Additional text objects via treesitter
         "nvim-treesitter/nvim-treesitter-textobjects",
         dependencies = "nvim-treesitter",
     },
@@ -95,10 +99,10 @@ require("lazy").setup({
     "nvim-tree/nvim-web-devicons",
     "mhinz/vim-startify",
 
-    "sbdchd/neoformat",                  -- formatter
-    "nvim-lualine/lualine.nvim",         -- Fancier statusline
+    "sbdchd/neoformat",                    -- formatter
+    "nvim-lualine/lualine.nvim",           -- Fancier statusline
     "lukas-reineke/indent-blankline.nvim", -- Add indentation guides even on blank lines
-    "numToStr/Comment.nvim",             -- "gc" to comment visual regions/lines
+    "numToStr/Comment.nvim",               -- "gc" to comment visual regions/lines
     "kg8m/vim-simple-align",
 
     {
@@ -125,18 +129,18 @@ require("lazy").setup({
         dependencies = {
             "nvim-tree/nvim-web-devicons", -- optional, for file icons
         },
-        tag = "nightly",             -- optional, updated every week. (see issue #1193)
+        tag = "nightly",                   -- optional, updated every week. (see issue #1193)
     },
 
     {
         "akinsho/toggleterm.nvim",
-        version = '*',
+        version = "*",
         config = function()
             require("toggleterm").setup({
                 open_mapping = [[<c-\>]],
-                direction = 'float',
+                direction = "float",
                 shade_terminals = true,
-                shading_factor = '75',
+                shading_factor = "75",
                 shell = vim.o.shell,
                 start_in_insert = true,
             })
@@ -147,7 +151,9 @@ require("lazy").setup({
     {
         "rcarriga/nvim-dap-ui",
         requires = { "mfussenegger/nvim-dap" },
-        config = function() require("dapui").setup({}) end,
+        config = function()
+            require("dapui").setup({})
+        end,
     },
     {
         "theHamsta/nvim-dap-virtual-text",
@@ -159,9 +165,11 @@ require("lazy").setup({
     { "simrat39/rust-tools.nvim" },
 
     {
-        'Wansmer/treesj',
-        requires = { 'nvim-treesitter' },
-        config = function() require('treesj').setup({}) end,
+        "Wansmer/treesj",
+        requires = { "nvim-treesitter" },
+        config = function()
+            require("treesj").setup({})
+        end,
     },
 
     { "kevinhwang91/nvim-bqf" },
@@ -171,10 +179,16 @@ require("lazy").setup({
         opts = {},
         dependencies = { "nvim-tree/nvim-web-devicons" },
         config = function()
-            require('oil').setup({})
-        end
+            require("oil").setup({})
+        end,
     },
 
+    {
+        "lvimuser/lsp-inlayhints.nvim",
+        config = function()
+            require("lsp-inlayhints").setup({})
+        end,
+    },
 })
 
 vim.o.tabstop = 4       -- 4 spaces for tabs (prettier default)
@@ -431,27 +445,25 @@ local on_attach = function(_, bufnr)
         vim.fn.sign_define(hl, { text = icon, texthl = hl, numhl = hl })
     end
 
+    -- nmap("<leader>ch", require("lsp-inlayhints").toggle, "[C]ode [H]ints")
     nmap("<leader>cr", vim.lsp.buf.rename, "[C]ode [R]ename")
     nmap("<leader>ca", vim.lsp.buf.code_action, "[C]ode [A]ction")
-
     nmap("gd", vim.lsp.buf.definition, "[G]oto [D]efinition")
     nmap("gr", require("telescope.builtin").lsp_references, "[G]oto [R]eferences")
     nmap("gI", vim.lsp.buf.implementation, "[G]oto [I]mplementation")
     nmap("<leader>D", vim.lsp.buf.type_definition, "Type [D]efinition")
     nmap("<leader>sd", require("telescope.builtin").lsp_document_symbols, "[D]ocument [S]ymbols")
     nmap("<leader>ws", require("telescope.builtin").lsp_dynamic_workspace_symbols, "[W]orkspace [S]ymbols")
-
     -- See `:help K` for why this keymap
     nmap("K", vim.lsp.buf.hover, "Hover Documentation")
     nmap("<C-k>", vim.lsp.buf.signature_help, "Signature Documentation")
-
     -- Lesser used LSP functionality
     nmap("gD", vim.lsp.buf.declaration, "[G]oto [D]eclaration")
     nmap("<leader>wa", vim.lsp.buf.add_workspace_folder, "[W]orkspace [A]dd Folder")
     nmap("<leader>wr", vim.lsp.buf.remove_workspace_folder, "[W]orkspace [R]emove Folder")
-    nmap("<leader>wl", function()
-        print(vim.inspect(vim.lsp.buf.list_workspace_folders()))
-    end, "[W]orkspace [L]ist Folders")
+
+    nmap("<leader>wl", function() print(vim.inspect(vim.lsp.buf.list_workspace_folders())) end,
+        "[W]orkspace [L]ist Folders")
 
     -- Create a command `:Format` local to the LSP buffer
     vim.api.nvim_buf_create_user_command(bufnr, "Format", function(_)
@@ -460,6 +472,19 @@ local on_attach = function(_, bufnr)
 end
 
 vim.diagnostic.config({ virtual_text = false })
+
+-- vim.api.nvim_create_augroup("LspAttach_inlayhints", {})
+-- vim.api.nvim_create_autocmd("LspAttach", {
+--   group = "LspAttach_inlayhints",
+--   callback = function(args)
+--     if not (args.data and args.data.client_id) then
+--       return
+--     end
+--     local bufnr = args.buf
+--     local client = vim.lsp.get_client_by_id(args.data.client_id)
+--     require("lsp-inlayhints").on_attach(client, bufnr)
+--   end,
+-- })
 
 -- Enable the following language servers
 --  Feel free to add/remove any LSPs that you want here. They will automatically be installed.
@@ -470,7 +495,44 @@ local servers = {
     -- clangd = {},
     gopls = {},
     pyright = {},
-    rust_analyzer = {},
+    rust_analyzer = {
+        settings = {
+            ['rust-analyzer'] = {
+                inlayHints = {
+                    bindingModeHints = {
+                        enable = false,
+                    },
+                    chainingHints = {
+                        enable = true,
+                    },
+                    closingBraceHints = {
+                        enable = true,
+                        minLines = 25,
+                    },
+                    closureReturnTypeHints = {
+                        enable = 'never',
+                    },
+                    lifetimeElisionHints = {
+                        enable = 'never',
+                        useParameterNames = false,
+                    },
+                    maxLength = 25,
+                    parameterHints = {
+                        enable = true,
+                    },
+                    reborrowHints = {
+                        enable = 'never',
+                    },
+                    renderColons = true,
+                    typeHints = {
+                        enable = true,
+                        hideClosureInitialization = false,
+                        hideNamedConstructor = false,
+                    },
+                }
+            },
+        },
+    },
     ruff = {},
     tsserver = {},
     sumneko_lua = {
@@ -504,6 +566,13 @@ mason_lspconfig.setup_handlers({
             capabilities = capabilities,
             on_attach = on_attach,
             settings = servers[server_name],
+            inlay_hints = {
+                enabled = false,
+                parameter_hints = true,
+                type_hints = true,
+                highlight = 'Comment',
+                priority = 0,
+            }
         })
     end,
 })
@@ -514,8 +583,8 @@ require("fidget").setup()
 local lspkind = require("lspkind")
 
 lspkind.init({
-    mode = 'symbol_text',
-    preset = 'codicons',
+    mode = "symbol_text",
+    preset = "codicons",
     symbol_map = {
         Text = "",
         Method = "",
@@ -541,7 +610,7 @@ lspkind.init({
         Struct = "פּ",
         Event = "",
         Operator = "",
-        TypeParameter = ""
+        TypeParameter = "",
     },
 })
 
@@ -588,16 +657,16 @@ cmp.setup({
     },
     formatting = {
         format = lspkind.cmp_format({
-            mode = 'symbol', -- show only symbol annotations
-            maxwidth = 50,   -- prevent the popup from showing more than provided characters (e.g 50 will not show more than 50 characters)
-            ellipsis_char = '...', -- when popup menu exceed maxwidth, the truncated part would show ellipsis_char instead (must define maxwidth first)
+            mode = "symbol",       -- show only symbol annotations
+            maxwidth = 50,         -- prevent the popup from showing more than provided characters (e.g 50 will not show more than 50 characters)
+            ellipsis_char = "...", -- when popup menu exceed maxwidth, the truncated part would show ellipsis_char instead (must define maxwidth first)
 
             -- The function below will be called before any actual modifications from lspkind
             -- so that you can provide more controls on popup customization. (See [#30](https://github.com/onsails/lspkind-nvim/pull/30))
             before = function(entry, vim_item)
                 return vim_item
-            end
-        })
+            end,
+        }),
     },
 })
 
@@ -624,39 +693,50 @@ vim.api.nvim_set_hl(0, "green", { fg = "#9ece6a" })
 vim.api.nvim_set_hl(0, "yellow", { fg = "#FFFF00" })
 vim.api.nvim_set_hl(0, "orange", { fg = "#f09000" })
 vim.api.nvim_set_hl(0, "red", { fg = "#FF0000" })
-vim.fn.sign_define('DapBreakpoint', { text = '', texthl = 'red', linehl = 'DapBreakpoint', numhl = 'DapBreakpoint' })
-vim.fn.sign_define('DapBreakpointCondition', { text = 'ﳁ', texthl = 'blue', linehl = 'DapBreakpoint',
-    numhl = 'DapBreakpoint' })
-vim.fn.sign_define('DapBreakpointRejected', { text = '', texthl = 'orange', linehl = 'DapBreakpoint',
-    numhl = 'DapBreakpoint' })
-vim.fn.sign_define('DapStopped', { text = '', texthl = 'green', linehl = 'DapBreakpoint', numhl = 'DapBreakpoint' })
-vim.fn.sign_define('DapLogPoint', { text = '', texthl = 'yellow', linehl = 'DapBreakpoint', numhl = 'DapBreakpoint' })
+vim.fn.sign_define("DapBreakpoint", { text = "", texthl = "red", linehl = "DapBreakpoint", numhl = "DapBreakpoint" })
+vim.fn.sign_define("DapBreakpointCondition", {
+    text = "ﳁ",
+    texthl = "blue",
+    linehl = "DapBreakpoint",
+    numhl = "DapBreakpoint",
+})
+vim.fn.sign_define("DapBreakpointRejected", {
+    text = "",
+    texthl = "orange",
+    linehl = "DapBreakpoint",
+    numhl = "DapBreakpoint",
+})
+vim.fn.sign_define("DapStopped", { text = "", texthl = "green", linehl = "DapBreakpoint", numhl = "DapBreakpoint" })
+vim.fn.sign_define(
+    "DapLogPoint",
+    { text = "", texthl = "yellow", linehl = "DapBreakpoint", numhl = "DapBreakpoint" }
+)
 
-vim.keymap.set('n', '<F5>', require 'dap'.continue)
-vim.keymap.set('n', '<F10>', require 'dap'.step_over)
-vim.keymap.set('n', '<F11>', require 'dap'.step_into)
-vim.keymap.set('n', '<F12>', require 'dap'.step_out)
-vim.keymap.set('n', '<leader>b', require 'dap'.toggle_breakpoint, { desc = "Breakpoint Toggle" })
+vim.keymap.set("n", "<F5>", require("dap").continue)
+vim.keymap.set("n", "<F10>", require("dap").step_over)
+vim.keymap.set("n", "<F11>", require("dap").step_into)
+vim.keymap.set("n", "<F12>", require("dap").step_out)
+vim.keymap.set("n", "<leader>b", require("dap").toggle_breakpoint, { desc = "Breakpoint Toggle" })
 
 dap.adapters.python = function(cb, config)
-    if config.request == 'attach' then
+    if config.request == "attach" then
         local port = (config.connect or config).port
-        local host = (config.connect or config).host or '127.0.0.1'
+        local host = (config.connect or config).host or "127.0.0.1"
         cb({
-            type = 'server',
-            port = assert(port, '`connect.port` is required for a python `attach` configuration'),
+            type = "server",
+            port = assert(port, "`connect.port` is required for a python `attach` configuration"),
             host = host,
             options = {
-                source_filetype = 'python',
+                source_filetype = "python",
             },
         })
     else
         cb({
-            type = 'executable',
+            type = "executable",
             command = os.getenv("VIRTUAL_ENV") .. "/bin/python",
-            args = { '-m', 'debugpy.adapter' },
+            args = { "-m", "debugpy.adapter" },
             options = {
-                source_filetype = 'python',
+                source_filetype = "python",
             },
         })
     end
@@ -665,8 +745,8 @@ end
 dap.configurations.python = {
     {
         -- The first three options are required by nvim-dap
-        type = 'python', -- the type here established the link to the adapter definition: `dap.adapters.python`
-        request = 'launch',
+        type = "python", -- the type here established the link to the adapter definition: `dap.adapters.python`
+        request = "launch",
         name = "Launch file",
 
         -- Options below are for debugpy, see https://github.com/microsoft/debugpy/wiki/Debug-configuration-settings for supported options
@@ -677,10 +757,10 @@ dap.configurations.python = {
             -- The code below looks for a `venv` or `.venv` folder in the current directly and uses the python within.
             -- You could adapt this - to for example use the `VIRTUAL_ENV` environment variable.
             local cwd = vim.fn.getcwd()
-            if vim.fn.executable(cwd .. '/venv/bin/python') == 1 then
-                return cwd .. '/venv/bin/python'
-            elseif vim.fn.executable(cwd .. '/.venv/bin/python') == 1 then
-                return cwd .. '/.venv/bin/python'
+            if vim.fn.executable(cwd .. "/venv/bin/python") == 1 then
+                return cwd .. "/venv/bin/python"
+            elseif vim.fn.executable(cwd .. "/.venv/bin/python") == 1 then
+                return cwd .. "/.venv/bin/python"
             else
                 -- return '/usr/bin/python'
                 return os.getenv("VIRTUAL_ENV") .. "/bin/python"
@@ -689,15 +769,30 @@ dap.configurations.python = {
     },
 }
 
-
 dap.adapters.codelldb = {
-    type = 'server',
+    type = "server",
     port = "${port}",
     executable = {
-        command = '/Users/mkmc/.local/share/nvim/mason/bin/codelldb',
+        command = "/Users/mkmc/.local/share/nvim/mason/bin/codelldb",
         args = { "--port", "${port}" },
-    }
+    },
 }
+
+-- local lfs = require("lfs")
+-- local function fileExists(filename)
+--   local file = io.open(filename, "r")
+--   if file then
+--     file:close()
+--     return true
+--   else
+--     return false
+--   end
+-- end
+
+local pgm = "${workspaceFolder}/target/debug/${workspaceFolderBasename}"
+-- if fileExists(pgm) == false then
+--    pgm =  "../${workspaceFolder}/target/debug/${workspaceFolderBasename}"
+-- end
 
 dap.configurations.rust = {
     {
@@ -707,8 +802,9 @@ dap.configurations.rust = {
         -- program = function()
         --   return vim.fn.input('Path to executable: ', vim.fn.getcwd() .. '/target/debug/', 'file')
         -- end,
-        program = "${workspaceFolder}/target/debug/${workspaceFolderBasename}",
-        cwd = '${workspaceFolder}',
+        -- program = "${workspaceFolder}/target/debug/${workspaceFolderBasename}",
+        program = pgm,
+        cwd = "${workspaceFolder}",
         -- stopOnEntry = true,
         stopOnEntry = false,
     },
@@ -727,3 +823,18 @@ dap.configurations.rust = {
 -- })
 
 vim.keymap.set("n", "-", require("oil").open, { desc = "Open parent directory" })
+
+
+-- vim.api.nvim_create_augroup("LspAttach_inlayhints", {})
+-- vim.api.nvim_create_autocmd("LspAttach", {
+--   group = "LspAttach_inlayhints",
+--   callback = function(args)
+--     if not (args.data and args.data.client_id) then
+--       return
+--     end
+--
+--     local bufnr = args.buf
+--     local client = vim.lsp.get_client_by_id(args.data.client_id)
+--     require("lsp-inlayhints").on_attach(client, bufnr)
+--   end,
+-- })
