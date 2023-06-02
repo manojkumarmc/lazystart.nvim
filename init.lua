@@ -20,7 +20,7 @@ require("lazy").setup({
     { "folke/neoconf.nvim",  cmd = "Neoconf" },
 
     {
-    -- LSP Configuration & Plugins
+        -- LSP Configuration & Plugins
         "neovim/nvim-lspconfig",
         dependencies = {
             -- Automatically install LSPs to stdpath for neovim
@@ -46,13 +46,13 @@ require("lazy").setup({
     { "rafamadriz/friendly-snippets" },
 
     {
-    -- Autocompletion
+        -- Autocompletion
         "hrsh7th/nvim-cmp",
         dependencies = { "hrsh7th/cmp-nvim-lsp", "L3MON4D3/LuaSnip", "saadparwaiz1/cmp_luasnip" },
     },
 
     {
-    -- Highlight, edit, and navigate code
+        -- Highlight, edit, and navigate code
         "nvim-treesitter/nvim-treesitter",
         build = function()
             pcall(require("nvim-treesitter.install").update({ with_sync = true }))
@@ -60,7 +60,7 @@ require("lazy").setup({
     },
 
     {
-    -- Additional text objects via treesitter
+        -- Additional text objects via treesitter
         "nvim-treesitter/nvim-treesitter-textobjects",
         dependencies = "nvim-treesitter",
     },
@@ -77,7 +77,14 @@ require("lazy").setup({
     "tpope/vim-rhubarb",
     "tpope/vim-repeat",
     "tpope/vim-surround",
-    "lewis6991/gitsigns.nvim",
+
+    {
+        "lewis6991/gitsigns.nvim",
+        requires = { "nvim-lua/plenary.nvim" },
+        config = function()
+            require("gitsigns").setup({ current_line_blame = true })
+        end
+    },
 
     {
         "windwp/nvim-autopairs",
@@ -95,10 +102,10 @@ require("lazy").setup({
     "nvim-tree/nvim-web-devicons",
     "mhinz/vim-startify",
 
-    "sbdchd/neoformat",                  -- formatter
-    "nvim-lualine/lualine.nvim",         -- Fancier statusline
+    "sbdchd/neoformat",                    -- formatter
+    "nvim-lualine/lualine.nvim",           -- Fancier statusline
     "lukas-reineke/indent-blankline.nvim", -- Add indentation guides even on blank lines
-    "numToStr/Comment.nvim",             -- "gc" to comment visual regions/lines
+    "numToStr/Comment.nvim",               -- "gc" to comment visual regions/lines
     "kg8m/vim-simple-align",
 
     {
@@ -125,7 +132,7 @@ require("lazy").setup({
         dependencies = {
             "nvim-tree/nvim-web-devicons", -- optional, for file icons
         },
-        tag = "nightly",             -- optional, updated every week. (see issue #1193)
+        tag = "nightly",                   -- optional, updated every week. (see issue #1193)
     },
 
     {
@@ -175,6 +182,47 @@ require("lazy").setup({
         end
     },
 
+    {
+        "folke/twilight.nvim",
+        opts = {
+        }
+    },
+
+    {
+        "folke/zen-mode.nvim",
+        opts = {
+        }
+    },
+
+    {
+        "folke/noice.nvim",
+        event = "VeryLazy",
+        opts = {
+        },
+        dependencies = {
+            "MunifTanjim/nui.nvim",
+            "rcarriga/nvim-notify",
+        },
+        config = function()
+            require("noice").setup({
+                lsp = {
+                    override = {
+                        ["vim.lsp.util.convert_input_to_markdown_lines"] = true,
+                        ["vim.lsp.util.stylize_markdown"] = true,
+                        ["cmp.entry.get_documentation"] = true,
+                    },
+                },
+                presets = {
+                    bottom_search = true,         -- use a classic bottom cmdline for search
+                    command_palette = true,       -- position the cmdline and popupmenu together
+                    long_message_to_split = true, -- long messages will be sent to a split
+                    inc_rename = false,           -- enables an input dialog for inc-rename.nvim
+                    lsp_doc_border = false,       -- add a border to hover docs and signature help
+                },
+            })
+        end
+    },
+
 })
 
 vim.o.tabstop = 4       -- 4 spaces for tabs (prettier default)
@@ -208,6 +256,7 @@ vim.o.smartcase = true
 -- Decrease update time
 vim.o.updatetime = 250
 vim.wo.signcolumn = "yes"
+vim.wo.scrolloff = 999 -- cursor will always be on the center
 
 -- Set colorscheme
 -- require('onedark').load()
@@ -274,6 +323,7 @@ require("gitsigns").setup({
         topdelete = { text = "‾" },
         changedelete = { text = "~" },
     },
+    current_line_blame = true,
 })
 
 -- [[ Configure Telescope ]]
@@ -337,7 +387,6 @@ require("nvim-treesitter.configs").setup({
         "python",
         "rust",
         "typescript",
-        "help",
         "vim",
         "svelte",
         "javascript",
@@ -473,12 +522,13 @@ local servers = {
     rust_analyzer = {},
     ruff = {},
     tsserver = {},
-    sumneko_lua = {
-        Lua = {
-            workspace = { checkThirdParty = false },
-            telemetry = { enable = false },
-        },
-    },
+    lua_ls = {},
+    -- sumneko_lua = {
+    --     Lua = {
+    --         workspace = { checkThirdParty = false },
+    --         telemetry = { enable = false },
+    --     },
+    -- },
 }
 
 -- Setup neovim lua configuration
@@ -588,8 +638,8 @@ cmp.setup({
     },
     formatting = {
         format = lspkind.cmp_format({
-            mode = 'symbol', -- show only symbol annotations
-            maxwidth = 50,   -- prevent the popup from showing more than provided characters (e.g 50 will not show more than 50 characters)
+            mode = 'symbol',       -- show only symbol annotations
+            maxwidth = 50,         -- prevent the popup from showing more than provided characters (e.g 50 will not show more than 50 characters)
             ellipsis_char = '...', -- when popup menu exceed maxwidth, the truncated part would show ellipsis_char instead (must define maxwidth first)
 
             -- The function below will be called before any actual modifications from lspkind
@@ -625,10 +675,18 @@ vim.api.nvim_set_hl(0, "yellow", { fg = "#FFFF00" })
 vim.api.nvim_set_hl(0, "orange", { fg = "#f09000" })
 vim.api.nvim_set_hl(0, "red", { fg = "#FF0000" })
 vim.fn.sign_define('DapBreakpoint', { text = '', texthl = 'red', linehl = 'DapBreakpoint', numhl = 'DapBreakpoint' })
-vim.fn.sign_define('DapBreakpointCondition', { text = 'ﳁ', texthl = 'blue', linehl = 'DapBreakpoint',
-    numhl = 'DapBreakpoint' })
-vim.fn.sign_define('DapBreakpointRejected', { text = '', texthl = 'orange', linehl = 'DapBreakpoint',
-    numhl = 'DapBreakpoint' })
+vim.fn.sign_define('DapBreakpointCondition', {
+    text = 'ﳁ',
+    texthl = 'blue',
+    linehl = 'DapBreakpoint',
+    numhl = 'DapBreakpoint'
+})
+vim.fn.sign_define('DapBreakpointRejected', {
+    text = '',
+    texthl = 'orange',
+    linehl = 'DapBreakpoint',
+    numhl = 'DapBreakpoint'
+})
 vim.fn.sign_define('DapStopped', { text = '', texthl = 'green', linehl = 'DapBreakpoint', numhl = 'DapBreakpoint' })
 vim.fn.sign_define('DapLogPoint', { text = '', texthl = 'yellow', linehl = 'DapBreakpoint', numhl = 'DapBreakpoint' })
 
