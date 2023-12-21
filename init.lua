@@ -313,20 +313,6 @@ require("lazy").setup({
     },
   },
 
-  -- {
-  --     "neovim/nvim-lspconfig",
-  --     dependencies = {
-  --         {
-  --             "SmiteshP/nvim-navbuddy",
-  --             dependencies = {
-  --                 "SmiteshP/nvim-navic",
-  --                 "MunifTanjim/nui.nvim"
-  --             },
-  --             opts = { lsp = { auto_attach = true } }
-  --         }
-  --     },
-  -- },
-
   {
     "rmagatti/goto-preview",
     config = function()
@@ -336,23 +322,7 @@ require("lazy").setup({
 
   { "sindrets/diffview.nvim" },
 
-  {
-    "smoka7/multicursors.nvim",
-    event = "VeryLazy",
-    dependencies = {
-      "smoka7/hydra.nvim",
-    },
-    opts = {},
-    cmd = { "MCstart", "MCvisual", "MCclear", "MCpattern", "MCvisualPattern", "MCunderCursor" },
-    keys = {
-      {
-        mode = { "v", "n" },
-        "<Leader>m",
-        "<cmd>MCstart<cr>",
-        desc = "Create a selection for selected text or word under the cursor",
-      },
-    },
-  },
+  { "mg979/vim-visual-multi" },
 
 })
 
@@ -924,4 +894,3 @@ vim.keymap.set("n", "gpt", require("goto-preview").goto_preview_type_definition,
 vim.keymap.set("n", "gpi", require("goto-preview").goto_preview_implementation, { desc = "Close Preview " })
 vim.keymap.set("n", "gpD", require("goto-preview").goto_preview_declaration, { desc = "Preview Declaration " })
 vim.keymap.set("n", "gpr", require("goto-preview").goto_preview_references, { desc = "Preview References " })
-
