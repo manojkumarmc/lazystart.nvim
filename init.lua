@@ -26,12 +26,18 @@ require("lazy").setup({
       -- Automatically install LSPs to stdpath for neovim
       "williamboman/mason.nvim",
       "williamboman/mason-lspconfig.nvim",
-
       -- Useful status updates for LSP
       "j-hui/fidget.nvim",
-
       -- Additional lua configuration, makes nvim stuff amazing
       "folke/neodev.nvim",
+      {
+        "SmiteshP/nvim-navbuddy",
+        dependencies = {
+          "SmiteshP/nvim-navic",
+          "MunifTanjim/nui.nvim",
+        },
+        opts = { lsp = { auto_attach = true } },
+      },
     },
   },
 
@@ -127,12 +133,23 @@ require("lazy").setup({
     end,
   },
 
-  "lukas-reineke/indent-blankline.nvim", -- Add indentation guides even on blank lines
+  -- "lukas-reineke/indent-blankline.nvim", -- Add indentation guides even on blank lines
+  -- {
+  --     "lukas-reineke/indent-blankline.nvim",
+  --     main = "ibl",
+  --     opts = {},
+  --     config = function()
+  --         require("ibl").setup({})
+  --     end
+  -- },
+
   "numToStr/Comment.nvim", -- "gc" to comment visual regions/lines
   "kg8m/vim-simple-align",
 
   {
     "iamcco/markdown-preview.nvim",
+    cmd = { "MarkdownPreviewToggle", "MarkdownPreview", "MarkdownPreviewStop" },
+    ft = { "markdown" },
     build = function()
       vim.fn["mkdp#util#install"]()
     end,
@@ -229,20 +246,20 @@ require("lazy").setup({
     },
     config = function()
       require("noice").setup({
-        lsp = {
-          override = {
-            ["vim.lsp.util.convert_input_to_markdown_lines"] = true,
-            ["vim.lsp.util.stylize_markdown"] = true,
-            ["cmp.entry.get_documentation"] = true,
-          },
-        },
-        presets = {
-          bottom_search = true, -- use a classic bottom cmdline for search
-          command_palette = true, -- position the cmdline and popupmenu together
-          long_message_to_split = true, -- long messages will be sent to a split
-          inc_rename = false, -- enables an input dialog for inc-rename.nvim
-          lsp_doc_border = false, -- add a border to hover docs and signature help
-        },
+        -- lsp = {
+        --   override = {
+        --     ["vim.lsp.util.convert_input_to_markdown_lines"] = true,
+        --     ["vim.lsp.util.stylize_markdown"] = true,
+        --     ["cmp.entry.get_documentation"] = true,
+        --   },
+        -- },
+        -- presets = {
+        --   bottom_search = true, -- use a classic bottom cmdline for search
+        --   command_palette = true, -- position the cmdline and popupmenu together
+        --   long_message_to_split = true, -- long messages will be sent to a split
+        --   inc_rename = false, -- enables an input dialog for inc-rename.nvim
+        --   lsp_doc_border = false, -- add a border to hover docs and signature help
+        -- },
       })
     end,
   },
@@ -274,6 +291,42 @@ require("lazy").setup({
       })
     end,
   },
+
+  {
+    "dreamsofcode-io/ChatGPT.nvim",
+    event = "VeryLazy",
+    config = function()
+      require("chatgpt").setup()
+    end,
+    dependencies = {
+      "MunifTanjim/nui.nvim",
+      "nvim-lua/plenary.nvim",
+      "nvim-telescope/telescope.nvim",
+    },
+  },
+
+  -- {
+  --     "neovim/nvim-lspconfig",
+  --     dependencies = {
+  --         {
+  --             "SmiteshP/nvim-navbuddy",
+  --             dependencies = {
+  --                 "SmiteshP/nvim-navic",
+  --                 "MunifTanjim/nui.nvim"
+  --             },
+  --             opts = { lsp = { auto_attach = true } }
+  --         }
+  --     },
+  -- },
+
+  {
+    "rmagatti/goto-preview",
+    config = function()
+      require("goto-preview").setup({})
+    end,
+  },
+
+  { "sindrets/diffview.nvim" },
 })
 
 vim.o.tabstop = 4 -- 4 spaces for tabs (prettier default)
@@ -349,13 +402,6 @@ vim.api.nvim_create_autocmd("TextYankPost", {
 -- Enable Comment.nvim
 require("Comment").setup()
 
--- Enable `lukas-reineke/indent-blankline.nvim`
--- See `:help indent_blankline.txt`
-require("indent_blankline").setup({
-  char = "┊",
-  show_trailing_blankline_indent = false,
-})
-
 -- Gitsigns
 -- See `:help gitsigns.txt`
 require("gitsigns").setup({
@@ -416,6 +462,7 @@ wk.register({
   ["<leader>c"] = { name = "Code" },
   ["<leader>w"] = { name = "Workspace" },
   ["<leader>s"] = { name = "Search" },
+  ["dp"] = { name = "Preview" },
 })
 
 -- [[ Configure Treesitter ]]
@@ -436,6 +483,11 @@ require("nvim-treesitter.configs").setup({
     "css",
     "markdown",
   },
+
+  modules = {},
+  sync_install = true,
+  ignore_install = {},
+  auto_install = true,
 
   highlight = { enable = true },
   indent = { enable = true, disable = { "python" } },
@@ -480,7 +532,7 @@ require("nvim-treesitter.configs").setup({
       goto_previous_end = {
         ["[M"] = "@function.outer",
         ["[]"] = "@class.outer",
-      },
+     },
     },
     swap = {
       enable = true,
@@ -563,7 +615,6 @@ local servers = {
   gopls = {},
   pyright = {},
   rust_analyzer = {},
-  ruff = {},
   tsserver = {},
   lua_ls = {},
   -- sumneko_lua = {
@@ -675,22 +726,30 @@ cmp.setup({
       end
     end, { "i", "s" }),
   }),
-  sources = {
-    { name = "nvim_lsp" },
-    { name = "luasnip" },
-  },
+  sources = { { name = "nvim_lsp" }, { name = "luasnip" }, { name = "buffer" } },
   formatting = {
     format = lspkind.cmp_format({
-      mode = "symbol", -- show only symbol annotations
+      -- mode = "symbol", -- show only symbol annotations
       maxwidth = 50, -- prevent the popup from showing more than provided characters (e.g 50 will not show more than 50 characters)
       ellipsis_char = "...", -- when popup menu exceed maxwidth, the truncated part would show ellipsis_char instead (must define maxwidth first)
-
       -- The function below will be called before any actual modifications from lspkind
       -- so that you can provide more controls on popup customization. (See [#30](https://github.com/onsails/lspkind-nvim/pull/30))
       before = function(entry, vim_item)
         return vim_item
       end,
+      mode = "symbol_text",
+      menu = {
+        buffer = "[Buffer]",
+        nvim_lsp = "[LSP]",
+        luasnip = "[LuaSnip]",
+        nvim_lua = "[Lua]",
+        latex_symbols = "[Latex]",
+      },
     }),
+  },
+  window = {
+    completion = cmp.config.window.bordered(),
+    documentation = cmp.config.window.bordered(),
   },
 })
 
@@ -830,4 +889,11 @@ dap.configurations.rust = {
 -- })
 
 vim.keymap.set("n", "-", require("oil").open, { desc = "Open parent directory" })
-vim.keymap.set("n", "<leader>a", "<cmd>AerialToggle!<CR>")
+vim.keymap.set("n", "<leader>at", "<cmd>AerialToggle!<CR>", { desc = "Open Code Tree" })
+
+vim.keymap.set("n", "gpd", require("goto-preview").goto_preview_definition, { desc = "Preview Definition" })
+vim.keymap.set("n", "gpc", require("goto-preview").close_all_win, { desc = "Close Preview " })
+vim.keymap.set("n", "gpt", require("goto-preview").goto_preview_type_definition, { desc = "Preview Type Definition " })
+vim.keymap.set("n", "gpi", require("goto-preview").goto_preview_implementation, { desc = "Close Preview " })
+vim.keymap.set("n", "gpD", require("goto-preview").goto_preview_declaration, { desc = "Preview Declaration " })
+vim.keymap.set("n", "gpr", require("goto-preview").goto_preview_references, { desc = "Preview References " })
