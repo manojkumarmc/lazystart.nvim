@@ -139,7 +139,7 @@ require("lazy").setup({
           },
           lualine_y = {
             -- { "filetype", icon_only = true, separator = "", padding = { left = 1, right = 0 } },
-            { "filetype", icon_only = true, },
+            { "filetype", icon_only = true },
             { "progress" },
             -- { "progress", separator = " ", padding = { left = 1, right = 0 } },
           },
@@ -344,7 +344,11 @@ require("lazy").setup({
       { "<leader>u", "<cmd>lua require('undotree').toggle()<cr>" },
     },
   },
+
+  { "itchyny/calendar.vim" },
 })
+
+-- plugins end
 
 vim.o.tabstop = 4 -- 4 spaces for tabs (prettier default)
 vim.o.shiftwidth = 4 -- 4 spaces for indent width
