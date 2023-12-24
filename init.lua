@@ -120,6 +120,7 @@ require("lazy").setup({
 
   {
     "nvim-lualine/lualine.nvim",
+    dependencies = { "nvim-tree/nvim-web-devicons" },
     config = function()
       require("lualine").setup({
         options = {
@@ -135,6 +136,12 @@ require("lazy").setup({
               cond = require("noice").api.statusline.mode.has,
               color = { fg = "#ff9e64" },
             },
+          },
+          lualine_y = {
+            -- { "filetype", icon_only = true, separator = "", padding = { left = 1, right = 0 } },
+            { "filetype", icon_only = true, },
+            { "progress" },
+            -- { "progress", separator = " ", padding = { left = 1, right = 0 } },
           },
         },
       })
@@ -324,6 +331,19 @@ require("lazy").setup({
 
   { "mg979/vim-visual-multi" },
 
+  {
+    "jiaoshijie/undotree",
+    dependencies = "nvim-lua/plenary.nvim",
+    -- config = true,
+    config = function()
+      require("undotree").setup({
+        float_diff = false,
+      })
+    end,
+    keys = { -- load the plugin only when using it's keybinding:
+      { "<leader>u", "<cmd>lua require('undotree').toggle()<cr>" },
+    },
+  },
 })
 
 vim.o.tabstop = 4 -- 4 spaces for tabs (prettier default)
@@ -459,7 +479,6 @@ wk.register({
   ["<leader>c"] = { name = "Code" },
   ["<leader>w"] = { name = "Workspace" },
   ["<leader>s"] = { name = "Search" },
-  ["dp"] = { name = "Preview" },
 })
 
 -- [[ Configure Treesitter ]]
@@ -894,3 +913,55 @@ vim.keymap.set("n", "gpt", require("goto-preview").goto_preview_type_definition,
 vim.keymap.set("n", "gpi", require("goto-preview").goto_preview_implementation, { desc = "Close Preview " })
 vim.keymap.set("n", "gpD", require("goto-preview").goto_preview_declaration, { desc = "Preview Declaration " })
 vim.keymap.set("n", "gpr", require("goto-preview").goto_preview_references, { desc = "Preview References " })
+
+local icons = {
+  misc = {
+    dots = "󰇘",
+  },
+  dap = {
+    Stopped = { "󰁕 ", "DiagnosticWarn", "DapStoppedLine" },
+    Breakpoint = " ",
+    BreakpointCondition = " ",
+    BreakpointRejected = { " ", "DiagnosticError" },
+    LogPoint = ".>",
+  },
+  diagnostics = {
+    Error = " ",
+    Warn = " ",
+    Hint = " ",
+    Info = " ",
+  },
+  git = {
+    added = " ",
+    modified = " ",
+    removed = " ",
+  },
+}
+
+require("lualine").setup({
+  options = {
+    icons_enabled = true,
+  },
+  sections = {
+    lualine_b = {
+      "branch",
+      {
+        "diff",
+        symbols = {
+          added = icons.git.added,
+          modified = icons.git.modified,
+          removed = icons.git.removed,
+        },
+      },
+      {
+        "diagnostics",
+        symbols = {
+          error = icons.diagnostics.Error,
+          warn = icons.diagnostics.Warn,
+          info = icons.diagnostics.Info,
+          hint = icons.diagnostics.Hint,
+        },
+      },
+    },
+  },
+})
