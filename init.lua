@@ -30,6 +30,7 @@ require("lazy").setup({
       "j-hui/fidget.nvim",
       -- Additional lua configuration, makes nvim stuff amazing
       "folke/neodev.nvim",
+      -- code context
       {
         "SmiteshP/nvim-navbuddy",
         dependencies = {
@@ -53,12 +54,12 @@ require("lazy").setup({
     -- Autocompletion
     "hrsh7th/nvim-cmp",
     dependencies = {
-            "hrsh7th/cmp-buffer",
-            "hrsh7th/cmp-path",
-            "hrsh7th/cmp-nvim-lsp",
-            "saadparwaiz1/cmp_luasnip",
-            "rafamadriz/friendly-snippets",
-        },
+      "hrsh7th/cmp-buffer",
+      "hrsh7th/cmp-path",
+      "hrsh7th/cmp-nvim-lsp",
+      "saadparwaiz1/cmp_luasnip",
+      "rafamadriz/friendly-snippets",
+    },
   },
 
   {
@@ -86,7 +87,7 @@ require("lazy").setup({
   "tpope/vim-fugitive",
   "tpope/vim-rhubarb",
   "tpope/vim-repeat",
-  -- "tpope/vim-surround",
+
   {
     "kylechui/nvim-surround",
     version = "*", -- Use for stability; omit to use `main` branch for the latest features
@@ -341,13 +342,33 @@ require("lazy").setup({
       require("undotree").setup({
         float_diff = false,
       })
-    end,
-    keys = { -- load the plugin only when using it's keybinding:
-      { "<leader>u", "<cmd>lua require('undotree').toggle()<cr>" },
-    },
+    end
   },
 
   { "itchyny/calendar.vim" },
+
+  {
+    "echasnovski/mini.indentscope",
+    config = function()
+      require("mini.indentscope").setup()
+    end,
+  },
+
+  {
+    "utilyre/barbecue.nvim",
+    name = "barbecue",
+    version = "*",
+    dependencies = {
+      "SmiteshP/nvim-navic",
+      "nvim-tree/nvim-web-devicons", -- optional dependency
+    },
+    config = function()
+      require("barbecue").setup()
+    end,
+    opts = {
+      -- configurations go here
+    },
+  },
 })
 
 -- plugins end
@@ -620,6 +641,7 @@ local on_attach = function(_, bufnr)
   end, "[W]orkspace [L]ist Folders")
 
   -- Create a command `:Format` local to the LSP buffer
+
   vim.api.nvim_buf_create_user_command(bufnr, "Format", function(_)
     vim.lsp.buf.format()
   end, { desc = "Format current buffer with LSP" })
@@ -899,6 +921,8 @@ dap.configurations.rust = {
 
 vim.keymap.set("n", "-", require("oil").open, { desc = "Open parent directory" })
 vim.keymap.set("n", "<leader>ct", "<cmd>AerialToggle!<CR>", { desc = "Open Code Tree" })
+vim.keymap.set("n", "<leader>u", "<cmd>AerialToggle!<CR>", { desc = "Open Code Tree" })
+vim.keymap.set("n", "<leader>u", "<cmd>lua require('undotree').toggle()<cr>", { desc = "Undotree" })
 
 vim.keymap.set("n", "gpd", require("goto-preview").goto_preview_definition, { desc = "Preview Definition" })
 vim.keymap.set("n", "gpc", require("goto-preview").close_all_win, { desc = "Close Preview " })
