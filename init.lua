@@ -49,12 +49,16 @@ require("lazy").setup({
     build = "make install_jsregexp",
   },
 
-  { "rafamadriz/friendly-snippets" },
-
   {
     -- Autocompletion
     "hrsh7th/nvim-cmp",
-    dependencies = { "hrsh7th/cmp-nvim-lsp", "L3MON4D3/LuaSnip", "saadparwaiz1/cmp_luasnip" },
+    dependencies = {
+            "hrsh7th/cmp-buffer",
+            "hrsh7th/cmp-path",
+            "hrsh7th/cmp-nvim-lsp",
+            "saadparwaiz1/cmp_luasnip",
+            "rafamadriz/friendly-snippets",
+        },
   },
 
   {
@@ -88,7 +92,7 @@ require("lazy").setup({
     version = "*", -- Use for stability; omit to use `main` branch for the latest features
     event = "VeryLazy",
     config = function()
-      require("nvim-surround").setup({})
+      require("nvim-surround").setup()
     end,
   },
 
@@ -171,8 +175,6 @@ require("lazy").setup({
   },
 
   { "nvim-telescope/telescope.nvim", branch = "0.1.x", dependencies = { "nvim-lua/plenary.nvim" } },
-
-  -- Fuzzy Finder Algorithm which requires local dependencies to be built. Only load if `make` is available
   { "nvim-telescope/telescope-fzf-native.nvim", build = "make", cond = vim.fn.executable("make") == 1 },
 
   {
@@ -210,7 +212,7 @@ require("lazy").setup({
     "rcarriga/nvim-dap-ui",
     requires = { "mfussenegger/nvim-dap" },
     config = function()
-      require("dapui").setup({})
+      require("dapui").setup()
     end,
   },
   {
@@ -625,37 +627,24 @@ end
 
 vim.diagnostic.config({ virtual_text = false })
 
--- Enable the following language servers
---  Feel free to add/remove any LSPs that you want here. They will automatically be installed.
---
---  Add any additional override configuration in the following tables. They will be passed to
---  the `settings` field of the server config. You must look up that documentation yourself.
+-- language servers to be installed
 local servers = {
-  -- clangd = {},
   gopls = {},
   pyright = {},
   rust_analyzer = {},
   tsserver = {},
   lua_ls = {},
-  -- sumneko_lua = {
-  --     Lua = {
-  --         workspace = { checkThirdParty = false },
-  --         telemetry = { enable = false },
-  --     },
-  -- },
 }
 
 -- Setup neovim lua configuration
 require("neodev").setup()
---
+
 -- nvim-cmp supports additional completion capabilities, so broadcast that to servers
 local capabilities = vim.lsp.protocol.make_client_capabilities()
 capabilities = require("cmp_nvim_lsp").default_capabilities(capabilities)
 
 -- Setup mason so it can manage external tooling
 require("mason").setup()
-
--- Ensure the servers above are installed
 local mason_lspconfig = require("mason-lspconfig")
 
 mason_lspconfig.setup({
@@ -909,7 +898,7 @@ dap.configurations.rust = {
 -- })
 
 vim.keymap.set("n", "-", require("oil").open, { desc = "Open parent directory" })
-vim.keymap.set("n", "<leader>at", "<cmd>AerialToggle!<CR>", { desc = "Open Code Tree" })
+vim.keymap.set("n", "<leader>ct", "<cmd>AerialToggle!<CR>", { desc = "Open Code Tree" })
 
 vim.keymap.set("n", "gpd", require("goto-preview").goto_preview_definition, { desc = "Preview Definition" })
 vim.keymap.set("n", "gpc", require("goto-preview").close_all_win, { desc = "Close Preview " })
