@@ -229,7 +229,9 @@ require("lazy").setup({
     "Wansmer/treesj",
     requires = { "nvim-treesitter" },
     config = function()
-      require("treesj").setup({})
+      require("treesj").setup({
+        max_join_length = 240,
+      })
     end,
   },
 
@@ -342,7 +344,7 @@ require("lazy").setup({
       require("undotree").setup({
         float_diff = false,
       })
-    end
+    end,
   },
 
   { "itchyny/calendar.vim" },
@@ -480,6 +482,7 @@ pcall(require("telescope").load_extension, "fzf")
 -- See `:help telescope.builtin`
 vim.keymap.set("n", "<leader>?", require("telescope.builtin").oldfiles, { desc = "[?] Find recently opened files" })
 vim.keymap.set("n", "<leader><space>", require("telescope.builtin").buffers, { desc = "[ ] Find existing buffers" })
+
 vim.keymap.set(
   "n",
   "<leader>/",
