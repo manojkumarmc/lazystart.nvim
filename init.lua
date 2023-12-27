@@ -371,6 +371,32 @@ require("lazy").setup({
       -- configurations go here
     },
   },
+
+  {
+    "pwntester/octo.nvim",
+    requires = {
+      "nvim-lua/plenary.nvim",
+      "nvim-telescope/telescope.nvim",
+    },
+    config = function()
+      require("octo").setup()
+    end,
+  },
+
+  {
+    "nvim-pack/nvim-spectre",
+    requires = {
+      "nvim-lua/plenary.nvim",
+      "nvim-tree/nvim-web-devicons",
+    },
+    config = function()
+       require("spectre").setup()
+    end,
+  },
+
+  "RRethy/vim-illuminate",
+
+
 })
 
 -- plugins end
@@ -478,6 +504,7 @@ require("telescope").setup({
 
 -- Enable telescope fzf native, if installed
 pcall(require("telescope").load_extension, "fzf")
+pcall(require("telescope").load_extension, "octo")
 
 -- See `:help telescope.builtin`
 vim.keymap.set("n", "<leader>?", require("telescope.builtin").oldfiles, { desc = "[?] Find recently opened files" })
@@ -985,3 +1012,5 @@ require("lualine").setup({
     },
   },
 })
+
+vim.keymap.set('n', '<leader>S', '<cmd>lua require("spectre").toggle()<CR>', { desc = "Toggle Spectre" })
