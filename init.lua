@@ -442,6 +442,16 @@ require("lazy").setup({
     end,
   },
 
+  {
+    "AckslD/nvim-neoclip.lua",
+    requires = {
+      { "nvim-telescope/telescope.nvim" },
+    },
+    config = function()
+      require("neoclip").setup()
+    end,
+  },
+
 })
 
 -- plugins end
@@ -550,6 +560,7 @@ require("telescope").setup({
 -- Enable telescope fzf native, if installed
 pcall(require("telescope").load_extension, "fzf")
 pcall(require("telescope").load_extension, "octo")
+pcall(require("telescope").load_extension, "neoclip")
 -- pcall(require("telescope").load_extension, "yaml_schema")
 
 -- See `:help telescope.builtin`
