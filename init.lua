@@ -211,7 +211,7 @@ require("lazy").setup({
   { "mfussenegger/nvim-dap" },
   {
     "rcarriga/nvim-dap-ui",
-    requires = { "mfussenegger/nvim-dap" },
+    dependencies = { "mfussenegger/nvim-dap" },
     config = function()
       require("dapui").setup()
     end,
@@ -227,7 +227,7 @@ require("lazy").setup({
 
   {
     "Wansmer/treesj",
-    requires = { "nvim-treesitter" },
+    dependencies = { "nvim-treesitter" },
     config = function()
       require("treesj").setup({
         max_join_length = 240,
@@ -235,7 +235,7 @@ require("lazy").setup({
     end,
   },
 
-  { "kevinhwang91/nvim-bqf" },
+  { "kevinhwang91/nvim-bqf", ft = "qf" },
 
   {
     "stevearc/oil.nvim",
@@ -374,7 +374,7 @@ require("lazy").setup({
 
   {
     "pwntester/octo.nvim",
-    requires = {
+    dependencies = {
       "nvim-lua/plenary.nvim",
       "nvim-telescope/telescope.nvim",
     },
@@ -385,7 +385,7 @@ require("lazy").setup({
 
   {
     "nvim-pack/nvim-spectre",
-    requires = {
+    dependencies = {
       "nvim-lua/plenary.nvim",
       "nvim-tree/nvim-web-devicons",
     },
@@ -398,7 +398,7 @@ require("lazy").setup({
 
   {
     "someone-stole-my-name/yaml-companion.nvim",
-    requires = {
+    dependencies = {
       { "neovim/nvim-lspconfig" },
       { "nvim-lua/plenary.nvim" },
       { "nvim-telescope/telescope.nvim" },
@@ -444,14 +444,13 @@ require("lazy").setup({
 
   {
     "AckslD/nvim-neoclip.lua",
-    requires = {
+    dependencies = {
       { "nvim-telescope/telescope.nvim" },
     },
     config = function()
       require("neoclip").setup()
     end,
   },
-
 })
 
 -- plugins end
@@ -579,6 +578,8 @@ vim.keymap.set("n", "<leader>sh", require("telescope.builtin").help_tags, { desc
 vim.keymap.set("n", "<leader>sw", require("telescope.builtin").grep_string, { desc = "[S]earch current [W]ord" })
 vim.keymap.set("n", "<leader>sg", require("telescope.builtin").live_grep, { desc = "[S]earch by [G]rep" })
 vim.keymap.set("n", "<leader>sd", require("telescope.builtin").diagnostics, { desc = "[S]earch [D]iagnostics" })
+
+vim.keymap.set("n", "<leader>sc", "<cmd>Telescope neoclip<cr>", { desc = "[S]earch [C]lipboard" })
 
 vim.keymap.set("n", "<leader>gs", "<cmd>Git status<cr>", { desc = "[G]it [S]tatus" })
 vim.keymap.set("n", "<leader>ga", "<cmd>Git add .<cr>", { desc = "[G]it [A]dd" })
@@ -1073,3 +1074,6 @@ require("lualine").setup({
 })
 
 vim.keymap.set("n", "<leader>S", '<cmd>lua require("spectre").toggle()<CR>', { desc = "Toggle Spectre" })
+vim.keymap.set("n", "<leader>M", function()
+  require("treesj").toggle({ split = { recursive = true } })
+end, { desc = "Split recursive" })
