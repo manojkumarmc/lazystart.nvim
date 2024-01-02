@@ -451,6 +451,14 @@ require("lazy").setup({
       require("neoclip").setup()
     end,
   },
+
+  {
+    "junegunn/fzf",
+    run = function()
+      vim.fn["fzf#install"]()
+    end,
+  },
+
 })
 
 -- plugins end
@@ -551,6 +559,15 @@ require("telescope").setup({
         ["<C-d>"] = false,
       },
     },
+  },
+  actions = {
+    bqf = function(prompt_bufnr)
+      local selected = require("telescope.actions.state").get_selected_entry(prompt_bufnr)
+      for _, entry in ipairs(selected) do
+        require("bqf").qf_set({ entry.value })
+      end
+      require("bqf").open()
+    end,
   },
 })
 
