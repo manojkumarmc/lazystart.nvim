@@ -459,6 +459,13 @@ require("lazy").setup({
     end,
   },
 
+  {
+    "gen740/SmoothCursor.nvim",
+    config = function()
+      require("smoothcursor").setup()
+    end,
+  },
+
 })
 
 -- plugins end
