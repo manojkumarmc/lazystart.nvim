@@ -419,11 +419,11 @@ require("lazy").setup({
   {
     "ggandor/leap.nvim",
     enabled = true,
-    keys = {
-      { "s", mode = { "n", "x", "o" }, desc = "Leap forward to" },
-      { "S", mode = { "n", "x", "o" }, desc = "Leap backward to" },
-      { "gs", mode = { "n", "x", "o" }, desc = "Leap from windows" },
-    },
+    -- keys = {
+    --   { ",", mode = { "n", "x", "o" }, desc = "Leap forward to" },
+    --   { "<", mode = { "n", "x", "o" }, desc = "Leap backward to" },
+    --   { "g,", mode = { "n", "x", "o" }, desc = "Leap from windows" },
+    -- },
     config = function(_, opts)
       local leap = require("leap")
       for k, v in pairs(opts) do
@@ -464,6 +464,19 @@ require("lazy").setup({
     config = function()
       require("smoothcursor").setup()
     end,
+  },
+
+  {
+    "NeogitOrg/neogit",
+    dependencies = {
+      "nvim-lua/plenary.nvim", -- required
+      "sindrets/diffview.nvim", -- optional - Diff integration
+
+      -- Only one of these is needed, not both.
+      "nvim-telescope/telescope.nvim", -- optional
+      "ibhagwan/fzf-lua", -- optional
+    },
+    config = true,
   },
 
 })
@@ -1101,3 +1114,5 @@ vim.keymap.set("n", "<leader>S", '<cmd>lua require("spectre").toggle()<CR>', { d
 vim.keymap.set("n", "<leader>M", function()
   require("treesj").toggle({ split = { recursive = true } })
 end, { desc = "Split recursive" })
+
+vim.keymap.set("n", "<leader>q", "<cmd>copen<CR>", { desc = "Quickfix" })
