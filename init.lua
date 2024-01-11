@@ -479,6 +479,12 @@ require("lazy").setup({
     config = true,
   },
 
+  {
+    "ahmedkhalf/project.nvim",
+    config = function()
+      require("project_nvim").setup({})
+    end,
+  },
 })
 
 -- plugins end
@@ -597,6 +603,7 @@ require("telescope").setup({
 pcall(require("telescope").load_extension, "fzf")
 pcall(require("telescope").load_extension, "octo")
 pcall(require("telescope").load_extension, "neoclip")
+pcall(require("telescope").load_extension, "projects")
 -- pcall(require("telescope").load_extension, "yaml_schema")
 
 -- See `:help telescope.builtin`
@@ -911,7 +918,15 @@ cmp.setup({
   },
 })
 
-require("nvim-tree").setup()
+require("nvim-tree").setup({
+  sync_root_with_cwd = true,
+  respect_buf_cwd = true,
+  update_focused_file = {
+    enable = true,
+    update_root = true,
+  },
+})
+
 vim.keymap.set("n", "<leader>tt", "<cmd>NvimTreeToggle<cr>", { desc = "[T]ree [T]oggle" })
 vim.keymap.set("n", "<leader>tfo", "<cmd>NvimTreeFocus<cr>", { desc = "[T]ree [F]ocus" })
 vim.keymap.set("n", "<leader>tff", "<cmd>NvimTreeFindFile<cr>", { desc = "[T]ree [F]ind File" })
@@ -1116,3 +1131,4 @@ vim.keymap.set("n", "<leader>M", function()
 end, { desc = "Split recursive" })
 
 vim.keymap.set("n", "<leader>q", "<cmd>copen<CR>", { desc = "Quickfix" })
+vim.keymap.set("n", "<leader>sp", "<cmd>Telescope projects<CR>", { desc = "Search Projects" })
