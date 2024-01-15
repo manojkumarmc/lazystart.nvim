@@ -891,7 +891,12 @@ cmp.setup({
       end
     end, { "i", "s" }),
   }),
-  sources = { { name = "nvim_lsp" }, { name = "luasnip" }, { name = "buffer" } },
+  sources = {
+    { name = "nvim_lsp" },
+    { name = "luasnip" },
+    { name = "buffer" },
+    { name = "path" },
+  },
   formatting = {
     format = lspkind.cmp_format({
       -- mode = "symbol", -- show only symbol annotations
@@ -1132,3 +1137,5 @@ end, { desc = "Split recursive" })
 
 vim.keymap.set("n", "<leader>q", "<cmd>copen<CR>", { desc = "Quickfix" })
 vim.keymap.set("n", "<leader>sp", "<cmd>Telescope projects<CR>", { desc = "Search Projects" })
+
+
