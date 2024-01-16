@@ -485,6 +485,18 @@ require("lazy").setup({
       require("project_nvim").setup({})
     end,
   },
+
+  {
+    "kdheepak/lazygit.nvim",
+    dependencies = {
+      "nvim-telescope/telescope.nvim",
+      "nvim-lua/plenary.nvim",
+    },
+    config = function()
+      require("telescope").load_extension("lazygit")
+    end,
+  },
+
 })
 
 -- plugins end
@@ -1137,5 +1149,5 @@ end, { desc = "Split recursive" })
 
 vim.keymap.set("n", "<leader>q", "<cmd>copen<CR>", { desc = "Quickfix" })
 vim.keymap.set("n", "<leader>sp", "<cmd>Telescope projects<CR>", { desc = "Search Projects" })
-
-
+vim.keymap.set("n", "<leader>gg", "<cmd>LazyGit<CR>", { desc = "Lazygit" })
+vim.keymap.set("n", "<leader>gn", "<cmd>Neogit<CR>", { desc = "Neogit" })
