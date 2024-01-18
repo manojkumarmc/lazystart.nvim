@@ -215,6 +215,8 @@ require("lazy").setup({
           },
           lualine_y = {
             -- { "filetype", icon_only = true, separator = "", padding = { left = 1, right = 0 } },
+            "encoding",
+            "fileformat",
             { "filetype", icon_only = true },
             { "progress" },
             -- { "progress", separator = " ", padding = { left = 1, right = 0 } },
