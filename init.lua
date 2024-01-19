@@ -216,7 +216,14 @@ require("lazy").setup({
           lualine_y = {
             -- { "filetype", icon_only = true, separator = "", padding = { left = 1, right = 0 } },
             "encoding",
-            "fileformat",
+            {
+              "fileformat",
+              symbols = {
+                mac = "", -- e711
+                unix = "", -- e712
+                dos = "", -- e70f
+              },
+            },
             { "filetype", icon_only = true },
             { "progress" },
             -- { "progress", separator = " ", padding = { left = 1, right = 0 } },
@@ -569,6 +576,31 @@ require("lazy").setup({
       require("telescope").load_extension("lazygit")
     end,
   },
+
+  {
+    "dhruvmanila/browser-bookmarks.nvim",
+    version = "*",
+    dependencies = {
+      "kkharji/sqlite.lua",
+      "nvim-telescope/telescope.nvim",
+    },
+    config = function()
+      require("browser_bookmarks").setup({ selected_browser = "firefox" })
+    end,
+  },
+
+  { "barrett-ruth/telescope-http.nvim" },
+
+  {
+    "paopaol/telescope-git-diffs.nvim",
+    requires = {
+      "nvim-lua/plenary.nvim",
+      "sindrets/diffview.nvim",
+    },
+  },
+
+  "jonarrien/telescope-cmdline.nvim",
+
 })
 
 -- plugins end
@@ -688,6 +720,10 @@ pcall(require("telescope").load_extension, "fzf")
 pcall(require("telescope").load_extension, "octo")
 pcall(require("telescope").load_extension, "neoclip")
 pcall(require("telescope").load_extension, "projects")
+pcall(require("telescope").load_extension, "bookmarks")
+pcall(require("telescope").load_extension, "http")
+pcall(require("telescope").load_extension, "git_diffs")
+pcall(require("telescope").load_extension, "cmdline")
 -- pcall(require("telescope").load_extension, "yaml_schema")
 
 -- See `:help telescope.builtin`
@@ -706,8 +742,8 @@ vim.keymap.set("n", "<leader>sh", require("telescope.builtin").help_tags, { desc
 vim.keymap.set("n", "<leader>sw", require("telescope.builtin").grep_string, { desc = "[S]earch current [W]ord" })
 vim.keymap.set("n", "<leader>sg", require("telescope.builtin").live_grep, { desc = "[S]earch by [G]rep" })
 vim.keymap.set("n", "<leader>sd", require("telescope.builtin").diagnostics, { desc = "[S]earch [D]iagnostics" })
-
 vim.keymap.set("n", "<leader>sc", "<cmd>Telescope neoclip<cr>", { desc = "[S]earch [C]lipboard" })
+vim.keymap.set("n", "<leader>sl", "<cmd>Telescope cmdline<cr>", { desc = "[S]earch Command[L]ine" })
 
 vim.keymap.set("n", "<leader>gs", "<cmd>Git status<cr>", { desc = "[G]it [S]tatus" })
 vim.keymap.set("n", "<leader>ga", "<cmd>Git add .<cr>", { desc = "[G]it [A]dd" })
@@ -1171,3 +1207,4 @@ vim.keymap.set("n", "<leader>q", "<cmd>copen<CR>", { desc = "Quickfix" })
 vim.keymap.set("n", "<leader>sp", "<cmd>Telescope projects<CR>", { desc = "Search Projects" })
 vim.keymap.set("n", "<leader>gg", "<cmd>LazyGit<CR>", { desc = "Lazygit" })
 vim.keymap.set("n", "<leader>gn", "<cmd>Neogit<CR>", { desc = "Neogit" })
+vim.keymap.set("n", "<leader>gd", "<cmd>Telescope git_diffs  diff_commits<CR>", { desc = "Neogit" })
