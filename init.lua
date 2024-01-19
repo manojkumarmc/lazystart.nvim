@@ -1207,3 +1207,4 @@ vim.keymap.set("n", "<leader>sp", "<cmd>Telescope projects<CR>", { desc = "Searc
 vim.keymap.set("n", "<leader>gg", "<cmd>LazyGit<CR>", { desc = "Lazygit" })
 vim.keymap.set("n", "<leader>gn", "<cmd>Neogit<CR>", { desc = "Neogit" })
 vim.keymap.set("n", "<leader>gd", "<cmd>Telescope git_diffs  diff_commits<CR>", { desc = "Git commit diffs" })
+vim.keymap.set("n", "<leader>gf", "<cmd>G diff<CR>", { desc = "Git diff" })
