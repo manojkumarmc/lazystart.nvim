@@ -593,7 +593,7 @@ require("lazy").setup({
 
   {
     "paopaol/telescope-git-diffs.nvim",
-    requires = {
+    dependencies = {
       "nvim-lua/plenary.nvim",
       "sindrets/diffview.nvim",
     },
@@ -601,9 +601,20 @@ require("lazy").setup({
 
   "jonarrien/telescope-cmdline.nvim",
 
+  {
+    "anuvyklack/pretty-fold.nvim",
+    config = function()
+      require("pretty-fold").setup()
+    end,
+  },
+
 })
 
 -- plugins end
+
+vim.o.foldexpr = "v:lua.vim.treesitter.foldexpr()"
+vim.o.foldmethod = "expr"
+vim.o.foldlevel = 99
 
 vim.o.tabstop = 4 -- 4 spaces for tabs (prettier default)
 vim.o.shiftwidth = 4 -- 4 spaces for indent width
@@ -1208,3 +1219,5 @@ vim.keymap.set("n", "<leader>gg", "<cmd>LazyGit<CR>", { desc = "Lazygit" })
 vim.keymap.set("n", "<leader>gn", "<cmd>Neogit<CR>", { desc = "Neogit" })
 vim.keymap.set("n", "<leader>gd", "<cmd>Telescope git_diffs  diff_commits<CR>", { desc = "Git commit diffs" })
 vim.keymap.set("n", "<leader>gf", "<cmd>G diff<CR>", { desc = "Git diff" })
+
+
