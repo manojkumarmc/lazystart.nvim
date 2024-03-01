@@ -322,7 +322,22 @@ require("lazy").setup({
     opts = {},
     dependencies = { "nvim-tree/nvim-web-devicons" },
     config = function()
-      require("oil").setup({})
+      require("oil").setup({
+        float = {
+          padding = 2,
+          max_width = 0,
+          max_height = 0,
+          border = "rounded",
+          win_options = {
+            winblend = 0,
+          },
+          -- This is the config that will be passed to nvim_open_win.
+          -- Change values here to customize the layout
+          override = function(conf)
+            return conf
+          end,
+        },
+      })
     end,
   },
 
@@ -608,6 +623,30 @@ require("lazy").setup({
     end,
   },
 
+  {
+    "sidebar-nvim/sidebar.nvim",
+    config = function()
+      require("sidebar-nvim").setup()
+    end,
+  },
+
+  {
+    "johmsalas/text-case.nvim",
+    config = function()
+      require("textcase").setup({})
+    end,
+  },
+
+  {
+    "michaelrommel/nvim-silicon",
+    lazy = true,
+    cmd = "Silicon",
+    config = function()
+      require("silicon").setup({
+        font = "FiraCode Nerd Font Mono",
+      })
+    end,
+  },
 })
 
 -- plugins end
@@ -1197,7 +1236,7 @@ dap.configurations.rust = {
 --   },
 -- })
 
-vim.keymap.set("n", "-", require("oil").open, { desc = "Open parent directory" })
+vim.keymap.set("n", "-", "<cmd>Oil --float<CR>", { desc = "Open parent directory" })
 vim.keymap.set("n", "<leader>ct", "<cmd>AerialToggle!<CR>", { desc = "Open Code Tree" })
 vim.keymap.set("n", "<leader>u", "<cmd>lua require('undotree').toggle()<cr>", { desc = "Undotree" })
 
@@ -1219,5 +1258,3 @@ vim.keymap.set("n", "<leader>gg", "<cmd>LazyGit<CR>", { desc = "Lazygit" })
 vim.keymap.set("n", "<leader>gn", "<cmd>Neogit<CR>", { desc = "Neogit" })
 vim.keymap.set("n", "<leader>gd", "<cmd>Telescope git_diffs  diff_commits<CR>", { desc = "Git commit diffs" })
 vim.keymap.set("n", "<leader>gf", "<cmd>G diff<CR>", { desc = "Git diff" })
-
-
