@@ -600,7 +600,9 @@ require("lazy").setup({
       "nvim-telescope/telescope.nvim",
     },
     config = function()
-      require("browser_bookmarks").setup({ selected_browser = "firefox" })
+      require("browser_bookmarks").setup({
+        selected_browser = "firefox",
+      })
     end,
   },
 
@@ -631,13 +633,6 @@ require("lazy").setup({
   },
 
   {
-    "johmsalas/text-case.nvim",
-    config = function()
-      require("textcase").setup({})
-    end,
-  },
-
-  {
     "michaelrommel/nvim-silicon",
     lazy = true,
     cmd = "Silicon",
@@ -647,6 +642,31 @@ require("lazy").setup({
       })
     end,
   },
+
+  -- {
+  --   "Exafunction/codeium.vim",
+  --   event = "BufEnter",
+  --   -- config = function()
+  --   --   -- Change '<C-g>' here to any keycode you like.
+  --   --   vim.keymap.set("i", "<C-g>", function() return vim.fn["codeium#Accept"]() end, { expr = true, silent = true })
+  --   --   vim.keymap.set("i", "<c-;>", function() return vim.fn["codeium#CycleCompletions"](1) end, { expr = true, silent = true })
+  --   --   vim.keymap.set("i", "<c-,>", function() return vim.fn["codeium#CycleCompletions"](-1) end, { expr = true, silent = true })
+  --   --   vim.keymap.set("i", "<c-x>", function() return vim.fn["codeium#Clear"]() end, { expr = true, silent = true })
+  --   -- end,
+  -- },
+
+  {
+    "Exafunction/codeium.nvim",
+    dependencies = {
+      "nvim-lua/plenary.nvim",
+      "hrsh7th/nvim-cmp",
+    },
+    config = function()
+      require("codeium").setup({})
+    end,
+  },
+
+  { "arthurxavierx/vim-caser" }, -- the command starts with gss | gsu | gsl | gs_ | gsm | gst | gs<space>
 })
 
 -- plugins end
@@ -686,7 +706,9 @@ vim.o.smartcase = true
 -- Decrease update time
 vim.o.updatetime = 250
 vim.wo.signcolumn = "yes"
-vim.wo.scrolloff = 999 -- cursor will always be on the center
+-- vim.wo.scrolloff = 999 -- cursor will always be on the center
+vim.o.scrolloff = 5
+vim.wo.scrolloff = 5
 
 -- Set colorscheme
 -- require('onedark').load()
@@ -770,7 +792,7 @@ pcall(require("telescope").load_extension, "fzf")
 pcall(require("telescope").load_extension, "octo")
 pcall(require("telescope").load_extension, "neoclip")
 pcall(require("telescope").load_extension, "projects")
-pcall(require("telescope").load_extension, "bookmarks")
+-- pcall(require("telescope").load_extension, "bookmarks")
 pcall(require("telescope").load_extension, "http")
 pcall(require("telescope").load_extension, "git_diffs")
 pcall(require("telescope").load_extension, "cmdline")
@@ -1021,6 +1043,7 @@ lspkind.init({
     Event = "",
     Operator = "",
     TypeParameter = "",
+    Codeium = "",
   },
 })
 
@@ -1066,6 +1089,7 @@ cmp.setup({
     { name = "luasnip" },
     { name = "buffer" },
     { name = "path" },
+    { name = "codeium" },
   },
   formatting = {
     format = lspkind.cmp_format({
@@ -1254,6 +1278,7 @@ end, { desc = "Split recursive" })
 
 vim.keymap.set("n", "<leader>q", "<cmd>copen<CR>", { desc = "Quickfix" })
 vim.keymap.set("n", "<leader>sp", "<cmd>Telescope projects<CR>", { desc = "Search Projects" })
+vim.keymap.set("n", "<leader>sb", require("browser_bookmarks").select, { desc = "Search Bookmarks" })
 vim.keymap.set("n", "<leader>gg", "<cmd>LazyGit<CR>", { desc = "Lazygit" })
 vim.keymap.set("n", "<leader>gn", "<cmd>Neogit<CR>", { desc = "Neogit" })
 vim.keymap.set("n", "<leader>gd", "<cmd>Telescope git_diffs  diff_commits<CR>", { desc = "Git commit diffs" })
