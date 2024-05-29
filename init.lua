@@ -142,6 +142,16 @@ require("lazy").setup({
   "martinsione/darkplus.nvim",
   "folke/tokyonight.nvim",
   "cpea2506/one_monokai.nvim",
+  {
+    "nvimdev/lspsaga.nvim",
+    config = function()
+      require("lspsaga").setup({})
+    end,
+    dependencies = {
+      "nvim-treesitter/nvim-treesitter", -- optional
+      "nvim-tree/nvim-web-devicons", -- optional
+    },
+  },
   "nvim-tree/nvim-web-devicons",
   "mhinz/vim-startify",
 
@@ -291,11 +301,12 @@ require("lazy").setup({
   { "mfussenegger/nvim-dap" },
   {
     "rcarriga/nvim-dap-ui",
-    dependencies = { "mfussenegger/nvim-dap" },
+    dependencies = { "mfussenegger/nvim-dap", "nvim-neotest/nvim-nio" },
     config = function()
       require("dapui").setup()
     end,
   },
+
   {
     "theHamsta/nvim-dap-virtual-text",
     config = function()
@@ -655,18 +666,55 @@ require("lazy").setup({
   --   -- end,
   -- },
 
+  -- {
+  --   "Exafunction/codeium.nvim",
+  --   dependencies = {
+  --     "nvim-lua/plenary.nvim",
+  --     "hrsh7th/nvim-cmp",
+  --   },
+  --   config = function()
+  --     require("codeium").setup({})
+  --   end,
+  -- },
+
+  { "arthurxavierx/vim-caser" }, -- the command starts with gss | gsu | gsl | gs_ | gsm | gst | gs<space>
+
   {
-    "Exafunction/codeium.nvim",
-    dependencies = {
-      "nvim-lua/plenary.nvim",
-      "hrsh7th/nvim-cmp",
-    },
+    "johnfrankmorgan/whitespace.nvim",
     config = function()
-      require("codeium").setup({})
+      require("whitespace-nvim").setup({
+        highlight = "DiffDelete",
+        ignored_filetypes = { "TelescopePrompt", "Trouble", "help" },
+        ignore_terminal = true,
+        return_cursor = true,
+      })
+      vim.keymap.set("n", "<Leader>dw", require("whitespace-nvim").trim, { desc = "Trim Whitespace" })
     end,
   },
 
-  { "arthurxavierx/vim-caser" }, -- the command starts with gss | gsu | gsl | gs_ | gsm | gst | gs<space>
+  {
+    "zbirenbaum/copilot.lua",
+    cmd = "Copilot",
+    event = "InsertEnter",
+    config = function()
+      require("copilot").setup({
+        -- suggestion = { enabled = false },
+        panel = {
+          auto_refresh = true,
+          layout = {
+            position = "right",
+          },
+        },
+      })
+    end, -- event = "InsertEnter",
+  },
+
+  {
+    "zbirenbaum/copilot-cmp",
+    config = function()
+      require("copilot_cmp").setup()
+    end,
+  },
 })
 
 -- plugins end
@@ -1044,6 +1092,7 @@ lspkind.init({
     Operator = "",
     TypeParameter = "",
     Codeium = "",
+    Copilot = "",
   },
 })
 
@@ -1085,11 +1134,12 @@ cmp.setup({
     end, { "i", "s" }),
   }),
   sources = {
-    { name = "nvim_lsp" },
-    { name = "luasnip" },
-    { name = "buffer" },
-    { name = "path" },
-    { name = "codeium" },
+    { name = "copilot", group_index = 2 },
+    { name = "nvim_lsp", group_index = 2 },
+    { name = "luasnip", group_index = 2 },
+    { name = "buffer", group_index = 2 },
+    { name = "path", group_index = 2 },
+    -- { name = "codeium" }, -- uncomment this for codeium
   },
   formatting = {
     format = lspkind.cmp_format({
