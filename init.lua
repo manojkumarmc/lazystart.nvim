@@ -142,16 +142,20 @@ require("lazy").setup({
   "martinsione/darkplus.nvim",
   "folke/tokyonight.nvim",
   "cpea2506/one_monokai.nvim",
+
   {
     "nvimdev/lspsaga.nvim",
     config = function()
-      require("lspsaga").setup({})
+      require("lspsaga").setup({
+        use_saga_diagnostic_sign = false,
+      })
     end,
     dependencies = {
       "nvim-treesitter/nvim-treesitter", -- optional
       "nvim-tree/nvim-web-devicons", -- optional
     },
   },
+
   "nvim-tree/nvim-web-devicons",
   "mhinz/vim-startify",
 
@@ -984,7 +988,8 @@ local on_attach = function(client, bufnr)
     vim.keymap.set("n", keys, func, { buffer = bufnr, desc = desc })
   end
 
-  local signs = { Error = " ", Warn = " ", Hint = " ", Info = " " }
+  -- local signs = { Error = " ", Warn = " ", Hint = " ", Info = " " }
+  local signs = icons.diagnostics
   for type, icon in pairs(signs) do
     local hl = "DiagnosticSign" .. type
     vim.fn.sign_define(hl, { text = icon, texthl = hl, numhl = hl })
@@ -1064,35 +1069,33 @@ local lspkind = require("lspkind")
 
 lspkind.init({
   mode = "symbol_text",
-  preset = "codicons",
+  -- preset = "codicons",
   symbol_map = {
-    Text = "",
-    Method = "",
-    Function = "",
+    Text = "󰉿",
+    Method = "󰆧",
+    Function = "󰊕",
     Constructor = "",
-    Field = "ﰠ",
-    Variable = "",
-    Class = "ﴯ",
+    Field = "󰜢",
+    Variable = "󰀫",
+    Class = "󰠱",
     Interface = "",
     Module = "",
-    Property = "ﰠ",
-    Unit = "塞",
-    Value = "",
+    Property = "󰜢",
+    Unit = "󰑭",
+    Value = "󰎠",
     Enum = "",
-    Keyword = "",
+    Keyword = "󰌋",
     Snippet = "",
-    Color = "",
-    File = "",
-    Reference = "",
-    Folder = "",
+    Color = "󰏘",
+    File = "󰈙",
+    Reference = "󰈇",
+    Folder = "󰉋",
     EnumMember = "",
-    Constant = "",
-    Struct = "פּ",
+    Constant = "󰏿",
+    Struct = "󰙅",
     Event = "",
-    Operator = "",
+    Operator = "󰆕",
     TypeParameter = "",
-    Codeium = "",
-    Copilot = "",
   },
 })
 
