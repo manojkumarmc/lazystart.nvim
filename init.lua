@@ -996,7 +996,13 @@ local on_attach = function(client, bufnr)
   end
 
   nmap("<leader>cr", vim.lsp.buf.rename, "[C]ode [R]ename")
-  nmap("<leader>ca", vim.lsp.buf.code_action, "[C]ode [A]ction")
+  -- nmap("<leader>ca", vim.lsp.buf.code_action, "[C]ode [A]ction")
+  nmap("<leader>ca", "<cmd>Lspsaga code_action<cr>", "[C]ode [A]ction")
+  nmap("<leader>ci", "<cmd>Lspsaga incoming_calls<cr>", "[C]alls [I]ncoming")
+  nmap("<leader>co", "<cmd>Lspsaga outgoing_calls<cr>", "[C]alls [O]utgoing")
+  nmap("<leader>cf", "<cmd>Lspsaga finder<cr>", "[C]ode [F]inder")
+  nmap("<leader>ch", "<cmd>Lspsaga hover_doc<cr>", "[C]ode [H]over")
+  nmap("<leader>cl", "<cmd>Lspsaga outline<cr>", "[C]ode [O]utline")
 
   nmap("gd", vim.lsp.buf.definition, "[G]oto [D]efinition")
   nmap("gr", require("telescope.builtin").lsp_references, "[G]oto [R]eferences")
