@@ -376,19 +376,11 @@ require("lazy").setup({
     },
     config = function()
       require("noice").setup({
-        -- lsp = {
-        --   override = {
-        --     ["vim.lsp.util.convert_input_to_markdown_lines"] = true,
-        --     ["vim.lsp.util.stylize_markdown"] = true,
-        --     ["cmp.entry.get_documentation"] = true,
-        --   },
+        -- messages = {
+        --   enabled = false,
         -- },
-        -- presets = {
-        --   bottom_search = true, -- use a classic bottom cmdline for search
-        --   command_palette = true, -- position the cmdline and popupmenu together
-        --   long_message_to_split = true, -- long messages will be sent to a split
-        --   inc_rename = false, -- enables an input dialog for inc-rename.nvim
-        --   lsp_doc_border = false, -- add a border to hover docs and signature help
+        -- popupmenu = {
+        --   enabled = true,
         -- },
       })
     end,
@@ -931,6 +923,14 @@ require("nvim-treesitter.configs").setup({
         ["if"] = "@function.inner",
         ["ac"] = "@class.outer",
         ["ic"] = "@class.inner",
+        ["il"] = "@loop.inner",
+        ["al"] = "@loop.outer",
+        ["ib"] = "@block.inner",
+        ["ab"] = "@block.outer",
+        ["ig"] = "@assignment.inner",
+        ["ag"] = "@assignment.outer",
+        ["rg"] = "@assignment.right",
+        ["lg"] = "@assignment.left",
       },
     },
     move = {
@@ -1325,8 +1325,8 @@ vim.keymap.set("n", "<leader>u", "<cmd>lua require('undotree').toggle()<cr>", { 
 
 vim.keymap.set("n", "gpd", require("goto-preview").goto_preview_definition, { desc = "Preview Definition" })
 vim.keymap.set("n", "gpc", require("goto-preview").close_all_win, { desc = "Close Preview " })
-vim.keymap.set("n", "gpt", require("goto-preview").goto_preview_type_definition, { desc = "Preview Type Definition " })
-vim.keymap.set("n", "gpi", require("goto-preview").goto_preview_implementation, { desc = "Close Preview " })
+vim.keymap.set("n", "gpt", require("goto-preview").goto_preview_type_definition, { desc = "Preview Type Definition" })
+vim.keymap.set("n", "gpi", require("goto-preview").goto_preview_implementation, { desc = "Preview Implementation" })
 vim.keymap.set("n", "gpD", require("goto-preview").goto_preview_declaration, { desc = "Preview Declaration " })
 vim.keymap.set("n", "gpr", require("goto-preview").goto_preview_references, { desc = "Preview References " })
 
@@ -1342,3 +1342,17 @@ vim.keymap.set("n", "<leader>gg", "<cmd>LazyGit<CR>", { desc = "Lazygit" })
 vim.keymap.set("n", "<leader>gn", "<cmd>Neogit<CR>", { desc = "Neogit" })
 vim.keymap.set("n", "<leader>gd", "<cmd>Telescope git_diffs  diff_commits<CR>", { desc = "Git commit diffs" })
 vim.keymap.set("n", "<leader>gf", "<cmd>G diff<CR>", { desc = "Git diff" })
+
+-- local ts_repeat_move = require "nvim-treesitter.textobjects.repeatable_move"
+-- -- Repeat movement with ; and ,
+-- -- ensure ; goes forward and , goes backward regardless of the last direction
+-- vim.keymap.set({ "n", "x", "o" }, ";", ts_repeat_move.repeat_last_move_next)
+-- vim.keymap.set({ "n", "x", "o" }, ",", ts_repeat_move.repeat_last_move_previous)
+-- -- vim way: ; goes to the direction you were moving.
+-- -- vim.keymap.set({ "n", "x", "o" }, ";", ts_repeat_move.repeat_last_move)
+-- -- vim.keymap.set({ "n", "x", "o" }, ",", ts_repeat_move.repeat_last_move_opposite)
+-- -- Optionally, make builtin f, F, t, T also repeatable with ; and ,
+-- vim.keymap.set({ "n", "x", "o" }, "f", ts_repeat_move.builtin_f_expr, { expr = true })
+-- vim.keymap.set({ "n", "x", "o" }, "F", ts_repeat_move.builtin_F_expr, { expr = true })
+-- vim.keymap.set({ "n", "x", "o" }, "t", ts_repeat_move.builtin_t_expr, { expr = true })
+-- vim.keymap.set({ "n", "x", "o" }, "T", ts_repeat_move.builtin_T_expr, { expr = true })
