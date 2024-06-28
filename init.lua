@@ -1040,6 +1040,7 @@ local servers = {
   rust_analyzer = {},
   tsserver = {},
   lua_ls = {},
+  svelte = {},
 }
 
 -- Setup neovim lua configuration
