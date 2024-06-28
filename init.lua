@@ -70,7 +70,7 @@ require("lazy").setup({
 
   {
     "L3MON4D3/LuaSnip",
-    version = "<CurrentMajor>.*",
+    version = "v2.*",
     build = "make install_jsregexp",
   },
 
@@ -284,7 +284,6 @@ require("lazy").setup({
     dependencies = {
       "nvim-tree/nvim-web-devicons", -- optional, for file icons
     },
-    tag = "nightly", -- optional, updated every week. (see issue #1193)
   },
 
   {
@@ -474,16 +473,16 @@ require("lazy").setup({
     },
   },
 
-  {
-    "pwntester/octo.nvim",
-    dependencies = {
-      "nvim-lua/plenary.nvim",
-      "nvim-telescope/telescope.nvim",
-    },
-    config = function()
-      require("octo").setup()
-    end,
-  },
+  -- {
+  --   "pwntester/octo.nvim",
+  --   dependencies = {
+  --     "nvim-lua/plenary.nvim",
+  --     "nvim-telescope/telescope.nvim",
+  --   },
+  --   config = function()
+  --     require("octo").setup()
+  --   end,
+  -- },
 
   {
     "nvim-pack/nvim-spectre",
@@ -613,7 +612,7 @@ require("lazy").setup({
     end,
   },
 
-  { "barrett-ruth/telescope-http.nvim" },
+  -- { "barrett-ruth/telescope-http.nvim" },
 
   {
     "paopaol/telescope-git-diffs.nvim",
@@ -625,12 +624,12 @@ require("lazy").setup({
 
   "jonarrien/telescope-cmdline.nvim",
 
-  {
-    "anuvyklack/pretty-fold.nvim",
-    config = function()
-      require("pretty-fold").setup()
-    end,
-  },
+  -- {
+  --   "anuvyklack/pretty-fold.nvim",
+  --   config = function()
+  --     require("pretty-fold").setup()
+  --   end,
+  -- },
 
   {
     "sidebar-nvim/sidebar.nvim",
@@ -833,11 +832,11 @@ require("telescope").setup({
 
 -- Enable telescope fzf native, if installed
 pcall(require("telescope").load_extension, "fzf")
-pcall(require("telescope").load_extension, "octo")
+-- pcall(require("telescope").load_extension, "octo")
 pcall(require("telescope").load_extension, "neoclip")
 pcall(require("telescope").load_extension, "projects")
 -- pcall(require("telescope").load_extension, "bookmarks")
-pcall(require("telescope").load_extension, "http")
+-- pcall(require("telescope").load_extension, "http")
 pcall(require("telescope").load_extension, "git_diffs")
 pcall(require("telescope").load_extension, "cmdline")
 -- pcall(require("telescope").load_extension, "yaml_schema")
@@ -1207,6 +1206,8 @@ vim.api.nvim_set_hl(0, "green", { fg = "#9ece6a" })
 vim.api.nvim_set_hl(0, "yellow", { fg = "#FFFF00" })
 vim.api.nvim_set_hl(0, "orange", { fg = "#f09000" })
 vim.api.nvim_set_hl(0, "red", { fg = "#FF0000" })
+
+-- Just for the time being
 vim.fn.sign_define("DapBreakpoint", { text = "", texthl = "red", linehl = "DapBreakpoint", numhl = "DapBreakpoint" })
 vim.fn.sign_define("DapBreakpointCondition", {
   text = "ﳁ",
@@ -1342,6 +1343,9 @@ vim.keymap.set("n", "<leader>gg", "<cmd>LazyGit<CR>", { desc = "Lazygit" })
 vim.keymap.set("n", "<leader>gn", "<cmd>Neogit<CR>", { desc = "Neogit" })
 vim.keymap.set("n", "<leader>gd", "<cmd>Telescope git_diffs  diff_commits<CR>", { desc = "Git commit diffs" })
 vim.keymap.set("n", "<leader>gf", "<cmd>G diff<CR>", { desc = "Git diff" })
+
+vim.keymap.set("n", "<leader>db", "<cmd>windo diffthis<cr>", { desc = "Show Diff" })
+vim.keymap.set("n", "<leader>do", "<cmd>windo diffoff<cr>", { desc = "Diff Off" })
 
 -- local ts_repeat_move = require "nvim-treesitter.textobjects.repeatable_move"
 -- -- Repeat movement with ; and ,
