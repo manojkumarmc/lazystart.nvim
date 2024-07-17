@@ -39,7 +39,6 @@ local icons = {
 }
 
 require("lazy").setup({
-  "folke/which-key.nvim",
 
   { "folke/neoconf.nvim", cmd = "Neoconf" },
 
@@ -274,6 +273,7 @@ require("lazy").setup({
 
   {
     "folke/which-key.nvim",
+    dependencies = { "echasnovski/mini.icons", version = "*" },
     config = function()
       require("which-key").setup({})
     end,
@@ -324,7 +324,7 @@ require("lazy").setup({
     dependencies = { "nvim-treesitter" },
     config = function()
       require("treesj").setup({
-        max_join_length = 240,
+        max_join_length = 2400,
       })
     end,
   },
@@ -866,13 +866,22 @@ vim.keymap.set("n", "<leader>gl", "<cmd>Git log<cr>", { desc = "[G]it [L]og" })
 vim.keymap.set("n", "<leader>gc", "<cmd>Git commit<cr>", { desc = "[G]it [C]ommit" })
 
 local wk = require("which-key")
-wk.register({
-  ["<leader>g"] = { name = "Git" },
-  ["<leader>t"] = { name = "Tree Explorer" },
-  ["<leader>tf"] = { name = "Find" },
-  ["<leader>c"] = { name = "Code" },
-  ["<leader>w"] = { name = "Workspace" },
-  ["<leader>s"] = { name = "Search" },
+-- wk.register({
+-- ["<leader>g"] = { name = "Git" },
+-- ["<leader>t"] = { name = "Tree Explorer" },
+-- ["<leader>tf"] = { name = "Find" },
+-- ["<leader>c"] = { name = "Code" },
+-- ["<leader>w"] = { name = "Workspace" },
+-- ["<leader>s"] = { name = "Search" },
+-- })
+
+wk.add({
+  { "<leader>c", group = "Code" },
+  { "<leader>g", group = "Git" },
+  { "<leader>s", group = "Search" },
+  { "<leader>t", group = "Tree Explorer" },
+  { "<leader>tf", group = "Find" },
+  { "<leader>w", group = "Workspace" },
 })
 
 -- [[ Configure Treesitter ]]
@@ -922,14 +931,14 @@ require("nvim-treesitter.configs").setup({
         ["if"] = "@function.inner",
         ["ac"] = "@class.outer",
         ["ic"] = "@class.inner",
-        ["il"] = "@loop.inner",
-        ["al"] = "@loop.outer",
-        ["ib"] = "@block.inner",
-        ["ab"] = "@block.outer",
-        ["ig"] = "@assignment.inner",
-        ["ag"] = "@assignment.outer",
-        ["rg"] = "@assignment.right",
-        ["lg"] = "@assignment.left",
+        -- ["il"] = "@loop.inner",
+        -- ["al"] = "@loop.outer",
+        -- ["ib"] = "@block.inner",
+        -- ["ab"] = "@block.outer",
+        -- ["ig"] = "@assignment.inner",
+        -- ["ag"] = "@assignment.outer",
+        -- ["rg"] = "@assignment.right",
+        -- ["lg"] = "@assignment.left",
       },
     },
     move = {
@@ -1347,6 +1356,9 @@ vim.keymap.set("n", "<leader>gf", "<cmd>G diff<CR>", { desc = "Git diff" })
 
 vim.keymap.set("n", "<leader>db", "<cmd>windo diffthis<cr>", { desc = "Show Diff" })
 vim.keymap.set("n", "<leader>do", "<cmd>windo diffoff<cr>", { desc = "Diff Off" })
+
+vim.keymap.set("n", "<C-l>", "20zl")
+vim.keymap.set("n", "<C-h>", "20zh")
 
 -- local ts_repeat_move = require "nvim-treesitter.textobjects.repeatable_move"
 -- -- Repeat movement with ; and ,
