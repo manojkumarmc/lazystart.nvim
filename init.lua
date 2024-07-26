@@ -130,11 +130,9 @@ require("lazy").setup({
 
   {
     "windwp/nvim-autopairs",
-    config = function()
-      require("nvim-autopairs").setup({})
-    end,
+    event = "InsertEnter",
+    config = true,
   },
-
   -- colorschemes
   "navarasu/onedark.nvim",
   "EdenEast/nightfox.nvim",
@@ -246,15 +244,6 @@ require("lazy").setup({
     end,
   },
 
-  -- "lukas-reineke/indent-blankline.nvim", -- Add indentation guides even on blank lines
-  -- {
-  --     "lukas-reineke/indent-blankline.nvim",
-  --     main = "ibl",
-  --     opts = {},
-  --     config = function()
-  --         require("ibl").setup({})
-  --     end
-  -- },
 
   "numToStr/Comment.nvim", -- "gc" to comment visual regions/lines
   "kg8m/vim-simple-align",
@@ -273,10 +262,18 @@ require("lazy").setup({
 
   {
     "folke/which-key.nvim",
+    event = "VeryLazy",
     dependencies = { "echasnovski/mini.icons", version = "*" },
-    config = function()
-      require("which-key").setup({})
-    end,
+    opts = {},
+    keys = {
+      {
+        "<leader>?",
+        function()
+          require("which-key").show({ global = false })
+        end,
+        desc = "Buffer Local Keymaps (which-key)",
+      },
+    },
   },
 
   {
@@ -473,17 +470,6 @@ require("lazy").setup({
     },
   },
 
-  -- {
-  --   "pwntester/octo.nvim",
-  --   dependencies = {
-  --     "nvim-lua/plenary.nvim",
-  --     "nvim-telescope/telescope.nvim",
-  --   },
-  --   config = function()
-  --     require("octo").setup()
-  --   end,
-  -- },
-
   {
     "nvim-pack/nvim-spectre",
     dependencies = {
@@ -623,13 +609,6 @@ require("lazy").setup({
   },
 
   "jonarrien/telescope-cmdline.nvim",
-
-  -- {
-  --   "anuvyklack/pretty-fold.nvim",
-  --   config = function()
-  --     require("pretty-fold").setup()
-  --   end,
-  -- },
 
   {
     "sidebar-nvim/sidebar.nvim",
@@ -841,47 +820,65 @@ pcall(require("telescope").load_extension, "git_diffs")
 pcall(require("telescope").load_extension, "cmdline")
 -- pcall(require("telescope").load_extension, "yaml_schema")
 
--- See `:help telescope.builtin`
-vim.keymap.set("n", "<leader>?", require("telescope.builtin").oldfiles, { desc = "[?] Find recently opened files" })
-vim.keymap.set("n", "<leader><space>", require("telescope.builtin").buffers, { desc = "[ ] Find existing buffers" })
-
-vim.keymap.set(
-  "n",
-  "<leader>/",
-  require("telescope.builtin").current_buffer_fuzzy_find,
-  { desc = "[/] Fuzzily search in current buffer]" }
-)
-
-vim.keymap.set("n", "<leader>sf", require("telescope.builtin").find_files, { desc = "[S]earch [F]iles" })
-vim.keymap.set("n", "<leader>sh", require("telescope.builtin").help_tags, { desc = "[S]earch [H]elp" })
-vim.keymap.set("n", "<leader>sw", require("telescope.builtin").grep_string, { desc = "[S]earch current [W]ord" })
-vim.keymap.set("n", "<leader>sg", require("telescope.builtin").live_grep, { desc = "[S]earch by [G]rep" })
-vim.keymap.set("n", "<leader>sd", require("telescope.builtin").diagnostics, { desc = "[S]earch [D]iagnostics" })
-vim.keymap.set("n", "<leader>sc", "<cmd>Telescope neoclip<cr>", { desc = "[S]earch [C]lipboard" })
-vim.keymap.set("n", "<leader>sl", "<cmd>Telescope cmdline<cr>", { desc = "[S]earch Command[L]ine" })
-
-vim.keymap.set("n", "<leader>gs", "<cmd>Git status<cr>", { desc = "[G]it [S]tatus" })
-vim.keymap.set("n", "<leader>ga", "<cmd>Git add .<cr>", { desc = "[G]it [A]dd" })
-vim.keymap.set("n", "<leader>gl", "<cmd>Git log<cr>", { desc = "[G]it [L]og" })
-vim.keymap.set("n", "<leader>gc", "<cmd>Git commit<cr>", { desc = "[G]it [C]ommit" })
-
 local wk = require("which-key")
--- wk.register({
--- ["<leader>g"] = { name = "Git" },
--- ["<leader>t"] = { name = "Tree Explorer" },
--- ["<leader>tf"] = { name = "Find" },
--- ["<leader>c"] = { name = "Code" },
--- ["<leader>w"] = { name = "Workspace" },
--- ["<leader>s"] = { name = "Search" },
--- })
-
 wk.add({
+  -- { "n", "<leader>cp", "<cmd>AerialPrev<CR>", { buffer = bufnr } },
+  -- { "n", "<leader>cn", "<cmd>AerialNext<CR>", { buffer = bufnr } },
+  { "<leader>dw", require("whitespace-nvim").trim, desc = "Trim Whitespace", mode = "n" },
+  { "<leader><space>", require("telescope.builtin").buffers, desc = "[ ] Find existing buffers", mode = "n" },
+  { "<leader>?", require("telescope.builtin").oldfiles, desc = "[?] Find recently opened files", mode = "n" },
+  { "<leader>D", vim.lsp.buf.type_definition, desc = "Type [D]efinition", mode = "n" },
+  { "<leader>S", '<cmd>lua require("spectre").toggle()<CR>', desc = "Toggle Spectre", mode = "n" },
+  { "<leader>b", require("dap").toggle_breakpoint, desc = "Breakpoint Toggle", mode = "n" },
   { "<leader>c", group = "Code" },
+  { "<leader>ca", "<cmd>Lspsaga code_action<cr>", desc = "[C]ode [A]ction", mode = "n" },
+  { "<leader>cf", "<cmd>Lspsaga finder<cr>", desc = "[C]ode [F]inder", mode = "n" },
+  { "<leader>ch", "<cmd>Lspsaga hover_doc<cr>", desc = "[C]ode [H]over", mode = "n" },
+  { "<leader>ci", "<cmd>Lspsaga incoming_calls<cr>", desc = "[C]alls [I]ncoming", mode = "n" },
+  { "<leader>cl", "<cmd>Lspsaga outline<cr>", desc = "[C]ode [O]utline", mode = "n" },
+  { "<leader>co", "<cmd>Lspsaga outgoing_calls<cr>", desc = "[C]alls [O]utgoing", mode = "n" },
+  { "<leader>cr", vim.lsp.buf.rename, desc = "[C]ode [R]ename", mode = "n" },
+  { "<leader>ct", "<cmd>AerialToggle!<CR>", desc = "Open Code Tree", mode = "n" },
+  { "<leader>d", vim.diagnostic.setloclist, desc = "[D]iagnostics List", mode = "n" },
+  { "<leader>db", "<cmd>windo diffthis<cr>", desc = "Show Diff", mode = "n" },
+  { "<leader>do", "<cmd>windo diffoff<cr>", desc = "Diff Off", mode = "n" },
+  { "<leader>e", vim.diagnostic.open_float, desc = "Diagnostics popup", mode = "n" },
   { "<leader>g", group = "Git" },
+  { "<leader>ga", "<cmd>Git add .<cr>", desc = "[G]it [A]dd", mode = "n" },
+  { "<leader>gc", "<cmd>Git commit<cr>", desc = "[G]it [C]ommit", mode = "n" },
+  { "<leader>gd", "<cmd>Telescope git_diffs  diff_commits<CR>", desc = "Git commit diffs", mode = "n" },
+  { "<leader>gf", "<cmd>G diff<CR>", desc = "Git diff", mode = "n" },
+  { "<leader>gg", "<cmd>LazyGit<CR>", desc = "Lazygit", mode = "n" },
+  { "<leader>gl", "<cmd>Git log<cr>", desc = "[G]it [L]og", mode = "n" },
+  { "<leader>gn", "<cmd>Neogit<CR>", desc = "Neogit", mode = "n" },
+  { "<leader>gs", "<cmd>Git status<cr>", desc = "[G]it [S]tatus", mode = "n" },
+  { "<leader>q", "<cmd>copen<CR>", desc = "Quickfix", mode = "n" },
   { "<leader>s", group = "Search" },
+  { "<leader>sb", require("browser_bookmarks").select, desc = "Search Bookmarks", mode = "n" },
+  { "<leader>sc", "<cmd>Telescope neoclip<cr>", desc = "[S]earch [C]lipboard", mode = "n" },
+  { "<leader>sd", require("telescope.builtin").diagnostics, desc = "[S]earch [D]iagnostics", mode = "n" },
+  { "<leader>sd", require("telescope.builtin").lsp_document_symbols, desc = "[D]ocument [S]ymbols" },
+  { "<leader>sf", require("telescope.builtin").find_files, desc = "[S]earch [F]iles", mode = "n" },
+  { "<leader>sg", require("telescope.builtin").live_grep, desc = "[S]earch by [G]rep", mode = "n" },
+  { "<leader>sh", require("telescope.builtin").help_tags, desc = "[S]earch [H]elp", mode = "n" },
+  { "<leader>sl", "<cmd>Telescope cmdline<cr>", desc = "[S]earch Command[L]ine", mode = "n" },
+  { "<leader>sp", "<cmd>Telescope projects<CR>", desc = "Search Projects", mode = "n" },
+  { "<leader>sw", require("telescope.builtin").grep_string, desc = "[S]earch current [W]ord", mode = "n" },
   { "<leader>t", group = "Tree Explorer" },
-  { "<leader>tf", group = "Find" },
+  { "<leader>tf", "<cmd>NvimTreeFindFile<cr>", desc = "[T]ree [F]ind File", mode = "n" },
+  { "<leader>to", "<cmd>NvimTreeFocus<cr>", desc = "[T]ree [F]ocus", mode = "n" },
+  { "<leader>tt", "<cmd>NvimTreeToggle<cr>", desc = "[T]ree [T]oggle", mode = "n" },
+  { "<leader>u", "<cmd>lua require('undotree').toggle()<cr>", desc = "Undotree", mode = "n" },
   { "<leader>w", group = "Workspace" },
+  { "<leader>wa", vim.lsp.buf.add_workspace_folder, desc = "[W]orkspace [A]dd Folder", mode = "n" },
+  { "<leader>wr", vim.lsp.buf.remove_workspace_folder, desc = "[W]orkspace [R]emove Folder", mode = "n" },
+  {
+    "<leader>ws",
+    require("telescope.builtin").lsp_dynamic_workspace_symbols,
+    desc = "[W]orkspace [S]ymbols",
+    mode = "n",
+  },
+  { "<leader>wd", require("whitespace-nvim").trim, desc = "Trim Whitespace", mode = "n" },
 })
 
 -- [[ Configure Treesitter ]]
@@ -976,8 +973,6 @@ require("nvim-treesitter.configs").setup({
 -- Diagnostic keymaps
 vim.keymap.set("n", "[d", vim.diagnostic.goto_prev, { desc = "Diagnostics next" })
 vim.keymap.set("n", "]d", vim.diagnostic.goto_next, { desc = "Diagnostics prev" })
-vim.keymap.set("n", "<leader>e", vim.diagnostic.open_float, { desc = "Diagnostics popup" })
-vim.keymap.set("n", "<leader>d", vim.diagnostic.setloclist, { desc = "[D]iagnostics List" })
 
 -- LSP settings.
 --  This function gets run when an LSP connects to a particular buffer.
@@ -992,7 +987,6 @@ local on_attach = function(client, bufnr)
     if desc then
       desc = "LSP: " .. desc
     end
-
     vim.keymap.set("n", keys, func, { buffer = bufnr, desc = desc })
   end
 
@@ -1004,20 +998,9 @@ local on_attach = function(client, bufnr)
   end
 
   nmap("<leader>cr", vim.lsp.buf.rename, "[C]ode [R]ename")
-  -- nmap("<leader>ca", vim.lsp.buf.code_action, "[C]ode [A]ction")
-  nmap("<leader>ca", "<cmd>Lspsaga code_action<cr>", "[C]ode [A]ction")
-  nmap("<leader>ci", "<cmd>Lspsaga incoming_calls<cr>", "[C]alls [I]ncoming")
-  nmap("<leader>co", "<cmd>Lspsaga outgoing_calls<cr>", "[C]alls [O]utgoing")
-  nmap("<leader>cf", "<cmd>Lspsaga finder<cr>", "[C]ode [F]inder")
-  nmap("<leader>ch", "<cmd>Lspsaga hover_doc<cr>", "[C]ode [H]over")
-  nmap("<leader>cl", "<cmd>Lspsaga outline<cr>", "[C]ode [O]utline")
-
   nmap("gd", vim.lsp.buf.definition, "[G]oto [D]efinition")
   nmap("gr", require("telescope.builtin").lsp_references, "[G]oto [R]eferences")
   nmap("gI", vim.lsp.buf.implementation, "[G]oto [I]mplementation")
-  nmap("<leader>D", vim.lsp.buf.type_definition, "Type [D]efinition")
-  nmap("<leader>sd", require("telescope.builtin").lsp_document_symbols, "[D]ocument [S]ymbols")
-  nmap("<leader>ws", require("telescope.builtin").lsp_dynamic_workspace_symbols, "[W]orkspace [S]ymbols")
 
   -- See `:help K` for why this keymap
   nmap("K", vim.lsp.buf.hover, "Hover Documentation")
@@ -1194,10 +1177,6 @@ require("nvim-tree").setup({
   },
 })
 
-vim.keymap.set("n", "<leader>tt", "<cmd>NvimTreeToggle<cr>", { desc = "[T]ree [T]oggle" })
-vim.keymap.set("n", "<leader>tfo", "<cmd>NvimTreeFocus<cr>", { desc = "[T]ree [F]ocus" })
-vim.keymap.set("n", "<leader>tff", "<cmd>NvimTreeFindFile<cr>", { desc = "[T]ree [F]ind File" })
-
 require("luasnip.loaders.from_vscode").lazy_load()
 
 local dap, dapui = require("dap"), require("dapui")
@@ -1331,8 +1310,6 @@ dap.configurations.rust = {
 -- })
 
 vim.keymap.set("n", "-", "<cmd>Oil --float<CR>", { desc = "Open parent directory" })
-vim.keymap.set("n", "<leader>ct", "<cmd>AerialToggle!<CR>", { desc = "Open Code Tree" })
-vim.keymap.set("n", "<leader>u", "<cmd>lua require('undotree').toggle()<cr>", { desc = "Undotree" })
 
 vim.keymap.set("n", "gpd", require("goto-preview").goto_preview_definition, { desc = "Preview Definition" })
 vim.keymap.set("n", "gpc", require("goto-preview").close_all_win, { desc = "Close Preview " })
@@ -1341,35 +1318,6 @@ vim.keymap.set("n", "gpi", require("goto-preview").goto_preview_implementation, 
 vim.keymap.set("n", "gpD", require("goto-preview").goto_preview_declaration, { desc = "Preview Declaration " })
 vim.keymap.set("n", "gpr", require("goto-preview").goto_preview_references, { desc = "Preview References " })
 
-vim.keymap.set("n", "<leader>S", '<cmd>lua require("spectre").toggle()<CR>', { desc = "Toggle Spectre" })
-vim.keymap.set("n", "<leader>M", function()
-  require("treesj").toggle({ split = { recursive = true } })
-end, { desc = "Split recursive" })
-
-vim.keymap.set("n", "<leader>q", "<cmd>copen<CR>", { desc = "Quickfix" })
-vim.keymap.set("n", "<leader>sp", "<cmd>Telescope projects<CR>", { desc = "Search Projects" })
-vim.keymap.set("n", "<leader>sb", require("browser_bookmarks").select, { desc = "Search Bookmarks" })
-vim.keymap.set("n", "<leader>gg", "<cmd>LazyGit<CR>", { desc = "Lazygit" })
-vim.keymap.set("n", "<leader>gn", "<cmd>Neogit<CR>", { desc = "Neogit" })
-vim.keymap.set("n", "<leader>gd", "<cmd>Telescope git_diffs  diff_commits<CR>", { desc = "Git commit diffs" })
-vim.keymap.set("n", "<leader>gf", "<cmd>G diff<CR>", { desc = "Git diff" })
-
-vim.keymap.set("n", "<leader>db", "<cmd>windo diffthis<cr>", { desc = "Show Diff" })
-vim.keymap.set("n", "<leader>do", "<cmd>windo diffoff<cr>", { desc = "Diff Off" })
-
 vim.keymap.set("n", "<C-l>", "20zl")
 vim.keymap.set("n", "<C-h>", "20zh")
 
--- local ts_repeat_move = require "nvim-treesitter.textobjects.repeatable_move"
--- -- Repeat movement with ; and ,
--- -- ensure ; goes forward and , goes backward regardless of the last direction
--- vim.keymap.set({ "n", "x", "o" }, ";", ts_repeat_move.repeat_last_move_next)
--- vim.keymap.set({ "n", "x", "o" }, ",", ts_repeat_move.repeat_last_move_previous)
--- -- vim way: ; goes to the direction you were moving.
--- -- vim.keymap.set({ "n", "x", "o" }, ";", ts_repeat_move.repeat_last_move)
--- -- vim.keymap.set({ "n", "x", "o" }, ",", ts_repeat_move.repeat_last_move_opposite)
--- -- Optionally, make builtin f, F, t, T also repeatable with ; and ,
--- vim.keymap.set({ "n", "x", "o" }, "f", ts_repeat_move.builtin_f_expr, { expr = true })
--- vim.keymap.set({ "n", "x", "o" }, "F", ts_repeat_move.builtin_F_expr, { expr = true })
--- vim.keymap.set({ "n", "x", "o" }, "t", ts_repeat_move.builtin_t_expr, { expr = true })
--- vim.keymap.set({ "n", "x", "o" }, "T", ts_repeat_move.builtin_T_expr, { expr = true })
