@@ -658,11 +658,10 @@ require("lazy").setup({
     config = function()
       require("whitespace-nvim").setup({
         highlight = "DiffDelete",
-        ignored_filetypes = { "TelescopePrompt", "Trouble", "help" },
+        ignored_filetypes = { "TelescopePrompt", "Trouble", "help" , "registers"},
         ignore_terminal = true,
         return_cursor = true,
       })
-      vim.keymap.set("n", "<Leader>dw", require("whitespace-nvim").trim, { desc = "Trim Whitespace" })
     end,
   },
 
@@ -822,9 +821,6 @@ pcall(require("telescope").load_extension, "cmdline")
 
 local wk = require("which-key")
 wk.add({
-  -- { "n", "<leader>cp", "<cmd>AerialPrev<CR>", { buffer = bufnr } },
-  -- { "n", "<leader>cn", "<cmd>AerialNext<CR>", { buffer = bufnr } },
-  { "<leader>dw", require("whitespace-nvim").trim, desc = "Trim Whitespace", mode = "n" },
   { "<leader><space>", require("telescope.builtin").buffers, desc = "Find existing buffers", mode = "n" },
   { "<leader>?", require("telescope.builtin").oldfiles, desc = " Find recently opened files", mode = "n" },
   { "<leader>/", require("telescope.builtin").current_buffer_fuzzy_find, desc = "Find in current file", mode = "n" },
@@ -1000,19 +996,19 @@ local on_attach = function(client, bufnr)
     vim.fn.sign_define(hl, { text = icon, texthl = hl, numhl = hl })
   end
 
-  nmap("<leader>cr", vim.lsp.buf.rename, "[C]ode [R]ename")
-  nmap("gd", vim.lsp.buf.definition, "[G]oto [D]efinition")
-  nmap("gr", require("telescope.builtin").lsp_references, "[G]oto [R]eferences")
-  nmap("gI", vim.lsp.buf.implementation, "[G]oto [I]mplementation")
+  nmap("<leader>cr", vim.lsp.buf.rename, "Code Rename")
+  nmap("gd", vim.lsp.buf.definition, "Goto Definition")
+  nmap("gr", require("telescope.builtin").lsp_references, "Goto References")
+  nmap("gI", vim.lsp.buf.implementation, "Goto Implementation")
 
   -- See `:help K` for why this keymap
   nmap("K", vim.lsp.buf.hover, "Hover Documentation")
   nmap("<C-k>", vim.lsp.buf.signature_help, "Signature Documentation")
 
   -- Lesser used LSP functionality
-  nmap("gD", vim.lsp.buf.declaration, "[G]oto [D]eclaration")
-  nmap("<leader>wa", vim.lsp.buf.add_workspace_folder, "[W]orkspace [A]dd Folder")
-  nmap("<leader>wr", vim.lsp.buf.remove_workspace_folder, "[W]orkspace [R]emove Folder")
+  nmap("gD", vim.lsp.buf.declaration, "Goto Declaration")
+  nmap("<leader>wa", vim.lsp.buf.add_workspace_folder, "Workspace Add Folder")
+  nmap("<leader>wr", vim.lsp.buf.remove_workspace_folder, "Workspace Remove Folder")
   nmap("<leader>wl", function()
     print(vim.inspect(vim.lsp.buf.list_workspace_folders()))
   end, "[W]orkspace [L]ist Folders")
