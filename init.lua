@@ -107,8 +107,8 @@ require("lazy").setup({
     end,
   },
 
-  "tpope/vim-fugitive",
-  "tpope/vim-rhubarb",
+  { "tpope/vim-fugitive", dependencies = "tpope/vim-rhubarb" },
+
   "tpope/vim-repeat",
 
   {
@@ -658,10 +658,11 @@ require("lazy").setup({
     config = function()
       require("whitespace-nvim").setup({
         highlight = "DiffDelete",
-        ignored_filetypes = { "TelescopePrompt", "Trouble", "help" , "registers"},
+        ignored_filetypes = { "TelescopePrompt", "Trouble", "help", "registers" },
         ignore_terminal = true,
         return_cursor = true,
       })
+      -- vim.keymap.set("n", "<Leader>dw", require("whitespace-nvim").trim, { desc = "Trim Whitespace" })
     end,
   },
 
@@ -691,6 +692,7 @@ require("lazy").setup({
 })
 
 -- plugins end
+vim.g.github_enterprise_urls = { 'https://github.kyndryl.net' }
 
 vim.o.foldexpr = "v:lua.vim.treesitter.foldexpr()"
 vim.o.foldmethod = "expr"
@@ -821,6 +823,9 @@ pcall(require("telescope").load_extension, "cmdline")
 
 local wk = require("which-key")
 wk.add({
+  -- { "n", "<leader>cp", "<cmd>AerialPrev<CR>", { buffer = bufnr } },
+  -- { "n", "<leader>cn", "<cmd>AerialNext<CR>", { buffer = bufnr } },
+  { "<leader>dw", require("whitespace-nvim").trim, desc = "Trim Whitespace", mode = "n" },
   { "<leader><space>", require("telescope.builtin").buffers, desc = "Find existing buffers", mode = "n" },
   { "<leader>?", require("telescope.builtin").oldfiles, desc = " Find recently opened files", mode = "n" },
   { "<leader>/", require("telescope.builtin").current_buffer_fuzzy_find, desc = "Find in current file", mode = "n" },
@@ -836,13 +841,14 @@ wk.add({
   { "<leader>co", "<cmd>Lspsaga outgoing_calls<cr>", desc = "Calls Outgoing", mode = "n" },
   { "<leader>cr", vim.lsp.buf.rename, desc = "Code Rename", mode = "n" },
   { "<leader>ct", "<cmd>AerialToggle!<CR>", desc = "Open Code Tree", mode = "n" },
-  { "<leader>cd", "<cmd>Troube diagnostics!<CR>", desc = "Diagnostics List", mode = "n" },
+  { "<leader>cd", "<cmd>Troube diagnostics<CR>", desc = "Diagnostics List", mode = "n" },
   { "<leader>d", group = "Diff" },
   { "<leader>db", "<cmd>windo diffthis<cr>", desc = "Show Diff", mode = "n" },
   { "<leader>do", "<cmd>windo diffoff<cr>", desc = "Diff Off", mode = "n" },
   { "<leader>e", vim.diagnostic.open_float, desc = "Diagnostics popup", mode = "n" },
   { "<leader>g", group = "Git" },
   { "<leader>ga", "<cmd>Git add .<cr>", desc = "Git Add", mode = "n" },
+  { "<leader>gb", "<cmd>GBrowse<cr>", desc = "Git Browse", mode = "n" },
   { "<leader>gc", "<cmd>Git commit<cr>", desc = "Git Commit", mode = "n" },
   { "<leader>gd", "<cmd>Telescope git_diffs  diff_commits<CR>", desc = "Git commit diffs", mode = "n" },
   { "<leader>gf", "<cmd>G diff<CR>", desc = "Git diff", mode = "n" },
