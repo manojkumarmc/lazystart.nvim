@@ -692,7 +692,7 @@ require("lazy").setup({
 })
 
 -- plugins end
-vim.g.github_enterprise_urls = { 'https://github.kyndryl.net' }
+vim.g.github_enterprise_urls = { "https://github.kyndryl.net" }
 
 vim.o.foldexpr = "v:lua.vim.treesitter.foldexpr()"
 vim.o.foldmethod = "expr"
