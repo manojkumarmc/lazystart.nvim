@@ -137,7 +137,14 @@ require("lazy").setup({
   "navarasu/onedark.nvim",
   "EdenEast/nightfox.nvim",
   "martinsione/darkplus.nvim",
-  "folke/tokyonight.nvim",
+
+  {
+    "folke/tokyonight.nvim",
+    config = function()
+      require("tokyonight").setup({ transparent = true })
+    end,
+  },
+
   "cpea2506/one_monokai.nvim",
   "rileytwo/kiss",
 
@@ -587,18 +594,23 @@ require("lazy").setup({
   {
     "dhruvmanila/browser-bookmarks.nvim",
     version = "*",
-    dependencies = {
-      "kkharji/sqlite.lua",
-      "nvim-telescope/telescope.nvim",
-    },
+    -- dependencies = {
+    --   "kkharji/sqlite.lua",
+    --   "nvim-telescope/telescope.nvim",
+    -- },
     config = function()
       require("browser_bookmarks").setup({
-        selected_browser = "firefox",
+        selected_browser = "chrome",
       })
     end,
   },
 
-  -- { "barrett-ruth/telescope-http.nvim" },
+  -- {
+  --   "barrett-ruth/telescope-http.nvim",
+  --   config = function()
+  --     require("telescope").load_extension("http")
+  --   end,
+  -- },
 
   {
     "paopaol/telescope-git-diffs.nvim",
@@ -689,6 +701,39 @@ require("lazy").setup({
       require("copilot_cmp").setup()
     end,
   },
+
+  {
+    "javiorfo/nvim-soil",
+    dependencies = { "javiorfo/nvim-nyctophilia" },
+    lazy = true,
+    ft = "plantuml",
+    opts = {
+      puml_jar = "/Users/mkmc/projects/software/plantuml/plantuml-1.2023.13.jar",
+      image = {
+        darkmode = false, -- Enable or disable darkmode
+        format = "png", -- Choose between png or svg
+        execute_to_open = function(img)
+          return "viu " .. img
+        end,
+      },
+    },
+  },
+
+  {
+    "ray-x/go.nvim",
+    dependencies = { -- optional packages
+      "ray-x/guihua.lua",
+      "neovim/nvim-lspconfig",
+      "nvim-treesitter/nvim-treesitter",
+    },
+    config = function()
+      require("go").setup()
+    end,
+    event = { "CmdlineEnter" },
+    ft = { "go", "gomod" },
+    build = ':lua require("go.install").update_all_sync()', -- if you need to install/update all binaries
+  },
+
 })
 
 -- plugins end
@@ -815,7 +860,7 @@ pcall(require("telescope").load_extension, "fzf")
 -- pcall(require("telescope").load_extension, "octo")
 pcall(require("telescope").load_extension, "neoclip")
 pcall(require("telescope").load_extension, "projects")
--- pcall(require("telescope").load_extension, "bookmarks")
+pcall(require("telescope").load_extension, "bookmarks")
 -- pcall(require("telescope").load_extension, "http")
 pcall(require("telescope").load_extension, "git_diffs")
 pcall(require("telescope").load_extension, "cmdline")
@@ -1032,10 +1077,15 @@ vim.diagnostic.config({ virtual_text = false })
 
 -- language servers to be installed
 local servers = {
-  gopls = {},
+  gopls = {
+    analyses = {
+      unusedparams = true,
+    },
+    staticcheck = true,
+    verboseOutput = true,
+  },
   pyright = {},
   rust_analyzer = {},
-  tsserver = {},
   lua_ls = {},
   svelte = {},
 }
