@@ -902,7 +902,7 @@ wk.add({
   { "<leader>co", "<cmd>Lspsaga outgoing_calls<cr>", desc = "Calls Outgoing", mode = "n" },
   { "<leader>cr", vim.lsp.buf.rename, desc = "Code Rename", mode = "n" },
   { "<leader>ct", "<cmd>AerialToggle!<CR>", desc = "Open Code Tree", mode = "n" },
-  { "<leader>cd", "<cmd>Troube diagnostics<CR>", desc = "Diagnostics List", mode = "n" },
+  { "<leader>cd", "<cmd>Trouble diagnostics toggle filter.buf=0<CR>", desc = "Diagnostics List", mode = "n" },
   { "<leader>d", group = "Diff" },
   { "<leader>db", "<cmd>windo diffthis<cr>", desc = "Show Diff", mode = "n" },
   { "<leader>do", "<cmd>windo diffoff<cr>", desc = "Diff Off", mode = "n" },
