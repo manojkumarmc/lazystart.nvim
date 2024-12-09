@@ -1042,19 +1042,6 @@ vim.keymap.set("n", "]d", vim.diagnostic.goto_next, { desc = "Diagnostics prev" 
 
 -- LSP settings.
 local on_attach = function(client, bufnr)
-  --
-  -- Configure diagnostic options
-  -- vim.diagnostic.config({
-  --   virtual_text = {
-  --     prefix = "●", -- Could be '●', '▎', 'x'
-  --     spacing = 4,
-  --   },
-  --   -- virtual_text = false,
-  --   signs = true,
-  --   underline = true,
-  --   update_in_insert = false,
-  --   severity_sort = true,
-  -- })
 
   local nmap = function(keys, func, desc)
     if desc then
@@ -1097,15 +1084,6 @@ end
 
 vim.diagnostic.config({ virtual_text = false })
 
--- local diagnostic_opts = {
---   underline = true,
---   virtual_text = false, -- this it what you're looking for
---   signs = false,
---   update_in_insert = true,
--- }
---
--- lsp.handlers["textDocument/publishDiagnostics"] = lsp.with(lsp.diagnostic.on_publish_diagnostics, diagnostic_opts)
-
 -- language servers to be installed
 local servers = {
   gopls = {
@@ -1115,20 +1093,20 @@ local servers = {
     staticcheck = true,
     verboseOutput = true,
   },
-  pyright = {
-    -- python = {
-    --   analysis = {
-    --     autoSearchPaths = true,
-    --     useLibraryCodeForTypes = true,
-    --     diagnosticMode = "workspace",
-    --     typeCheckingMode = "basic",
-    --     inlayHints = {
-    --       variableTypes = false,
-    --       functionReturnTypes = false,
-    --     },
-    --   },
-    -- },
-  },
+  -- pyright = {
+  --   -- python = {
+  --   --   analysis = {
+  --   --     autoSearchPaths = true,
+  --   --     useLibraryCodeForTypes = true,
+  --   --     diagnosticMode = "workspace",
+  --   --     typeCheckingMode = "basic",
+  --   --     inlayHints = {
+  --   --       variableTypes = false,
+  --   --       functionReturnTypes = false,
+  --   --     },
+  --   --   },
+  --   -- },
+  -- },
   rust_analyzer = {},
   lua_ls = {},
   svelte = {},
@@ -1157,6 +1135,35 @@ mason_lspconfig.setup_handlers({
       settings = servers[server_name],
     })
   end,
+})
+
+local pyright_on_attach = function(client, bufnr)
+  -- Disable all diagnostic messages
+  vim.diagnostic.disable()
+-- this is needed for trouble icons
+  local signs = icons.diagnostics
+  for type, icon in pairs(signs) do
+    local hl = "DiagnosticSign" .. type
+    vim.fn.sign_define(hl, { text = icon, texthl = hl, numhl = hl })
+  end
+end
+
+require("lspconfig").pyright.setup({
+  on_attach = pyright_on_attach,
+  settings = {
+    python = {
+      analysis = {
+        autoSearchPaths = true,
+        useLibraryCodeForTypes = true,
+        diagnosticMode = "workspace",
+        typeCheckingMode = "basic",
+        inlayHints = {
+          variableTypes = false,
+          functionReturnTypes = false,
+        },
+      },
+    },
+  },
 })
 
 -- Turn on lsp status information
