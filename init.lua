@@ -383,12 +383,11 @@ require("lazy").setup({
     },
     config = function()
       require("noice").setup({
-        -- messages = {
-        --   enabled = false,
-        -- },
-        -- popupmenu = {
-        --   enabled = true,
-        -- },
+        lsp = {
+          progress = {
+            enabled = false,
+          },
+        },
       })
     end,
   },
@@ -517,11 +516,6 @@ require("lazy").setup({
   {
     "ggandor/leap.nvim",
     enabled = true,
-    -- keys = {
-    --   { ",", mode = { "n", "x", "o" }, desc = "Leap forward to" },
-    --   { "<", mode = { "n", "x", "o" }, desc = "Leap backward to" },
-    --   { "g,", mode = { "n", "x", "o" }, desc = "Leap from windows" },
-    -- },
     config = function(_, opts)
       local leap = require("leap")
       for k, v in pairs(opts) do
@@ -560,7 +554,7 @@ require("lazy").setup({
   {
     "gen740/SmoothCursor.nvim",
     config = function()
-      require("smoothcursor").setup()
+      require("smoothcursor").setup({})
     end,
   },
 
@@ -737,9 +731,28 @@ require("lazy").setup({
     ft = { "go", "gomod" },
     build = ':lua require("go.install").update_all_sync()', -- if you need to install/update all binaries
   },
-})
 
+  {
+    "folke/snacks.nvim",
+    priority = 1000,
+    lazy = false,
+    opts = {
+      -- your configuration comes here
+      -- or leave it empty to use the default settings
+      -- refer to the configuration section below
+      bigfile = { enabled = true },
+      notifier = { enabled = true },
+      quickfile = { enabled = true },
+      -- statuscolumn = { enabled = true },
+      words = { enabled = true },
+      toggle = { enabled = true },
+    },
+  },
+
+  --
+})
 -- plugins end
+
 vim.g.github_enterprise_urls = { "https://github.kyndryl.net" }
 
 vim.o.foldexpr = "v:lua.vim.treesitter.foldexpr()"
@@ -1028,14 +1041,21 @@ vim.keymap.set("n", "[d", vim.diagnostic.goto_prev, { desc = "Diagnostics next" 
 vim.keymap.set("n", "]d", vim.diagnostic.goto_next, { desc = "Diagnostics prev" })
 
 -- LSP settings.
---  This function gets run when an LSP connects to a particular buffer.
 local on_attach = function(client, bufnr)
-  -- NOTE: Remember that lua is a real programming language, and as such it is possible
-  -- to define small helper and utility functions so you don't have to repeat yourself
-  -- many times.
   --
-  -- In this case, we create a function that lets us more easily define mappings specific
-  -- for LSP related items. It sets the mode, buffer and description for us each time.
+  -- Configure diagnostic options
+  -- vim.diagnostic.config({
+  --   virtual_text = {
+  --     prefix = "●", -- Could be '●', '▎', 'x'
+  --     spacing = 4,
+  --   },
+  --   -- virtual_text = false,
+  --   signs = true,
+  --   underline = true,
+  --   update_in_insert = false,
+  --   severity_sort = true,
+  -- })
+
   local nmap = function(keys, func, desc)
     if desc then
       desc = "LSP: " .. desc
@@ -1043,7 +1063,6 @@ local on_attach = function(client, bufnr)
     vim.keymap.set("n", keys, func, { buffer = bufnr, desc = desc })
   end
 
-  -- local signs = { Error = " ", Warn = " ", Hint = " ", Info = " " }
   local signs = icons.diagnostics
   for type, icon in pairs(signs) do
     local hl = "DiagnosticSign" .. type
@@ -1078,6 +1097,15 @@ end
 
 vim.diagnostic.config({ virtual_text = false })
 
+-- local diagnostic_opts = {
+--   underline = true,
+--   virtual_text = false, -- this it what you're looking for
+--   signs = false,
+--   update_in_insert = true,
+-- }
+--
+-- lsp.handlers["textDocument/publishDiagnostics"] = lsp.with(lsp.diagnostic.on_publish_diagnostics, diagnostic_opts)
+
 -- language servers to be installed
 local servers = {
   gopls = {
@@ -1087,7 +1115,20 @@ local servers = {
     staticcheck = true,
     verboseOutput = true,
   },
-  pyright = {},
+  pyright = {
+    -- python = {
+    --   analysis = {
+    --     autoSearchPaths = true,
+    --     useLibraryCodeForTypes = true,
+    --     diagnosticMode = "workspace",
+    --     typeCheckingMode = "basic",
+    --     inlayHints = {
+    --       variableTypes = false,
+    --       functionReturnTypes = false,
+    --     },
+    --   },
+    -- },
+  },
   rust_analyzer = {},
   lua_ls = {},
   svelte = {},
