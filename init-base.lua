@@ -354,6 +354,19 @@ require("lazy").setup({
     "junegunn/fzf.vim",
   },
 
+  -- colorscheme catppuccin
+  {
+    "catppuccin/nvim",
+    name = "catppuccin",
+    priority = 1000,
+    config = function()
+      require("catppuccin").setup({
+        transparent_background = true,
+        no_italic = true,
+      })
+    end,
+  },
+
   --- plugin end
 })
 
@@ -381,7 +394,6 @@ require("mason-lspconfig").setup({
     "pyright",
     "jsonls",
     "marksman",
-    "vaccum",
     "dockerls",
     "helm_ls",
     "biome",
@@ -483,6 +495,7 @@ vim.api.nvim_create_autocmd("BufWritePre", {
 
 -- set colorscheme
 -- vim.cmd("colorscheme rose-pine-moon")
+vim.cmd("colorscheme catppuccin")
 
 -- load telescope extensions
 require("telescope").load_extension("fzf")
