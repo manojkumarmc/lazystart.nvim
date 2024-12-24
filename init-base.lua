@@ -562,6 +562,41 @@ require("lazy").setup({
     end,
   },
 
+  -- { "RRethy/vim-illuminate" },
+
+  {
+    "ya2s/nvim-cursorline",
+    config = function()
+      require("nvim-cursorline").setup({
+        cursorline = {
+          enable = false,
+          timeout = 1000,
+          number = false,
+        },
+        cursorword = {
+          enable = true,
+          min_length = 3,
+          hl = { underline = true },
+        },
+      })
+    end,
+  },
+
+  {
+    "akinsho/toggleterm.nvim",
+    version = "*",
+    config = function()
+      require("toggleterm").setup({
+        open_mapping = [[<c-\>]],
+        direction = "float",
+        shade_terminals = true,
+        shading_factor = "75",
+        shell = vim.o.shell,
+        start_in_insert = true,
+      })
+    end,
+  },
+
   --- plugin end
 })
 
