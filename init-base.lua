@@ -29,6 +29,29 @@ vim.opt.shiftwidth = 4 -- 4 spaces for indent width
 vim.opt.expandtab = true -- expand tab to spaces
 vim.opt.autoindent = true -- copy indent from current line when starting new one
 
+local icons = {
+  misc = {
+    dots = "󰇘",
+  },
+  dap = {
+    Stopped = { "󰁕 ", "DiagnosticWarn", "DapStoppedLine" },
+    Breakpoint = " ",
+    BreakpointCondition = " ",
+    BreakpointRejected = { " ", "DiagnosticError" },
+    LogPoint = ".>",
+  },
+  diagnostics = {
+    Error = " ",
+    Warn = " ",
+    Hint = " ",
+    Info = " ",
+  },
+  git = {
+    added = " ",
+    modified = " ",
+    removed = " ",
+  },
+}
 -- Helpers
 local function change_colorscheme()
   local m = vim.fn.system("defaults read -g AppleInterfaceStyle")
@@ -157,7 +180,7 @@ require("lazy").setup({
       { "<leader>f", "<cmd>Telescope find_files<cr>", desc = "Find files" },
       { "<leader>c", "<cmd>Telescope resume<cr>", desc = "Resume search" },
       { "<leader>s", "<cmd>Telescope live_grep<cr>", desc = "Live grep" },
-      { "<leader>b", "<cmd>Telescope buffers<cr>", desc = "Buffers" },
+      { "<leader><space>", "<cmd>Telescope buffers<cr>", desc = "Buffers" },
     },
     dependencies = { "nvim-lua/plenary.nvim" },
     extensions = {
@@ -181,7 +204,6 @@ require("lazy").setup({
     build = ":TSUpdate",
     config = function()
       local configs = require("nvim-treesitter.configs")
-
       configs.setup({
         ensure_installed = "all",
         highlight = { enable = true },
@@ -208,12 +230,13 @@ require("lazy").setup({
         graphql = { "biome" },
         json = { "biome" },
         css = { "prettierd" },
+        yaml = { "prettierd" },
         lua = { "stylua" },
         go = { "gofmt" },
         python = { "black" },
         rust = { "rustfmt" },
       },
-      format_on_save = {},
+      -- format_on_save = {}, == this needs to be uncommented for the prebufwrite to work
     },
   },
 
@@ -291,14 +314,11 @@ require("lazy").setup({
     end,
   },
 
+  -- key display
   {
     "folke/which-key.nvim",
     event = "VeryLazy",
-    opts = {
-      -- your configuration comes here
-      -- or leave it empty to use the default settings
-      -- refer to the configuration section below
-    },
+    opts = {},
     keys = {
       {
         "<leader>?",
@@ -310,6 +330,7 @@ require("lazy").setup({
     },
   },
 
+  -- mini and friends
   {
     "echasnovski/mini.ai",
     config = function()
@@ -333,6 +354,13 @@ require("lazy").setup({
     "echasnovski/mini.indentscope",
     config = function()
       require("mini.indentscope").setup()
+    end,
+  },
+
+  {
+    "echasnovski/mini.tabline",
+    config = function()
+      require("mini.tabline").setup()
     end,
   },
 
@@ -367,17 +395,184 @@ require("lazy").setup({
     end,
   },
 
+  {
+    "nvim-tree/nvim-tree.lua",
+    dependencies = {
+      "nvim-tree/nvim-web-devicons",
+    },
+    config = function()
+      require("nvim-tree").setup({})
+    end,
+    keys = {
+      {
+        "<leader>tt",
+        "<cmd>NvimTreeToggle<CR>",
+        desc = "File Tree",
+      },
+    },
+  },
+
+  {
+    "kevinhwang91/nvim-hlslens",
+    config = function()
+      require("hlslens").setup({})
+    end,
+  },
+
+  {
+    "tzachar/local-highlight.nvim",
+    config = function()
+      require("local-highlight").setup()
+    end,
+  },
+
+  {
+    "utilyre/barbecue.nvim",
+    name = "barbecue",
+    version = "*",
+    dependencies = {
+      "SmiteshP/nvim-navic",
+      "nvim-tree/nvim-web-devicons", -- optional dependency
+    },
+    opts = {},
+  },
+
+  {
+    "VidocqH/lsp-lens.nvim",
+    config = function()
+      require("lsp-lens").setup({
+        enable = false,
+      })
+    end,
+  },
+
+  {
+    "Wansmer/treesj",
+    dependencies = { "nvim-treesitter" },
+    config = function()
+      require("treesj").setup({
+        max_join_length = 2400,
+      })
+    end,
+  },
+
+  { "mhinz/vim-startify" },
+
+  {
+    "kdheepak/lazygit.nvim",
+    lazy = true,
+    cmd = {
+      "LazyGit",
+      "LazyGitConfig",
+      "LazyGitCurrentFile",
+      "LazyGitFilter",
+      "LazyGitFilterCurrentFile",
+    },
+    dependencies = {
+      "nvim-lua/plenary.nvim",
+    },
+    keys = {
+      { "<leader>gg", "<cmd>LazyGit<cr>", desc = "LazyGit" },
+    },
+  },
+
+  {
+    "rmagatti/goto-preview",
+    event = "BufEnter",
+    config = true, -- necessary as per https://github.com/rmagatti/goto-preview/issues/88
+    keys = {
+      {
+        "gpr",
+        "<cmd>lua require('goto-preview').goto_preview_references()<CR>",
+        desc = "Go to references",
+        { noremap = true },
+      },
+      {
+        "gpd",
+        "<cmd>lua require('goto-preview').goto_preview_definition()<CR>",
+        desc = "Go to definition",
+        { noremap = true },
+      },
+      {
+        "gpt",
+        "<cmd>lua require('goto-preview').goto_preview_type_definition()<CR>",
+        desc = "Go to type definition",
+        { noremap = true },
+      },
+      {
+        "gpi",
+        "<cmd>lua require('goto-preview').goto_preview_implementation()<CR>",
+        desc = "Go to implemenation",
+        { noremap = true },
+      },
+      {
+        "gpD",
+        "<cmd>lua require('goto-preview').goto_preview_declaration()<CR>",
+        desc = "Go to declaration",
+        { noremap = true },
+      },
+      {
+        "gpc",
+        "<cmd>lua require('goto-preview').goto_preview_close_all_win()<CR>",
+        desc = "Go to declaration",
+        { noremap = true },
+      },
+    },
+  },
+
+  {
+    "ggandor/leap.nvim",
+    enabled = true,
+    config = function(_, opts)
+      local leap = require("leap")
+      for k, v in pairs(opts) do
+        leap.opts[k] = v
+      end
+      leap.add_default_mappings(true)
+      vim.keymap.del({ "x", "o" }, "x")
+      vim.keymap.del({ "x", "o" }, "X")
+    end,
+  },
+
+  {
+    "iamcco/markdown-preview.nvim",
+    cmd = { "MarkdownPreviewToggle", "MarkdownPreview", "MarkdownPreviewStop" },
+    build = "cd app && npm install",
+    init = function()
+      vim.g.mkdp_filetypes = { "markdown" }
+    end,
+    ft = { "markdown" },
+  },
+
+  { "kg8m/vim-simple-align" },
+
+  -- debug setup
+  { "mfussenegger/nvim-dap" },
+  {
+    "rcarriga/nvim-dap-ui",
+    dependencies = { "mfussenegger/nvim-dap", "nvim-neotest/nvim-nio" },
+    config = function()
+      require("dapui").setup()
+    end,
+  },
+  {
+    "theHamsta/nvim-dap-virtual-text",
+    config = function()
+      require("nvim-dap-virtual-text").setup({})
+    end,
+  },
+
   --- plugin end
 })
 
--- Open Telescope on start
-vim.api.nvim_create_autocmd("VimEnter", {
-  callback = function()
-    if vim.fn.argv(0) == "" then
-      require("telescope.builtin").find_files()
-    end
-  end,
-})
+-- -- Open Telescope on start
+-- vim.api.nvim_create_autocmd("VimEnter", {
+--   callback = function()
+--     if vim.fn.argv(0) == "" then
+--       require("telescope.builtin").find_files()
+--     end
+--   end,
+-- })
 
 -- Set up Comment.nvim
 require("Comment").setup({
@@ -391,7 +586,8 @@ require("mason-lspconfig").setup({
     "lua_ls",
     "rust_analyzer",
     "gopls",
-    "pyright",
+    -- "pyright",
+    "pylsp",
     "jsonls",
     "marksman",
     "dockerls",
@@ -401,6 +597,7 @@ require("mason-lspconfig").setup({
 })
 
 local capabilities = require("cmp_nvim_lsp").default_capabilities()
+-- local capabilities = require("blink.cmp").get_lsp_capabilities()
 
 require("mason-lspconfig").setup_handlers({
   function(server_name)
@@ -499,3 +696,123 @@ vim.cmd("colorscheme catppuccin")
 
 -- load telescope extensions
 require("telescope").load_extension("fzf")
+
+-- dap begin
+local dap, dapui = require("dap"), require("dapui")
+dap.listeners.after.event_initialized["dapui_config"] = function()
+  dapui.open()
+end
+dap.listeners.before.event_terminated["dapui_config"] = function()
+  dapui.close()
+end
+dap.listeners.before.event_exited["dapui_config"] = function()
+  dapui.close()
+end
+
+vim.api.nvim_set_hl(0, "blue", { fg = "#3d59a1" })
+vim.api.nvim_set_hl(0, "green", { fg = "#9ece6a" })
+vim.api.nvim_set_hl(0, "yellow", { fg = "#FFFF00" })
+vim.api.nvim_set_hl(0, "orange", { fg = "#f09000" })
+vim.api.nvim_set_hl(0, "red", { fg = "#FF0000" })
+
+-- Just for the time being
+vim.fn.sign_define("DapBreakpoint", { text = "B", texthl = "red", linehl = "DapBreakpoint", numhl = "DapBreakpoint" })
+vim.fn.sign_define("DapBreakpointCondition", {
+  text = "ﳁ",
+  texthl = "blue",
+  linehl = "DapBreakpoint",
+  numhl = "DapBreakpoint",
+})
+vim.fn.sign_define("DapBreakpointRejected", {
+  text = "",
+  texthl = "orange",
+  linehl = "DapBreakpoint",
+  numhl = "DapBreakpoint",
+})
+vim.fn.sign_define("DapStopped", { text = "", texthl = "green", linehl = "DapBreakpoint", numhl = "DapBreakpoint" })
+vim.fn.sign_define(
+  "DapLogPoint",
+  { text = "", texthl = "yellow", linehl = "DapBreakpoint", numhl = "DapBreakpoint" }
+)
+
+vim.keymap.set("n", "<F5>", require("dap").continue)
+vim.keymap.set("n", "<F10>", require("dap").step_over)
+vim.keymap.set("n", "<F11>", require("dap").step_into)
+vim.keymap.set("n", "<F12>", require("dap").step_out)
+vim.keymap.set("n", "<leader>b", require("dap").toggle_breakpoint, { desc = "Breakpoint Toggle" })
+
+dap.adapters.python = function(cb, config)
+  if config.request == "attach" then
+    local port = (config.connect or config).port
+    local host = (config.connect or config).host or "127.0.0.1"
+    cb({
+      type = "server",
+      port = assert(port, "`connect.port` is required for a python `attach` configuration"),
+      host = host,
+      options = {
+        source_filetype = "python",
+      },
+    })
+  else
+    cb({
+      type = "executable",
+      command = os.getenv("VIRTUAL_ENV") .. "/bin/python",
+      args = { "-m", "debugpy.adapter" },
+      options = {
+        source_filetype = "python",
+      },
+    })
+  end
+end
+
+dap.configurations.python = {
+  {
+    -- The first three options are required by nvim-dap
+    type = "python", -- the type here established the link to the adapter definition: `dap.adapters.python`
+    request = "launch",
+    name = "Launch file",
+
+    -- Options below are for debugpy, see https://github.com/microsoft/debugpy/wiki/Debug-configuration-settings for supported options
+
+    program = "${file}", -- This configuration will launch the current file if used.
+    pythonPath = function()
+      -- debugpy supports launching an application with a different interpreter then the one used to launch debugpy itself.
+      -- The code below looks for a `venv` or `.venv` folder in the current directly and uses the python within.
+      -- You could adapt this - to for example use the `VIRTUAL_ENV` environment variable.
+      local cwd = vim.fn.getcwd()
+      if vim.fn.executable(cwd .. "/venv/bin/python") == 1 then
+        return cwd .. "/venv/bin/python"
+      elseif vim.fn.executable(cwd .. "/.venv/bin/python") == 1 then
+        return cwd .. "/.venv/bin/python"
+      else
+        -- return '/usr/bin/python'
+        return os.getenv("VIRTUAL_ENV") .. "/bin/python"
+      end
+    end,
+  },
+}
+
+dap.adapters.codelldb = {
+  type = "server",
+  port = "${port}",
+  executable = {
+    command = "/Users/mkmc/.local/share/nvim/mason/bin/codelldb",
+    args = { "--port", "${port}" },
+  },
+}
+
+dap.configurations.rust = {
+  {
+    name = "Rust debug",
+    type = "codelldb",
+    request = "launch",
+    -- program = function()
+    --   return vim.fn.input('Path to executable: ', vim.fn.getcwd() .. '/target/debug/', 'file')
+    -- end,
+    program = "${workspaceFolder}/target/debug/${workspaceFolderBasename}",
+    cwd = "${workspaceFolder}",
+    -- stopOnEntry = true,
+    stopOnEntry = false,
+  },
+}
+-- dap end
