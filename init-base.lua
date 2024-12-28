@@ -401,7 +401,34 @@ require("lazy").setup({
       "nvim-tree/nvim-web-devicons",
     },
     config = function()
-      require("nvim-tree").setup({})
+      require("nvim-tree").setup({
+        view = {
+          float = {
+            enable = true,
+            --   open_win_config = function()
+            --     local screen_w = vim.opt.columns:get()
+            --     local screen_h = vim.opt.lines:get() - vim.opt.cmdheight:get()
+            --     local window_w = screen_w * WIDTH_RATIO
+            --     local window_h = screen_h * HEIGHT_RATIO
+            --     local window_w_int = math.floor(window_w)
+            --     local window_h_int = math.floor(window_h)
+            --     local center_x = (screen_w - window_w) / 2
+            --     local center_y = ((vim.opt.lines:get() - window_h) / 2) - vim.opt.cmdheight:get()
+            --     return {
+            --       border = "rounded",
+            --       relative = "editor",
+            --       row = center_y,
+            --       col = center_x,
+            --       width = window_w_int,
+            --       height = window_h_int,
+            --     }
+            --   end,
+          },
+          -- width = function()
+          --   return math.floor(vim.opt.columns:get() * WIDTH_RATIO)
+          -- end,
+        },
+      })
     end,
     keys = {
       {
@@ -595,6 +622,70 @@ require("lazy").setup({
         start_in_insert = true,
       })
     end,
+  },
+
+  {
+    "jellydn/quick-code-runner.nvim",
+    dependencies = { "MunifTanjim/nui.nvim" },
+    opts = {
+      debug = true,
+    },
+    cmd = { "QuickCodeRunner", "QuickCodePad" },
+    keys = {
+      {
+        "<leader>cr",
+        ":QuickCodeRunner<CR>",
+        desc = "Quick Code Runner",
+        mode = "v",
+      },
+      {
+        "<leader>cp",
+        ":QuickCodePad<CR>",
+        desc = "Quick Code Pad",
+      },
+    },
+  },
+
+  {
+    "folke/noice.nvim",
+    event = "VeryLazy",
+    opts = {},
+    dependencies = {
+      "MunifTanjim/nui.nvim",
+    },
+    config = function()
+      require("noice").setup({
+        lsp = {
+          progress = {
+            enabled = true,
+          },
+        },
+      })
+    end,
+  },
+
+  {
+    "nvim-pack/nvim-spectre",
+    dependencies = {
+      "nvim-lua/plenary.nvim",
+      "nvim-tree/nvim-web-devicons",
+    },
+    config = function()
+      require("spectre").setup()
+    end,
+  },
+
+  { "itchyny/calendar.vim" },
+
+  {
+    "nvim-neo-tree/neo-tree.nvim",
+    branch = "v3.x",
+    dependencies = {
+      "nvim-lua/plenary.nvim",
+      "nvim-tree/nvim-web-devicons", -- not strictly required, but recommended
+      "MunifTanjim/nui.nvim",
+      -- "3rd/image.nvim", -- Optional image support in preview window: See `# Preview Mode` for more information
+    },
   },
 
   --- plugin end
