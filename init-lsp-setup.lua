@@ -198,8 +198,10 @@ require("lazy").setup({
             { "<leader>w",       "<cmd>Telescope grep_string<cr>",               desc = "Grep string" },
             { "<leader>f",       "<cmd>Telescope find_files<cr>",                desc = "Find files" },
             { "<leader>c",       "<cmd>Telescope resume<cr>",                    desc = "Resume search" },
-            { "<leader>s",       "<cmd>Telescope live_grep<cr>",                 desc = "Live grep" },
+            { "<leader>r",       "<cmd>Telescope live_grep<cr>",                 desc = "Live grep" },
             { "<leader><space>", "<cmd>Telescope buffers<cr>",                   desc = "Buffers" },
+            { "<leader>sp",      "<cmd>Telescope project<cr>",                   desc = "Search projects" },
+            { "<leader>sc",      "<cmd>Telescope neoclip<cr>",                   desc = "Search clipboard" },
         },
         dependencies = { "nvim-lua/plenary.nvim" },
         extensions = {
@@ -720,6 +722,28 @@ require("lazy").setup({
             statuscolumn = { enabled = true },
             words = { enabled = true },
         },
+    },
+
+    { "mistricky/codesnap.nvim", build = "make" },
+
+    {
+        'nvim-telescope/telescope-project.nvim',
+        dependencies = {
+            'nvim-telescope/telescope.nvim',
+        },
+        config = function()
+            require('telescope').load_extension('project')
+        end
+    },
+
+    {
+        "AckslD/nvim-neoclip.lua",
+        dependencies = {
+            { 'nvim-telescope/telescope.nvim' },
+        },
+        config = function()
+            require('neoclip').setup({})
+        end,
     }
 
     --- plugin end
@@ -968,3 +992,7 @@ wk.add({
     { "K",          "<cmd>lua vim.lsp.buf.hover()<cr>",           desc = "Hover",                 mode = "n" },
     { "<C-k>",      "<cmd>lua vim.lsp.buf.signature_help()<cr>",  desc = "Function signature",    mode = "n" },
 })
+
+-- load telescope extensions
+require('telescope').load_extension('project')
+require('telescope').load_extension('neoclip')
