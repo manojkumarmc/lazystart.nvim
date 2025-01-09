@@ -158,6 +158,14 @@ require("lazy").setup({
 
     -- Autocompletion
     {
+        "L3MON4D3/LuaSnip",
+        version = "v2.*", -- Replace <CurrentMajor> by the latest released major (first number of latest release)
+        build = "make install_jsregexp",
+        dependencies = {
+            "rafamadriz/friendly-snippets",
+        }
+    },
+    {
         "hrsh7th/nvim-cmp",
         dependencies = {
             "L3MON4D3/LuaSnip",
@@ -839,10 +847,10 @@ cmp.setup({
         end, { "i", "s" }),
     }),
     sources = {
-        { name = "nvim_lsp", max_item_count = 8 },
+        { name = "nvim_lsp", max_item_count = 15 },
+        { name = "luasnip",  max_item_count = 5 },
         { name = "buffer",   max_item_count = 8 },
         { name = "path",     max_item_count = 5 },
-        { name = "luasnip",  max_item_count = 5 },
     },
     formatting = {
         format = function(_, vim_item)
@@ -1039,3 +1047,4 @@ require('telescope').load_extension('neoclip')
 require("telescope").load_extension("import")
 
 vim.diagnostic.config({ virtual_text = false })
+require("luasnip.loaders.from_vscode").lazy_load()
