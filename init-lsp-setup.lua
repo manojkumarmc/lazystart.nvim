@@ -200,8 +200,9 @@ require("lazy").setup({
             { "<leader>c",       "<cmd>Telescope resume<cr>",                    desc = "Resume search" },
             { "<leader>r",       "<cmd>Telescope live_grep<cr>",                 desc = "Live grep" },
             { "<leader><space>", "<cmd>Telescope buffers<cr>",                   desc = "Buffers" },
-            { "<leader>sp",      "<cmd>Telescope project<cr>",                   desc = "Search projects" },
+            { "<leader>sp",      "<cmd>Telescope projects<cr>",                  desc = "Search projects" },
             { "<leader>sc",      "<cmd>Telescope neoclip<cr>",                   desc = "Search clipboard" },
+            { "<leader>si",      "<cmd>Telescope import<cr>",                    desc = "Search imports" },
         },
         dependencies = { "nvim-lua/plenary.nvim" },
         extensions = {
@@ -726,13 +727,11 @@ require("lazy").setup({
 
     { "mistricky/codesnap.nvim", build = "make" },
 
+
     {
-        'nvim-telescope/telescope-project.nvim',
-        dependencies = {
-            'nvim-telescope/telescope.nvim',
-        },
+        "ahmedkhalf/project.nvim",
         config = function()
-            require('telescope').load_extension('project')
+            require("project_nvim").setup({})
         end
     },
 
@@ -744,6 +743,46 @@ require("lazy").setup({
         config = function()
             require('neoclip').setup({})
         end,
+    },
+
+    {
+        'piersolenski/telescope-import.nvim',
+        dependencies = 'nvim-telescope/telescope.nvim',
+    },
+
+    {
+        "neovim/nvim-lspconfig",
+        dependencies = {
+            {
+                "SmiteshP/nvim-navbuddy",
+                dependencies = {
+                    "SmiteshP/nvim-navic",
+                    "MunifTanjim/nui.nvim"
+                },
+                opts = { lsp = { auto_attach = true } }
+            }
+        },
+    },
+
+    {
+        "rachartier/tiny-inline-diagnostic.nvim",
+        event = "VeryLazy", -- Or `LspAttach`
+        priority = 1000,    -- needs to be loaded in first
+        config = function()
+            require('tiny-inline-diagnostic').setup()
+        end
+    },
+
+    {
+        'stevearc/aerial.nvim',
+        opts = {},
+        dependencies = {
+            "nvim-treesitter/nvim-treesitter",
+            "nvim-tree/nvim-web-devicons"
+        },
+        config = function()
+            require("aerial").setup({})
+        end
     }
 
     --- plugin end
@@ -991,8 +1030,12 @@ wk.add({
     { "gD",         "<cmd>lua vim.lsp.buf.declaration()<cr>",     desc = "Go to declaration",     mode = "n" },
     { "K",          "<cmd>lua vim.lsp.buf.hover()<cr>",           desc = "Hover",                 mode = "n" },
     { "<C-k>",      "<cmd>lua vim.lsp.buf.signature_help()<cr>",  desc = "Function signature",    mode = "n" },
+    { "<leader>a",  "<cmd>AerialToggle!<cr>",                     desc = "Code symbols",          mode = "n" },
 })
 
 -- load telescope extensions
-require('telescope').load_extension('project')
+require('telescope').load_extension('projects')
 require('telescope').load_extension('neoclip')
+require("telescope").load_extension("import")
+
+vim.diagnostic.config({ virtual_text = false })
