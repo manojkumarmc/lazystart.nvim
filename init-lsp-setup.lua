@@ -148,6 +148,16 @@ require("lazy").setup({
                     dockerls = {},
                     helm_ls = {},
                     biome = {},
+                    yamlls = {
+                        settings = {
+                            yaml = {
+                                schemas = {
+                                    ["https://raw.githubusercontent.com/instrumenta/kubernetes-json-schema/master/v1.18.0-standalone-strict/all.json"] =
+                                    "/*.k8s.yaml",
+                                },
+                            },
+                        }
+                    },
                 },
                 inlay_hints = {
                     enabled = false,
@@ -200,13 +210,13 @@ require("lazy").setup({
         },
         keys = {
             { "<leader>z",       "<cmd>Telescope current_buffer_fuzzy_find<cr>", desc = "File fuzzy find" },
-            { "<leader>d",       "<cmd>Telescope diagnostics<cr>",               desc = "Show diagnostics" },
-            { "<leader>gb",      "<cmd>Telescope git_branches<cr>",              desc = "Git branches" },
-            { "<leader>gc",      "<cmd>Telescope git_commits<cr>",               desc = "Git commits" },
-            { "<leader>w",       "<cmd>Telescope grep_string<cr>",               desc = "Grep string" },
-            { "<leader>f",       "<cmd>Telescope find_files<cr>",                desc = "Find files" },
+            { "<leader>sd",      "<cmd>Telescope diagnostics<cr>",               desc = "Search diagnostics" },
+            { "<leader>sb",      "<cmd>Telescope git_branches<cr>",              desc = "Search branches" },
+            { "<leader>st",      "<cmd>Telescope git_commits<cr>",               desc = "Searcg commits" },
+            -- { "<leader>sw",      "<cmd>Telescope grep_string<cr>",               desc = "Search grep string" },
+            { "<leader>f",       "<cmd>Telescope find_files<cr>",                desc = "Search files" },
             { "<leader>c",       "<cmd>Telescope resume<cr>",                    desc = "Resume search" },
-            { "<leader>r",       "<cmd>Telescope live_grep<cr>",                 desc = "Live grep" },
+            { "<leader>sw",      "<cmd>Telescope live_grep<cr>",                 desc = "Search live grep" },
             { "<leader><space>", "<cmd>Telescope buffers<cr>",                   desc = "Buffers" },
             { "<leader>sp",      "<cmd>Telescope projects<cr>",                  desc = "Search projects" },
             { "<leader>sc",      "<cmd>Telescope neoclip<cr>",                   desc = "Search clipboard" },
@@ -791,7 +801,7 @@ require("lazy").setup({
         config = function()
             require("aerial").setup({})
         end
-    }
+    },
 
     --- plugin end
 })
