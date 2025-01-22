@@ -152,11 +152,12 @@ require("lazy").setup({
                         settings = {
                             yaml = {
                                 schemas = {
-                                    ["https://raw.githubusercontent.com/instrumenta/kubernetes-json-schema/master/v1.18.0-standalone-strict/all.json"] =
-                                    "/*.k8s.yaml",
+                                    [require("kubernetes").yamlls_schema()] = "*.yaml",
+                                    -- ["https://raw.githubusercontent.com/instrumenta/kubernetes-json-schema/master/v1.18.0-standalone-strict/all.json"] = "/*.k8s.yaml",
+                                    -- [require("kubernetes").yamlls_schema()] = require("kubernetes").yamlls_filetypes(),
                                 },
                             },
-                        }
+                        },
                     },
                 },
                 inlay_hints = {
@@ -173,7 +174,7 @@ require("lazy").setup({
         build = "make install_jsregexp",
         dependencies = {
             "rafamadriz/friendly-snippets",
-        }
+        },
     },
     {
         "hrsh7th/nvim-cmp",
@@ -225,10 +226,10 @@ require("lazy").setup({
         dependencies = { "nvim-lua/plenary.nvim" },
         extensions = {
             fzf = {
-                fuzzy = true,                   -- false will only do exact matching
+                fuzzy = true,       -- false will only do exact matching
                 override_generic_sorter = true, -- override the generic sorter
-                override_file_sorter = true,    -- override the file sorter
-                case_mode = "smart_case",       -- or "ignore_case" or "respect_case"
+                override_file_sorter = true, -- override the file sorter
+                case_mode = "smart_case", -- or "ignore_case" or "respect_case"
             },
         },
     },
@@ -295,7 +296,7 @@ require("lazy").setup({
         config = function()
             require("gitsigns").setup({
                 on_attach = function(bufnr)
-                    local gitsigns = require('gitsigns')
+                    local gitsigns = require("gitsigns")
 
                     local function map(mode, l, r, opts)
                         opts = opts or {}
@@ -304,40 +305,48 @@ require("lazy").setup({
                     end
 
                     -- Navigation
-                    map('n', ']c', function()
+                    map("n", "]c", function()
                         if vim.wo.diff then
-                            vim.cmd.normal({ ']c', bang = true })
+                            vim.cmd.normal({ "]c", bang = true })
                         else
-                            gitsigns.nav_hunk('next')
+                            gitsigns.nav_hunk("next")
                         end
                     end)
 
-                    map('n', '[c', function()
+                    map("n", "[c", function()
                         if vim.wo.diff then
-                            vim.cmd.normal({ '[c', bang = true })
+                            vim.cmd.normal({ "[c", bang = true })
                         else
-                            gitsigns.nav_hunk('prev')
+                            gitsigns.nav_hunk("prev")
                         end
                     end)
 
                     -- Actions
-                    map('n', '<leader>hs', gitsigns.stage_hunk)
-                    map('n', '<leader>hr', gitsigns.reset_hunk)
-                    map('v', '<leader>hs', function() gitsigns.stage_hunk { vim.fn.line('.'), vim.fn.line('v') } end)
-                    map('v', '<leader>hr', function() gitsigns.reset_hunk { vim.fn.line('.'), vim.fn.line('v') } end)
-                    map('n', '<leader>hS', gitsigns.stage_buffer)
-                    map('n', '<leader>hu', gitsigns.undo_stage_hunk)
-                    map('n', '<leader>hR', gitsigns.reset_buffer)
-                    map('n', '<leader>hp', gitsigns.preview_hunk)
-                    map('n', '<leader>hb', function() gitsigns.blame_line { full = true } end)
-                    map('n', '<leader>tb', gitsigns.toggle_current_line_blame)
-                    map('n', '<leader>hd', gitsigns.diffthis)
-                    map('n', '<leader>hD', function() gitsigns.diffthis('~') end)
-                    map('n', '<leader>td', gitsigns.toggle_deleted)
+                    map("n", "<leader>hs", gitsigns.stage_hunk)
+                    map("n", "<leader>hr", gitsigns.reset_hunk)
+                    map("v", "<leader>hs", function()
+                        gitsigns.stage_hunk({ vim.fn.line("."), vim.fn.line("v") })
+                    end)
+                    map("v", "<leader>hr", function()
+                        gitsigns.reset_hunk({ vim.fn.line("."), vim.fn.line("v") })
+                    end)
+                    map("n", "<leader>hS", gitsigns.stage_buffer)
+                    map("n", "<leader>hu", gitsigns.undo_stage_hunk)
+                    map("n", "<leader>hR", gitsigns.reset_buffer)
+                    map("n", "<leader>hp", gitsigns.preview_hunk)
+                    map("n", "<leader>hb", function()
+                        gitsigns.blame_line({ full = true })
+                    end)
+                    map("n", "<leader>tb", gitsigns.toggle_current_line_blame)
+                    map("n", "<leader>hd", gitsigns.diffthis)
+                    map("n", "<leader>hD", function()
+                        gitsigns.diffthis("~")
+                    end)
+                    map("n", "<leader>td", gitsigns.toggle_deleted)
 
                     -- Text object
-                    map({ 'o', 'x' }, 'ih', ':<C-U>Gitsigns select_hunk<CR>')
-                end
+                    map({ "o", "x" }, "ih", ":<C-U>Gitsigns select_hunk<CR>")
+                end,
             })
         end,
     },
@@ -589,10 +598,11 @@ require("lazy").setup({
         end,
     },
 
+
     {
         "iamcco/markdown-preview.nvim",
         cmd = { "MarkdownPreviewToggle", "MarkdownPreview", "MarkdownPreviewStop" },
-        build = "cd app && npm install",
+        build = "cd app && yarn install",
         init = function()
             vim.g.mkdp_filetypes = { "markdown" }
         end,
@@ -723,7 +733,7 @@ require("lazy").setup({
 
     {
         "tpope/vim-fugitive",
-        dependencies = "tpope/vim-rhubarb"
+        dependencies = "tpope/vim-rhubarb",
     },
 
     {
@@ -745,27 +755,26 @@ require("lazy").setup({
 
     { "mistricky/codesnap.nvim", build = "make" },
 
-
     {
         "ahmedkhalf/project.nvim",
         config = function()
             require("project_nvim").setup({})
-        end
+        end,
     },
 
     {
         "AckslD/nvim-neoclip.lua",
         dependencies = {
-            { 'nvim-telescope/telescope.nvim' },
+            { "nvim-telescope/telescope.nvim" },
         },
         config = function()
-            require('neoclip').setup({})
+            require("neoclip").setup({})
         end,
     },
 
     {
-        'piersolenski/telescope-import.nvim',
-        dependencies = 'nvim-telescope/telescope.nvim',
+        "piersolenski/telescope-import.nvim",
+        dependencies = "nvim-telescope/telescope.nvim",
     },
 
     {
@@ -775,32 +784,46 @@ require("lazy").setup({
                 "SmiteshP/nvim-navbuddy",
                 dependencies = {
                     "SmiteshP/nvim-navic",
-                    "MunifTanjim/nui.nvim"
+                    "MunifTanjim/nui.nvim",
                 },
-                opts = { lsp = { auto_attach = true } }
-            }
+                opts = { lsp = { auto_attach = true } },
+            },
         },
     },
 
     {
         "rachartier/tiny-inline-diagnostic.nvim",
         event = "VeryLazy", -- Or `LspAttach`
-        priority = 1000,    -- needs to be loaded in first
+        priority = 1000, -- needs to be loaded in first
         config = function()
-            require('tiny-inline-diagnostic').setup()
-        end
+            require("tiny-inline-diagnostic").setup()
+        end,
     },
 
     {
-        'stevearc/aerial.nvim',
+        "stevearc/aerial.nvim",
         opts = {},
         dependencies = {
             "nvim-treesitter/nvim-treesitter",
-            "nvim-tree/nvim-web-devicons"
+            "nvim-tree/nvim-web-devicons",
         },
         config = function()
             require("aerial").setup({})
-        end
+        end,
+    },
+
+    {
+        "diogo464/kubernetes.nvim",
+        config = function()
+            require("kubernetes").setup({})
+        end,
+    },
+
+    {
+        "h4ckm1n-dev/kube-utils-nvim",
+        dependencies = { "nvim-telescope/telescope.nvim" },
+        lazy = true,
+        event = "VeryLazy",
     },
 
     --- plugin end
@@ -1052,9 +1075,10 @@ wk.add({
 })
 
 -- load telescope extensions
-require('telescope').load_extension('projects')
-require('telescope').load_extension('neoclip')
+require("telescope").load_extension("projects")
+require("telescope").load_extension("neoclip")
 require("telescope").load_extension("import")
 
 vim.diagnostic.config({ virtual_text = false })
 require("luasnip.loaders.from_vscode").lazy_load()
+
