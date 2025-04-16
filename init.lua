@@ -192,17 +192,6 @@ require("lazy").setup({
         "nvim-telescope/telescope.nvim",
         event = "VeryLazy",
         opts = {
-            -- pickers = {
-            --   git_branches = { previewer = false, theme = "ivy", show_remote_tracking_branches = false },
-            --   git_commits = { previewer = false, theme = "ivy" },
-            --   grep_string = { previewer = false, theme = "ivy" },
-            --   diagnostics = { previewer = false, theme = "ivy" },
-            --   find_files = { previewer = false, theme = "ivy" },
-            --   buffers = { previewer = false, theme = "ivy" },
-            --   current_buffer_fuzzy_find = { theme = "ivy" },
-            --   resume = { previewer = false, theme = "ivy" },
-            --   live_grep = { theme = "ivy" },
-            -- },
             defaults = {
                 layout_config = {
                     prompt_position = "bottom",
@@ -217,22 +206,8 @@ require("lazy").setup({
             },
         },
         keys = {
-            { "<leader>z",  "<cmd>Telescope current_buffer_fuzzy_find<cr>", desc = "File fuzzy find" },
-            { "<leader>sd", "<cmd>Telescope diagnostics<cr>",               desc = "Search diagnostics" },
-            { "<leader>sb", "<cmd>Telescope git_branches<cr>",              desc = "Search branches" },
-            { "<leader>st", "<cmd>Telescope git_commits<cr>",               desc = "Searcg commits" },
-            { "<leader>f",  "<cmd>Telescope find_files<cr>",                desc = "Search files" },
-            {
-                "<leader>sf",
-                "<cmd>Telescope find_files hidden=true<cr>",
-                desc = "Search files including hidden",
-            },
-            { "<leader>c",       "<cmd>Telescope resume<cr>",    desc = "Resume search" },
-            { "<leader>sw",      "<cmd>Telescope live_grep<cr>", desc = "Search live grep" },
-            { "<leader><space>", "<cmd>Telescope buffers<cr>",   desc = "Buffers" },
-            { "<leader>sp",      "<cmd>Telescope projects<cr>",  desc = "Search projects" },
-            { "<leader>sc",      "<cmd>Telescope neoclip<cr>",   desc = "Search clipboard" },
-            { "<leader>si",      "<cmd>Telescope import<cr>",    desc = "Search imports" },
+            { "<leader>sc", "<cmd>Telescope neoclip<cr>", desc = "Search clipboard" },
+            { "<leader>si", "<cmd>Telescope import<cr>",  desc = "Search imports" },
         },
         dependencies = { "nvim-lua/plenary.nvim" },
         extensions = {
@@ -366,7 +341,9 @@ require("lazy").setup({
     {
         "folke/which-key.nvim",
         event = "VeryLazy",
-        opts = {},
+        opts = {
+            preset = "helix",
+        },
         keys = {
             {
                 "<leader>?",
@@ -744,15 +721,67 @@ require("lazy").setup({
         priority = 1000,
         lazy = false,
         opts = {
-            bigfile = { enabled = true },
-            dashboard = { enabled = false },
-            indent = { enabled = false },
-            input = { enabled = true },
-            notifier = { enabled = true },
-            quickfile = { enabled = true },
-            scroll = { enabled = true },
-            statuscolumn = { enabled = true },
-            words = { enabled = true },
+            bigfile = {enabled = true},
+            scroll = {enabled = true},
+            words = {enabled = true},
+            lazygit = {enabled = true},
+            picker = {
+                enabled = true,
+                sources = {
+                    files = {
+                        hidden = true, -- show hidden files
+                        follow = true,
+                    },
+                },
+                layout = {
+                    layout = {
+                        -- preset = "ivy",
+                        backdrop = true,
+                        position = "bottom",
+                        -- width = 0.6,
+                        height = 0.5,
+                        -- zindex = 20,
+                    },
+                },
+                icons = {
+                    files = {
+                        enabled = false, -- show file icons
+                    },
+                },
+                formatters = {
+                    file = {
+                        filename_first = true, -- display filename before the file path
+                    },
+                },
+            }
+        },
+        keys = {
+            { "<leader>lg",       function() Snacks.lazygit.open() end,                                   desc = "Lazygit", },
+            { "<leader>ll",       function() Snacks.lazygit.log() end,                                    desc = "Lazygit logs", },
+            { "<leader>lf",       function() Snacks.lazygit.log_file() end,                               desc = "Lazygit file logs", },
+
+            { "<leader>gb",       function() Snacks.picker.git_branches() end,                            desc = "Git Branches" },
+            { "<leader>gl",       function() Snacks.picker.git_log() end,                                 desc = "Git Log" },
+            { "<leader>gL",       function() Snacks.picker.git_log_line() end,                            desc = "Git Log Line" },
+            { "<leader>gs",       function() Snacks.picker.git_status() end,                              desc = "Git Status" },
+            { "<leader>gS",       function() Snacks.picker.git_stash() end,                               desc = "Git Stash" },
+            { "<leader>gd",       function() Snacks.picker.git_diff() end,                                desc = "Git Diff (Hunks)" },
+            { "<leader>gf",       function() Snacks.picker.git_log_file() end,                            desc = "Git Log File" },
+
+            { "<leader>ff",       function() Snacks.picker.files() end,                                   desc = "Find Files" },
+            { "<leader>fc",       function() Snacks.picker.files({ cwd = vim.fn.stdpath("config") }) end, desc = "Find Config File" },
+            { "<leader>fg",       function() Snacks.picker.git_files() end,                               desc = "Find Git Files" },
+            { "<leader>fp",       function() Snacks.picker.projects() end,                                desc = "Projects" },
+            { "<leader>fr",       function() Snacks.picker.recent() end,                                  desc = "Recent" },
+
+            { "<leader>z",        function() Snacks.picker.lines() end,                                   desc = "Buffer Lines" },
+            { "<leader><leader>", function() Snacks.picker.buffers() end,                                 desc = "Buffers" },
+            { "<leader>sb",       function() Snacks.picker.grep_buffers() end,                            desc = "Grep Open Buffers" },
+            { "<leader>sg",       function() Snacks.picker.grep() end,                                    desc = "Grep" },
+            { "<leader>sw",       function() Snacks.picker.grep_word() end,                               desc = "Visual selection or word", mode = { "n", "x" } },
+            { "<leader>x",        function() Snacks.explorer() end,                                       desc = "File Explorer" },
+
+            { "<leader>cs",       function() Snacks.picker.lsp_symbols() end,                             desc = "Code Symbols" },
         },
     },
 
@@ -1108,9 +1137,11 @@ wk.add({
     { "[d",         "<cmd>lua vim.diagnostic.goto_prev()<cr>",    desc = "Prev diagnostic",       mode = "n" },
     { "]d",         "<cmd>lua vim.diagnostic.goto_next()<cr>",    desc = "Prev diagnostic",       mode = "n" },
     -- e "<leader>d", group = "Diff" },
-    -- { "<leader>h",  group = "Hunk" },
+    { "<leader>h",  group = "Hunk" },
     { "<leader>g",  group = "Git" },
     { "<leader>s",  group = "Search" },
+    { "<leader>f",  group = "Find" },
+    { "<leader>l",  group = "Lazygit" },
     { "<leader>t",  group = "Tree Explorer" },
     -- { "<leader>w",  group = "Workspace" },
     { "gi",         "<cmd>lua vim.lsp.buf.implementation()<cr>",  desc = "Go to implementation",  mode = "n" },
