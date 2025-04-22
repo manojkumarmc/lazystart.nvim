@@ -364,25 +364,16 @@ require("lazy").setup({
         end,
     },
 
-    -- {
-    --     "echasnovski/mini.statusline",
-    --     dependencies = {
-    --         { "echasnovski/mini.icons" },
-    --         { "echasnovski/mini-git",  version = false, main = "mini.git" },
-    --         { "echasnovski/mini.diff" },
-    --     },
-    --     config = function()
-    --         require("mini.statusline").setup({})
-    --     end,
-    -- },
-
-
     {
-        'nvim-lualine/lualine.nvim',
-        dependencies = { 'nvim-tree/nvim-web-devicons' },
+        "echasnovski/mini.statusline",
+        dependencies = {
+            { "echasnovski/mini.icons" },
+            { "echasnovski/mini-git",  version = false, main = "mini.git" },
+            { "echasnovski/mini.diff" },
+        },
         config = function()
-            require("lualine").setup({})
-        end
+            require("mini.statusline").setup({})
+        end,
     },
 
     {
