@@ -193,6 +193,7 @@ require("lazy").setup({
         event = "VeryLazy",
         opts = {
             defaults = {
+                theme = "ivy",
                 layout_config = {
                     prompt_position = "bottom",
                 },
@@ -363,16 +364,25 @@ require("lazy").setup({
         end,
     },
 
+    -- {
+    --     "echasnovski/mini.statusline",
+    --     dependencies = {
+    --         { "echasnovski/mini.icons" },
+    --         { "echasnovski/mini-git",  version = false, main = "mini.git" },
+    --         { "echasnovski/mini.diff" },
+    --     },
+    --     config = function()
+    --         require("mini.statusline").setup({})
+    --     end,
+    -- },
+
+
     {
-        "echasnovski/mini.statusline",
-        dependencies = {
-            { "echasnovski/mini.icons" },
-            { "echasnovski/mini-git",  version = false, main = "mini.git" },
-            { "echasnovski/mini.diff" },
-        },
+        'nvim-lualine/lualine.nvim',
+        dependencies = { 'nvim-tree/nvim-web-devicons' },
         config = function()
-            require("mini.statusline").setup()
-        end,
+            require("lualine").setup({})
+        end
     },
 
     {
@@ -486,7 +496,9 @@ require("lazy").setup({
 
     {
         "Wansmer/treesj",
-        dependencies = { "nvim-treesitter" },
+        dependencies = { "nvim-treesitter/nvim-treesitter" },
+        -- keys = { '<space>m', '<space>j', '<space>s' },
+        keys = { '<space>m', '<space>j' },
         config = function()
             require("treesj").setup({
                 max_join_length = 2400,
@@ -559,17 +571,18 @@ require("lazy").setup({
     },
 
     {
-        "ggandor/leap.nvim",
-        enabled = true,
-        config = function(_, opts)
-            local leap = require("leap")
-            for k, v in pairs(opts) do
-                leap.opts[k] = v
-            end
-            leap.add_default_mappings(true)
-            vim.keymap.del({ "x", "o" }, "x")
-            vim.keymap.del({ "x", "o" }, "X")
-        end,
+        "folke/flash.nvim",
+        event = "VeryLazy",
+        ---@type Flash.Config
+        opts = {},
+        -- stylua: ignore
+        keys = {
+            { "s",     mode = { "n", "x", "o" }, function() require("flash").jump() end,              desc = "Flash" },
+            { "S",     mode = { "n", "x", "o" }, function() require("flash").treesitter() end,        desc = "Flash Treesitter" },
+            { "r",     mode = "o",               function() require("flash").remote() end,            desc = "Remote Flash" },
+            { "R",     mode = { "o", "x" },      function() require("flash").treesitter_search() end, desc = "Treesitter Search" },
+            { "<c-s>", mode = { "c" },           function() require("flash").toggle() end,            desc = "Toggle Flash Search" },
+        },
     },
 
     {
@@ -698,6 +711,16 @@ require("lazy").setup({
             "MunifTanjim/nui.nvim",
             -- "3rd/image.nvim", -- Optional image support in preview window: See `# Preview Mode` for more information
         },
+        config = function()
+            require('neo-tree').setup({
+                filesystem = {
+                    follow_current_file = {
+                        enabled = true,          -- This will find and focus the file in the active buffer every time
+                        leave_dirs_open = false, -- `false` closes auto expanded dirs, such as with `:Neotree reveal`
+                    },
+                }
+            })
+        end,
         keys = {
             {
                 "<leader>tt",
@@ -721,10 +744,11 @@ require("lazy").setup({
         priority = 1000,
         lazy = false,
         opts = {
-            bigfile = {enabled = true},
-            scroll = {enabled = true},
-            words = {enabled = true},
-            lazygit = {enabled = true},
+            bigfile = { enabled = true },
+            scroll = { enabled = true },
+            words = { enabled = true },
+            lazygit = { enabled = true },
+            explorer = { enabled = true, layout = { position = "left" } },
             picker = {
                 enabled = true,
                 sources = {
@@ -737,9 +761,9 @@ require("lazy").setup({
                     layout = {
                         -- preset = "ivy",
                         backdrop = true,
-                        position = "bottom",
+                        -- position = "bottom",
                         -- width = 0.6,
-                        height = 0.5,
+                        -- height = 0.5,
                         -- zindex = 20,
                     },
                 },
@@ -769,18 +793,24 @@ require("lazy").setup({
             { "<leader>gf",       function() Snacks.picker.git_log_file() end,                            desc = "Git Log File" },
 
             { "<leader>ff",       function() Snacks.picker.files() end,                                   desc = "Find Files" },
+            { "<leader>fz",       "<cmd>Files<cr>",                                                       desc = "FZF Find Files" },
+            { "<leader>fm",       "<cmd>Marks<cr>",                                                       desc = "FZF Find Marks" },
+            { "<leader>fj",       "<cmd>Jumps<cr>",                                                       desc = "FZF Find Jumps" },
             { "<leader>fc",       function() Snacks.picker.files({ cwd = vim.fn.stdpath("config") }) end, desc = "Find Config File" },
             { "<leader>fg",       function() Snacks.picker.git_files() end,                               desc = "Find Git Files" },
             { "<leader>fp",       function() Snacks.picker.projects() end,                                desc = "Projects" },
             { "<leader>fr",       function() Snacks.picker.recent() end,                                  desc = "Recent" },
 
-            { "<leader>z",        function() Snacks.picker.lines() end,                                   desc = "Buffer Lines" },
+            { "<leader>a",        function() Snacks.picker.lines() end,                                   desc = "Buffer Lines" },
+            { "<leader>z",        "<cmd>BLines<cr>",                                                      desc = "FZF Buffer Lines" },
             { "<leader><leader>", function() Snacks.picker.buffers() end,                                 desc = "Buffers" },
             { "<leader>sb",       function() Snacks.picker.grep_buffers() end,                            desc = "Grep Open Buffers" },
+            { "<leader>sz",       "<cmd>Lines<cr>",                                                       desc = "FZF Buffer Lines" },
             { "<leader>sg",       function() Snacks.picker.grep() end,                                    desc = "Grep" },
             { "<leader>sw",       function() Snacks.picker.grep_word() end,                               desc = "Visual selection or word", mode = { "n", "x" } },
-            { "<leader>x",        function() Snacks.explorer() end,                                       desc = "File Explorer" },
+            { "<leader>su",       function() Snacks.picker.undo() end,                                    desc = "Undotree", },
 
+            { "<leader>x",        function() Snacks.explorer() end,                                       desc = "File Explorer" },
             { "<leader>cs",       function() Snacks.picker.lsp_symbols() end,                             desc = "Code Symbols" },
         },
     },
@@ -901,6 +931,19 @@ require("lazy").setup({
                 },
             })
         end,
+    },
+
+    {
+        "folke/trouble.nvim",
+        opts = {}, -- for default options, refer to the configuration section for custom setup.
+        cmd = "Trouble",
+        keys = {
+            { "<leader>ce", "<cmd>Trouble diagnostics toggle<cr>",                        desc = "Diagnostics (Trouble)", },
+            { "<leader>cd", "<cmd>Trouble diagnostics toggle filter.buf=0<cr>",           desc = "Buffer Diagnostics (Trouble)", },
+            { "<leader>cl", "<cmd>Trouble lsp toggle focus=false win.position=right<cr>", desc = "LSP Definitions / references / ... (Trouble)", },
+            { "<leader>xL", "<cmd>Trouble loclist toggle<cr>",                            desc = "Location List (Trouble)", },
+            { "<leader>xQ", "<cmd>Trouble qflist toggle<cr>",                             desc = "Quickfix List (Trouble)", },
+        },
     },
 
     --- plugin end
@@ -1133,7 +1176,7 @@ wk.add({
     { "<leader>cr", "<cmd>lua vim.lsp.buf.rename()<cr>",          desc = "Code rename",           mode = "n" },
     { "<leader>ca", "<cmd>lua vim.lsp.buf.action()<cr>",          desc = "Code action",           mode = "n" },
     { "<leader>cf", "<cmd>Format<cr>",                            desc = "Code format",           mode = "n" },
-    { "<leader>e",  "<cmd>lua vim.diagnostic.open_float()<cr>",   desc = "Code diagnostics",      mode = "n" },
+    -- { "<leader>e",  "<cmd>lua vim.diagnostic.open_float()<cr>",   desc = "Code diagnostics",      mode = "n" },
     { "[d",         "<cmd>lua vim.diagnostic.goto_prev()<cr>",    desc = "Prev diagnostic",       mode = "n" },
     { "]d",         "<cmd>lua vim.diagnostic.goto_next()<cr>",    desc = "Prev diagnostic",       mode = "n" },
     -- e "<leader>d", group = "Diff" },
@@ -1150,15 +1193,14 @@ wk.add({
     { "gD",         "<cmd>lua vim.lsp.buf.declaration()<cr>",     desc = "Go to declaration",     mode = "n" },
     { "K",          "<cmd>lua vim.lsp.buf.hover()<cr>",           desc = "Hover",                 mode = "n" },
     { "<C-k>",      "<cmd>lua vim.lsp.buf.signature_help()<cr>",  desc = "Function signature",    mode = "n" },
-    { "<leader>a",  "<cmd>AerialToggle!<cr>",                     desc = "Code symbols",          mode = "n" },
     { "<leader>p",  "<cmd>MarkdownPreviewToggle<cr>",             desc = "Markdown preview",      mode = "n" },
 })
 
 -- load telescope extensions
-require("telescope").load_extension("projects")
+-- require("telescope").load_extension("projects")
 require("telescope").load_extension("neoclip")
 require("telescope").load_extension("import")
-require("telescope").load_extension("bookmarks")
+-- require("telescope").load_extension("bookmarks")
 
 vim.diagnostic.config({ virtual_text = false })
 require("luasnip.loaders.from_vscode").lazy_load()
