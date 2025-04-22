@@ -849,7 +849,8 @@ require("lazy").setup({
         event = "VeryLazy", -- Or `LspAttach`
         priority = 1000,    -- needs to be loaded in first
         config = function()
-            require("tiny-inline-diagnostic").setup()
+            vim.diagnostic.config({ virtual_text = false })
+            require("tiny-inline-diagnostic").setup({})
         end,
     },
 
@@ -1188,10 +1189,7 @@ wk.add({
 })
 
 -- load telescope extensions
--- require("telescope").load_extension("projects")
 require("telescope").load_extension("neoclip")
 require("telescope").load_extension("import")
--- require("telescope").load_extension("bookmarks")
 
-vim.diagnostic.config({ virtual_text = false })
 require("luasnip.loaders.from_vscode").lazy_load()
