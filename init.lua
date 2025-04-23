@@ -268,8 +268,6 @@ require("lazy").setup({
         },
     },
 
-    -- { 'sbdchd/neoformat' },
-
     -- Pair matching characters
     {
         "windwp/nvim-autopairs",
@@ -648,7 +646,6 @@ require("lazy").setup({
         },
     },
 
-    -- this is a test
     {
         "folke/noice.nvim",
         event = "VeryLazy",
@@ -769,9 +766,6 @@ require("lazy").setup({
             { "<leader>gf",       function() Snacks.picker.git_log_file() end,                            desc = "Git Log File" },
 
             { "<leader>ff",       function() Snacks.picker.files() end,                                   desc = "Find Files" },
-            { "<leader>fz",       "<cmd>Files<cr>",                                                       desc = "FZF Find Files" },
-            { "<leader>fm",       "<cmd>Marks<cr>",                                                       desc = "FZF Find Marks" },
-            { "<leader>fj",       "<cmd>Jumps<cr>",                                                       desc = "FZF Find Jumps" },
             { "<leader>fc",       function() Snacks.picker.files({ cwd = vim.fn.stdpath("config") }) end, desc = "Find Config File" },
             { "<leader>fg",       function() Snacks.picker.git_files() end,                               desc = "Find Git Files" },
             { "<leader>fp",       function() Snacks.picker.projects() end,                                desc = "Projects" },
@@ -951,57 +945,22 @@ require("lazy").setup({
         end,
     },
 
-    {
-        "kaymmm/bullets.nvim",
-        opts = {
-            colon_indent = true,
-            delete_last_bullet = true,
-            empty_buffers = true,
-            file_types = { 'markdown', 'text', 'gitcommit' },
-            line_spacing = 1,
-            mappings = true,
-            outline_levels = { 'ROM', 'ABC', 'num', 'abc', 'rom', 'std*', 'std-', 'std+' },
-            renumber = true,
-            alpha = {
-                len = 2,
-            },
-            checkbox = {
-                nest = true,
-                markers = ' .oOx',
-                toggle_partials = true,
-            },
-        },
-        config = function()
-            require("Bullets").setup({})
-        end
-    },
+    -- Markdown new line manager
+    { "bullets-vim/bullets.vim" },
 
+    -- search ahead
     {
         "folke/flash.nvim",
         event = "VeryLazy",
-        ---@type Flash.Config
         opts = {},
-        -- stylua: ignore
         keys = {
-            { "s",     mode = { "n", "x", "o" }, function() require("flash").jump() end,              desc = "Flash" },
-            { "S",     mode = { "n", "x", "o" }, function() require("flash").treesitter() end,        desc = "Flash Treesitter" },
-            { "r",     mode = "o",               function() require("flash").remote() end,            desc = "Remote Flash" },
-            { "R",     mode = { "o", "x" },      function() require("flash").treesitter_search() end, desc = "Treesitter Search" },
-            { "<c-s>", mode = { "c" },           function() require("flash").toggle() end,            desc = "Toggle Flash Search" },
+            { "s", mode = { "n", "x", "o" }, function() require("flash").jump() end,              desc = "Flash" },
+            { "R", mode = { "o", "x" },      function() require("flash").treesitter_search() end, desc = "Treesitter Search" },
         },
     },
 
     --- plugin end
 })
-
--- -- Open Telescope on start
--- vim.api.nvim_create_autocmd("VimEnter", {
---   callback = function()
---     if vim.fn.argv(0) == "" then
---       require("telescope.builtin").find_files()
---     end
---   end,
--- })
 
 -- Set up Comment.nvim
 require("Comment").setup({
@@ -1222,24 +1181,25 @@ wk.add({
     { "<leader>cr", "<cmd>lua vim.lsp.buf.rename()<cr>",          desc = "Code rename",           mode = "n" },
     { "<leader>ca", "<cmd>lua vim.lsp.buf.action()<cr>",          desc = "Code action",           mode = "n" },
     { "<leader>cf", "<cmd>Format<cr>",                            desc = "Code format",           mode = "n" },
-    -- { "<leader>e",  "<cmd>lua vim.diagnostic.open_float()<cr>",   desc = "Code diagnostics",      mode = "n" },
     { "[d",         "<cmd>lua vim.diagnostic.goto_prev()<cr>",    desc = "Prev diagnostic",       mode = "n" },
     { "]d",         "<cmd>lua vim.diagnostic.goto_next()<cr>",    desc = "Prev diagnostic",       mode = "n" },
-    -- e "<leader>d", group = "Diff" },
     { "<leader>h",  group = "Hunk" },
     { "<leader>g",  group = "Git" },
+    { "<leader>m",  group = "Markdown" },
+    { "<leader>mp", "<cmd>MarkdownPreviewToggle<cr>",             desc = "Markdown preview",      mode = "n" },
     { "<leader>s",  group = "Search" },
     { "<leader>f",  group = "Find" },
+    { "<leader>fz", "<cmd>Files<cr>",                             desc = "FZF Find Files",        mode = "n" },
+    { "<leader>fm", "<cmd>Marks<cr>",                             desc = "FZF Find Marks",        mode = "n" },
+    { "<leader>fj", "<cmd>Jumps<cr>",                             desc = "FZF Find Jumps",        mode = "n" },
     { "<leader>l",  group = "Lazygit" },
     { "<leader>t",  group = "Tree Explorer" },
-    -- { "<leader>w",  group = "Workspace" },
     { "gi",         "<cmd>lua vim.lsp.buf.implementation()<cr>",  desc = "Go to implementation",  mode = "n" },
     { "gd",         "<cmd>lua vim.lsp.buf.definition()<cr>",      desc = "Go to definition",      mode = "n" },
     { "gt",         "<cmd>lua vim.lsp.buf.type_definition()<cr>", desc = "Go to type definition", mode = "n" },
     { "gD",         "<cmd>lua vim.lsp.buf.declaration()<cr>",     desc = "Go to declaration",     mode = "n" },
     { "K",          "<cmd>lua vim.lsp.buf.hover()<cr>",           desc = "Hover",                 mode = "n" },
     { "<C-k>",      "<cmd>lua vim.lsp.buf.signature_help()<cr>",  desc = "Function signature",    mode = "n" },
-    { "<leader>p",  "<cmd>MarkdownPreviewToggle<cr>",             desc = "Markdown preview",      mode = "n" },
 })
 
 -- load telescope extensions
