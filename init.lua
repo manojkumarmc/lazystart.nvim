@@ -249,24 +249,26 @@ require("lazy").setup({
     },
 
     -- For formatting code
-    -- {
-    --     "stevearc/conform.nvim",
-    --     opts = {
-    --         formatters_by_ft = {
-    --             javascript = { "biome" },
-    --             typescript = { "biome" },
-    --             graphql = { "biome" },
-    --             json = { "biome" },
-    --             css = { "prettierd" },
-    --             yaml = { "prettierd" },
-    --             lua = { "stylua" },
-    --             go = { "gofmt" },
-    --             python = { "black" },
-    --             rust = { "rustfmt" },
-    --         },
-    --         -- format_on_save = {}, == this needs to be uncommented for the prebufwrite to work
-    --     },
-    -- },
+    {
+        "stevearc/conform.nvim",
+        opts = {
+            formatters_by_ft = {
+                javascript = { "biome" },
+                typescript = { "biome" },
+                graphql = { "biome" },
+                json = { "biome" },
+                css = { "prettierd" },
+                yaml = { "prettierd" },
+                lua = { "stylua" },
+                go = { "gofmt" },
+                python = { "black" },
+                rust = { "rustfmt" },
+            },
+            -- format_on_save = {}, == this needs to be uncommented for the prebufwrite to work
+        },
+    },
+
+    -- { 'sbdchd/neoformat' },
 
     -- Pair matching characters
     {
@@ -562,21 +564,6 @@ require("lazy").setup({
     },
 
     {
-        "folke/flash.nvim",
-        event = "VeryLazy",
-        ---@type Flash.Config
-        opts = {},
-        -- stylua: ignore
-        keys = {
-            { "s",     mode = { "n", "x", "o" }, function() require("flash").jump() end,              desc = "Flash" },
-            { "S",     mode = { "n", "x", "o" }, function() require("flash").treesitter() end,        desc = "Flash Treesitter" },
-            { "r",     mode = "o",               function() require("flash").remote() end,            desc = "Remote Flash" },
-            { "R",     mode = { "o", "x" },      function() require("flash").treesitter_search() end, desc = "Treesitter Search" },
-            { "<c-s>", mode = { "c" },           function() require("flash").toggle() end,            desc = "Toggle Flash Search" },
-        },
-    },
-
-    {
         "iamcco/markdown-preview.nvim",
         cmd = { "MarkdownPreviewToggle", "MarkdownPreview", "MarkdownPreviewStop" },
         build = "cd app && yarn install",
@@ -722,8 +709,6 @@ require("lazy").setup({
     },
 
     { "HiPhish/rainbow-delimiters.nvim" },
-
-    { "sbdchd/neoformat" },
 
     {
         "tpope/vim-fugitive",
@@ -938,6 +923,74 @@ require("lazy").setup({
         },
     },
 
+    {
+        'MeanderingProgrammer/render-markdown.nvim',
+        dependencies = { "nvim-treesitter/nvim-treesitter", "nvim-tree/nvim-web-devicons" }, -- if you prefer nvim-web-devicons
+        ---@module 'render-markdown'
+        ---@type render.md.UserConfig
+        opts = {},
+        config = function()
+            require("render-markdown").setup({
+                completions = { lsp = { enabled = true } },
+            })
+        end
+    },
+
+    {
+        "Biscuit-Theme/nvim",
+        name = "biscuit",
+    },
+
+    {
+        "uloco/bluloco.nvim",
+        lazy = false,
+        priority = 1000,
+        dependencies = { "rktjmp/lush.nvim" },
+        config = function()
+            require("bluloco").setup({})
+        end,
+    },
+
+    {
+        "kaymmm/bullets.nvim",
+        opts = {
+            colon_indent = true,
+            delete_last_bullet = true,
+            empty_buffers = true,
+            file_types = { 'markdown', 'text', 'gitcommit' },
+            line_spacing = 1,
+            mappings = true,
+            outline_levels = { 'ROM', 'ABC', 'num', 'abc', 'rom', 'std*', 'std-', 'std+' },
+            renumber = true,
+            alpha = {
+                len = 2,
+            },
+            checkbox = {
+                nest = true,
+                markers = ' .oOx',
+                toggle_partials = true,
+            },
+        },
+        config = function()
+            require("Bullets").setup({})
+        end
+    },
+
+    {
+        "folke/flash.nvim",
+        event = "VeryLazy",
+        ---@type Flash.Config
+        opts = {},
+        -- stylua: ignore
+        keys = {
+            { "s",     mode = { "n", "x", "o" }, function() require("flash").jump() end,              desc = "Flash" },
+            { "S",     mode = { "n", "x", "o" }, function() require("flash").treesitter() end,        desc = "Flash Treesitter" },
+            { "r",     mode = "o",               function() require("flash").remote() end,            desc = "Remote Flash" },
+            { "R",     mode = { "o", "x" },      function() require("flash").treesitter_search() end, desc = "Treesitter Search" },
+            { "<c-s>", mode = { "c" },           function() require("flash").toggle() end,            desc = "Toggle Flash Search" },
+        },
+    },
+
     --- plugin end
 })
 
@@ -992,10 +1045,11 @@ cmp.setup({
         end, { "i", "s" }),
     }),
     sources = {
-        { name = "nvim_lsp", max_item_count = 15 },
-        { name = "luasnip",  max_item_count = 5 },
-        { name = "buffer",   max_item_count = 8 },
-        { name = "path",     max_item_count = 5 },
+        { name = "nvim_lsp",        max_item_count = 15 },
+        { name = "luasnip",         max_item_count = 5 },
+        { name = "buffer",          max_item_count = 8 },
+        { name = "path",            max_item_count = 5 },
+        { name = "render-markdown", max_item_count = 5 },
     },
     formatting = {
         format = function(_, vim_item)
