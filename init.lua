@@ -159,6 +159,32 @@ require("lazy").setup({
                             },
                         },
                     },
+                    harper_ls = {
+                        userDictPath = "",
+                        fileDictPath = "",
+                        linters = {
+                            SpellCheck = true,
+                            SpelledNumbers = false,
+                            AnA = true,
+                            SentenceCapitalization = true,
+                            UnclosedQuotes = true,
+                            WrongQuotes = false,
+                            LongSentences = true,
+                            RepeatedWords = true,
+                            Spaces = true,
+                            Matcher = true,
+                            CorrectNumberSuffix = true
+                        },
+                        codeActions = {
+                            ForceStable = false
+                        },
+                        markdown = {
+                            IgnoreLinkTitle = false
+                        },
+                        diagnosticSeverity = "hint",
+                        isolateEnglish = false,
+                        dialect = "American"
+                    },
                 },
                 inlay_hints = {
                     enabled = false,
@@ -421,36 +447,11 @@ require("lazy").setup({
         end,
     },
 
-    -- {
-    --     "nvim-tree/nvim-tree.lua",
-    --     dependencies = {
-    --         "nvim-tree/nvim-web-devicons",
-    --     },
-    --     config = function()
-    --         require("nvim-tree").setup({
-    --             sort = {
-    --                 sorter = "case_sensitive",
-    --             },
-    --             view = {
-    --                 width = 50,
-    --             },
-    --             renderer = {
-    --                 group_empty = true,
-    --             },
-    --             filters = {
-    --                 dotfiles = true,
-    --             },
-    --         })
-    --     end,
-    --     keys = {
-    --         {
-    --             "<leader>tt",
-    --             "<cmd>NvimTreeToggle<CR>",
-    --             desc = "File Tree",
-    --         },
-    --     },
-    -- },
-    --
+    { "Rigellute/shades-of-purple.vim" },
+    { "rose-pine/vim" },
+    { "dterei/VimCobaltColourScheme" },
+    { "gregsexton/Gravity" },
+
     {
         "kevinhwang91/nvim-hlslens",
         config = function()
@@ -779,9 +780,11 @@ require("lazy").setup({
             { "<leader>sg",       function() Snacks.picker.grep() end,                                    desc = "Grep" },
             { "<leader>sw",       function() Snacks.picker.grep_word() end,                               desc = "Visual selection or word", mode = { "n", "x" } },
             { "<leader>su",       function() Snacks.picker.undo() end,                                    desc = "Undotree", },
+            { "<leader>sl",       function() Snacks.picker.colorschemes() end,                            desc = "Colorschemes", },
 
             { "<leader>x",        function() Snacks.explorer() end,                                       desc = "File Explorer" },
             { "<leader>cs",       function() Snacks.picker.lsp_symbols() end,                             desc = "Code Symbols" },
+            { "<leader>cz",       "<cmd>ZenMode<cr>",                                                     desc = "Zen mode" },
         },
     },
 
@@ -957,6 +960,38 @@ require("lazy").setup({
             { "s", mode = { "n", "x", "o" }, function() require("flash").jump() end,              desc = "Flash" },
             { "R", mode = { "o", "x" },      function() require("flash").treesitter_search() end, desc = "Treesitter Search" },
         },
+    },
+
+    {
+        "folke/twilight.nvim",
+        opts = {
+        }
+    },
+    {
+        "folke/zen-mode.nvim",
+        opts = {
+            window = {
+                backdrop = 0.95,            -- shade the backdrop of the Zen window. Set to 1 to keep the same as Normal
+                width = 120,                -- width of the Zen window
+                height = 1,                 -- height of the Zen window
+                options = {
+                    signcolumn = "no",      -- disable signcolumn
+                    number = false,         -- disable number column
+                    relativenumber = false, -- disable relative numbers
+                    cursorline = false,     -- disable cursorline
+                },
+            },
+            plugins = {
+                options = {
+                    enabled = true,
+                    ruler = false,             -- disables the ruler text in the cmd line area
+                    showcmd = false,           -- disables the command in the last line of the screen
+                    laststatus = 0,            -- turn off the statusline in zen mode
+                },
+                twilight = { enabled = true }, -- enable to start Twilight when zen mode opens
+            },
+
+        }
     },
 
     --- plugin end
