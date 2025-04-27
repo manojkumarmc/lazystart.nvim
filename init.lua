@@ -403,9 +403,16 @@ require("lazy").setup({
     },
 
     {
-        "echasnovski/mini.indentscope",
+        "nvimdev/indentmini.nvim",
         config = function()
-            require("mini.indentscope").setup()
+            -- vim.cmd.highlight('IndentLine guifg=#8b8c80')
+            -- vim.cmd.highlight('IndentLineCurrent guifg=#8b8c80')
+            vim.cmd.highlight('IndentLine guifg=#43393c')
+            vim.cmd.highlight('IndentLineCurrent guifg=#43393c')
+            require("indentmini").setup({
+                exclude = { "markdown", "startify" },
+                only_current = true
+            })
         end,
     },
 
@@ -451,6 +458,8 @@ require("lazy").setup({
     { "rose-pine/vim" },
     { "dterei/VimCobaltColourScheme" },
     { "gregsexton/Gravity" },
+    { "ryross/ryderbeans" },
+    { "daviddavis/vim-colorpack" },
 
     {
         "kevinhwang91/nvim-hlslens",
@@ -718,6 +727,7 @@ require("lazy").setup({
         priority = 1000,
         lazy = false,
         opts = {
+            image = { enabled = true },
             bigfile = { enabled = true },
             scroll = { enabled = true },
             words = { enabled = true },
@@ -1082,7 +1092,10 @@ end, { range = true })
 
 -- set colorscheme
 -- vim.cmd("colorscheme rose-pine-moon")
-vim.cmd("colorscheme catppuccin")
+-- vim.cmd("colorscheme catppuccin")
+-- vim.cmd("colorscheme biscuit")
+-- vim.cmd("colorscheme shades_of_purple")
+vim.cmd("colorscheme rosepine")
 
 -- load telescope extensions
 require("telescope").load_extension("fzf")
