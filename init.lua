@@ -52,6 +52,7 @@ local icons = {
         removed = " ",
     },
 }
+
 -- Helpers
 local function change_colorscheme()
     local m = vim.fn.system("defaults read -g AppleInterfaceStyle")
@@ -78,6 +79,18 @@ vim.keymap.set("n", "vs", ":vs<CR>")
 vim.keymap.set("n", "<leader>j", ":cnext<CR>", { silent = true })
 vim.keymap.set("n", "<leader>k", ":cprevious<CR>", { silent = true })
 vim.keymap.set("n", "<leader>o", ":tabonly<cr>:only<CR>", { silent = true })
+
+
+vim.api.nvim_set_hl(0, "DiagnosticSignError", { fg = "#ff5555", bg = "NONE" })
+vim.api.nvim_set_hl(0, "DiagnosticSignWarn",  { fg = "#f1fa8c", bg = "NONE" })
+vim.api.nvim_set_hl(0, "DiagnosticSignInfo",  { fg = "#8be9fd", bg = "NONE" })
+vim.api.nvim_set_hl(0, "DiagnosticSignHint",  { fg = "#50fa7b", bg = "NONE" })
+
+vim.fn.sign_define("DiagnosticSignError", {text = icons.diagnostics.Error, texthl = "DiagnosticSignError"})
+vim.fn.sign_define("DiagnosticSignWarn",  {text = icons.diagnostics.Warn, texthl = "DiagnosticSignWarn"})
+vim.fn.sign_define("DiagnosticSignInfo",  {text = icons.diagnostics.Info, texthl = "DiagnosticSignInfo"})
+vim.fn.sign_define("DiagnosticSignHint",  {text = icons.diagnostics.Hint, texthl = "DiagnosticSignHint"})
+
 
 -- Setup lazy.nvim
 local lazypath = vim.fn.stdpath("data") .. "/lazy/lazy.nvim"
@@ -459,7 +472,7 @@ require("lazy").setup({
     { "dterei/VimCobaltColourScheme" },
     { "gregsexton/Gravity" },
     { "ryross/ryderbeans" },
-    { "daviddavis/vim-colorpack" },
+    -- { "daviddavis/vim-colorpack" },
 
     {
         "kevinhwang91/nvim-hlslens",
@@ -1005,6 +1018,7 @@ require("lazy").setup({
     },
 
     --- plugin end
+    ---
 })
 
 -- Set up Comment.nvim
@@ -1091,11 +1105,12 @@ vim.api.nvim_create_user_command("Format", function(args)
 end, { range = true })
 
 -- set colorscheme
--- vim.cmd("colorscheme rose-pine-moon")
--- vim.cmd("colorscheme catppuccin")
--- vim.cmd("colorscheme biscuit")
--- vim.cmd("colorscheme shades_of_purple")
-vim.cmd("colorscheme rosepine")
+-- vim.cmd.colorscheme("rose-pine-moon")
+-- vim.cmd.colorscheme("catppuccin")
+vim.cmd.colorscheme("catppuccin-mocha")
+-- vim.cmd.colorscheme("biscuit")
+-- vim.cmd.colorscheme("shades_of_purple")
+-- vim.cmd.colorscheme("rose-pine")
 
 -- load telescope extensions
 require("telescope").load_extension("fzf")
