@@ -82,14 +82,14 @@ vim.keymap.set("n", "<leader>o", ":tabonly<cr>:only<CR>", { silent = true })
 
 
 vim.api.nvim_set_hl(0, "DiagnosticSignError", { fg = "#ff5555", bg = "NONE" })
-vim.api.nvim_set_hl(0, "DiagnosticSignWarn",  { fg = "#f1fa8c", bg = "NONE" })
-vim.api.nvim_set_hl(0, "DiagnosticSignInfo",  { fg = "#8be9fd", bg = "NONE" })
-vim.api.nvim_set_hl(0, "DiagnosticSignHint",  { fg = "#50fa7b", bg = "NONE" })
+vim.api.nvim_set_hl(0, "DiagnosticSignWarn", { fg = "#f1fa8c", bg = "NONE" })
+vim.api.nvim_set_hl(0, "DiagnosticSignInfo", { fg = "#8be9fd", bg = "NONE" })
+vim.api.nvim_set_hl(0, "DiagnosticSignHint", { fg = "#50fa7b", bg = "NONE" })
 
-vim.fn.sign_define("DiagnosticSignError", {text = icons.diagnostics.Error, texthl = "DiagnosticSignError"})
-vim.fn.sign_define("DiagnosticSignWarn",  {text = icons.diagnostics.Warn, texthl = "DiagnosticSignWarn"})
-vim.fn.sign_define("DiagnosticSignInfo",  {text = icons.diagnostics.Info, texthl = "DiagnosticSignInfo"})
-vim.fn.sign_define("DiagnosticSignHint",  {text = icons.diagnostics.Hint, texthl = "DiagnosticSignHint"})
+vim.fn.sign_define("DiagnosticSignError", { text = icons.diagnostics.Error, texthl = "DiagnosticSignError" })
+vim.fn.sign_define("DiagnosticSignWarn", { text = icons.diagnostics.Warn, texthl = "DiagnosticSignWarn" })
+vim.fn.sign_define("DiagnosticSignInfo", { text = icons.diagnostics.Info, texthl = "DiagnosticSignInfo" })
+vim.fn.sign_define("DiagnosticSignHint", { text = icons.diagnostics.Hint, texthl = "DiagnosticSignHint" })
 
 
 -- Setup lazy.nvim
@@ -794,6 +794,8 @@ require("lazy").setup({
             { "<leader>fg",       function() Snacks.picker.git_files() end,                               desc = "Find Git Files" },
             { "<leader>fp",       function() Snacks.picker.projects() end,                                desc = "Projects" },
             { "<leader>fr",       function() Snacks.picker.recent() end,                                  desc = "Recent" },
+            { "<leader>fR",       function() Snacks.picker.resume() end,                                  desc = "Resume", },
+            { "<leader>fi",       function() Snacks.picker.icons() end,                                   desc = "Icons", },
 
             { "<leader>a",        function() Snacks.picker.lines() end,                                   desc = "Buffer Lines" },
             { "<leader>z",        "<cmd>BLines<cr>",                                                      desc = "FZF Buffer Lines" },
@@ -1016,6 +1018,17 @@ require("lazy").setup({
 
         }
     },
+
+    -- {
+    --     "vague2k/huez.nvim",
+    --     -- if you want registry related features, uncomment this
+    --     -- import = "huez-manager.import"
+    --     branch = "stable",
+    --     event = "UIEnter",
+    --     config = function()
+    --         require("huez").setup({})
+    --     end,
+    -- },
 
     --- plugin end
     ---
