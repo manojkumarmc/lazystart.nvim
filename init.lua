@@ -23,6 +23,7 @@ vim.opt.laststatus = 3
 vim.opt.pumheight = 10
 vim.opt.scrolloff = 3
 vim.opt.sidescrolloff = 3
+vim.opt.clipboard:append("unnamedplus")
 
 vim.opt.tabstop = 4       -- 4 spaces for tabs (prettier default)
 vim.opt.shiftwidth = 4    -- 4 spaces for indent width
@@ -246,8 +247,7 @@ require("lazy").setup({
             },
         },
         keys = {
-            { "<leader>sc", "<cmd>Telescope neoclip<cr>", desc = "Search clipboard" },
-            { "<leader>si", "<cmd>Telescope import<cr>",  desc = "Search imports" },
+            { "<leader>si", "<cmd>Telescope import<cr>", desc = "Search imports" },
         },
         dependencies = { "nvim-lua/plenary.nvim" },
         extensions = {
@@ -472,7 +472,38 @@ require("lazy").setup({
     { "dterei/VimCobaltColourScheme" },
     { "gregsexton/Gravity" },
     { "ryross/ryderbeans" },
-    -- { "daviddavis/vim-colorpack" },
+    { "yorumicolors/yorumi.nvim" },
+    {
+        "datsfilipe/vesper.nvim",
+        config = function()
+            require('vesper').setup({
+                transparent = false,   -- Boolean: Sets the background to transparent
+                italics = {
+                    comments = false,  -- Boolean: Italicizes comments
+                    keywords = false,  -- Boolean: Italicizes keywords
+                    functions = false, -- Boolean: Italicizes functions
+                    strings = false,   -- Boolean: Italicizes strings
+                    variables = false, -- Boolean: Italicizes variables
+                },
+                overrides = {},        -- A dictionary of group names, can be a function returning a dictionary or a table.
+                palette_overrides = {}
+            })
+        end
+    },
+    {
+        "wnkz/monoglow.nvim",
+        lazy = false,
+        priority = 1000,
+        opts = {},
+    },
+    {
+        "lalitmee/cobalt2.nvim",
+        event = { "ColorSchemePre" },
+        dependencies = { "tjdevries/colorbuddy.nvim", tag = "v1.0.0" },
+        init = function()
+            require("colorbuddy").colorscheme("cobalt2")
+        end,
+    },
 
     {
         "kevinhwang91/nvim-hlslens",
@@ -638,7 +669,8 @@ require("lazy").setup({
         config = function()
             require("toggleterm").setup({
                 open_mapping = [[<c-\>]],
-                direction = "float",
+                direction = "horizontal",
+                width = "100",
                 shade_terminals = true,
                 shading_factor = "75",
                 shell = vim.o.shell,
@@ -713,8 +745,8 @@ require("lazy").setup({
             require('neo-tree').setup({
                 filesystem = {
                     follow_current_file = {
-                        enabled = true,          -- This will find and focus the file in the active buffer every time
-                        leave_dirs_open = false, -- `false` closes auto expanded dirs, such as with `:Neotree reveal`
+                        enabled = true,         -- This will find and focus the file in the active buffer every time
+                        leave_dirs_open = true, -- `false` closes auto expanded dirs, such as with `:Neotree reveal`
                     },
                 }
             })
@@ -740,12 +772,19 @@ require("lazy").setup({
         priority = 1000,
         lazy = false,
         opts = {
-            image = { enabled = true },
+            image = {
+                enabled = true,
+                max_width = 600,
+                max_height = 300,
+            },
             bigfile = { enabled = true },
             scroll = { enabled = true },
             words = { enabled = true },
             lazygit = { enabled = true },
-            explorer = { enabled = true, layout = { position = "left" } },
+            explorer = {
+                enabled = true,
+                layout = { position = "left" },
+            },
             picker = {
                 enabled = true,
                 sources = {
@@ -792,7 +831,7 @@ require("lazy").setup({
             { "<leader>ff",       function() Snacks.picker.files() end,                                   desc = "Find Files" },
             { "<leader>fc",       function() Snacks.picker.files({ cwd = vim.fn.stdpath("config") }) end, desc = "Find Config File" },
             { "<leader>fg",       function() Snacks.picker.git_files() end,                               desc = "Find Git Files" },
-            { "<leader>fp",       function() Snacks.picker.projects() end,                                desc = "Projects" },
+            { "<leader>fp",       "<cmd>Telescope projects<cr>",                                          desc = "Projects" },
             { "<leader>fr",       function() Snacks.picker.recent() end,                                  desc = "Recent" },
             { "<leader>fR",       function() Snacks.picker.resume() end,                                  desc = "Resume", },
             { "<leader>fi",       function() Snacks.picker.icons() end,                                   desc = "Icons", },
@@ -818,17 +857,14 @@ require("lazy").setup({
     {
         "ahmedkhalf/project.nvim",
         config = function()
-            require("project_nvim").setup({})
-        end,
-    },
-
-    {
-        "AckslD/nvim-neoclip.lua",
-        dependencies = {
-            { "nvim-telescope/telescope.nvim" },
-        },
-        config = function()
-            require("neoclip").setup({})
+            require("project_nvim").setup({
+                sync_root_with_cwd = true,
+                respect_buf_cwd = true,
+                update_focused_file = {
+                    enable = true,
+                    update_root = true
+                },
+            })
         end,
     },
 
@@ -974,7 +1010,12 @@ require("lazy").setup({
     },
 
     -- Markdown new line manager
-    { "bullets-vim/bullets.vim" },
+    {
+        "bullets-vim/bullets.vim",
+        config = function()
+            vim.g.bullets_delete_last_bullet_if_empty = 0
+        end
+    },
 
     -- search ahead
     {
@@ -1029,6 +1070,41 @@ require("lazy").setup({
     --         require("huez").setup({})
     --     end,
     -- },
+    --
+
+    {
+        "javiorfo/nvim-soil",
+        dependencies = { 'javiorfo/nvim-nyctophilia' },
+        lazy = true,
+        ft = "plantuml",
+        opts = {
+            actions = {
+                redraw = false
+            },
+            puml_jar = "~/projects/software/plantuml-1.2025.2.jar",
+            image = {
+                darkmode = false, -- Enable or disable darkmode
+                format = "png",   -- Choose between png or svg
+                execute_to_open = function(img)
+                    return "feh " .. img
+                end
+            }
+        },
+
+    },
+
+    {
+        "kelly-lin/ranger.nvim",
+        config = function()
+            require("ranger-nvim").setup({ replace_netrw = true })
+            vim.api.nvim_set_keymap("n", "<leader>ef", "", {
+                noremap = true,
+                callback = function()
+                    require("ranger-nvim").open(true)
+                end,
+            })
+        end,
+    },
 
     --- plugin end
     ---
@@ -1279,7 +1355,43 @@ wk.add({
 })
 
 -- load telescope extensions
-require("telescope").load_extension("neoclip")
 require("telescope").load_extension("import")
 
 require("luasnip.loaders.from_vscode").lazy_load()
+
+-- Mapping selecting mappings
+vim.keymap.set('n', '<leader><Tab>', '<plug>(fzf-maps-n)', { desc = "Normal maps", silent = true })
+vim.keymap.set('x', '<leader><Tab>', '<plug>(fzf-maps-x)', { desc = "Visual maps", silent = true })
+vim.keymap.set('o', '<leader><Tab>', '<plug>(fzf-maps-o)', { desc = "o mode", silent = true })
+
+-- Insert mode completion
+vim.keymap.set('i', '<C-x><C-k>', '<plug>(fzf-complete-word)', { desc = "Complete Word", silent = true })
+vim.keymap.set('i', '<C-x><C-f>', '<plug>(fzf-complete-path)', { desc = "Complete Path", silent = true })
+vim.keymap.set('i', '<C-x><C-b>', '<plug>(fzf-complete-buffer-line)', { desc = "Complete BLines", silent = true })
+vim.keymap.set('i', '<C-x><C-l>', '<plug>(fzf-complete-line)', { desc = "Complete Lines", silent = true })
+
+local function go_to_project_root()
+    local root_markers = { ".git", "package.json", "Makefile" }
+    local path = vim.fn.expand("%:p:h")
+    local root = nil
+
+    while path ~= "/" do
+        for _, marker in ipairs(root_markers) do
+            if vim.fn.glob(path .. "/" .. marker) ~= "" then
+                root = path
+                break
+            end
+        end
+        if root then break end
+        path = vim.fn.fnamemodify(path, ":h")
+    end
+
+    if root then
+        vim.cmd("cd " .. root)
+        print("Moved to project root: " .. root)
+    else
+        print("No project root found")
+    end
+end
+
+vim.api.nvim_create_user_command("ProjectRoot", go_to_project_root, {})
