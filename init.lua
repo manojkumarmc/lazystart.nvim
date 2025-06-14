@@ -21,7 +21,7 @@ vim.opt.writebackup = false
 vim.opt.swapfile = false
 vim.opt.laststatus = 3
 vim.opt.pumheight = 10
-vim.opt.scrolloff = 3
+vim.opt.scrolloff = 5
 vim.opt.sidescrolloff = 3
 vim.opt.clipboard:append("unnamedplus")
 
@@ -81,17 +81,10 @@ vim.keymap.set("n", "<leader>j", ":cnext<CR>", { silent = true })
 vim.keymap.set("n", "<leader>k", ":cprevious<CR>", { silent = true })
 vim.keymap.set("n", "<leader>o", ":tabonly<cr>:only<CR>", { silent = true })
 
-
-vim.api.nvim_set_hl(0, "DiagnosticSignError", { fg = "#ff5555", bg = "NONE" })
-vim.api.nvim_set_hl(0, "DiagnosticSignWarn", { fg = "#f1fa8c", bg = "NONE" })
-vim.api.nvim_set_hl(0, "DiagnosticSignInfo", { fg = "#8be9fd", bg = "NONE" })
-vim.api.nvim_set_hl(0, "DiagnosticSignHint", { fg = "#50fa7b", bg = "NONE" })
-
-vim.fn.sign_define("DiagnosticSignError", { text = icons.diagnostics.Error, texthl = "DiagnosticSignError" })
-vim.fn.sign_define("DiagnosticSignWarn", { text = icons.diagnostics.Warn, texthl = "DiagnosticSignWarn" })
-vim.fn.sign_define("DiagnosticSignInfo", { text = icons.diagnostics.Info, texthl = "DiagnosticSignInfo" })
-vim.fn.sign_define("DiagnosticSignHint", { text = icons.diagnostics.Hint, texthl = "DiagnosticSignHint" })
-
+-- for type, icon in pairs(icons.diagnostics) do
+--     local hl = "DiagnosticSign" .. type
+--     vim.fn.sign_define(hl, { text = icon, texthl = hl, numhl = "" })
+-- end
 
 -- Setup lazy.nvim
 local lazypath = vim.fn.stdpath("data") .. "/lazy/lazy.nvim"
@@ -142,6 +135,33 @@ require("lazy").setup({
         },
     },
 
+    {
+        "saghen/blink.cmp",
+        -- optional: provides snippets for the snippet source
+        dependencies = { "rafamadriz/friendly-snippets" },
+        version = "1.*",
+        opts = {
+            -- 'default' (recommended) for mappings similar to built-in completions (C-y to accept)
+            -- 'super-tab' for mappings similar to vscode (tab to accept)
+            -- 'enter' for enter to accept
+            -- 'none' for no mappings
+            --
+            -- All presets have the following mappings:
+            -- C-space: Open menu or open docs if already open
+            -- C-n/C-p or Up/Down: Select next/previous item
+            -- C-e: Hide menu
+            -- C-k: Toggle signature help (if signature.enabled = true)
+            --
+            -- See :h blink-cmp-config-keymap for defining your own keymap
+            keymap = { preset = "default" },
+            appearance = {
+                use_nvim_cmp_as_default = false,
+                nerd_font_variant = "mono",
+            },
+            signature = { enabled = true },
+        },
+    },
+
     -- LSP
     {
         "junnplus/lsp-setup.nvim",
@@ -152,6 +172,8 @@ require("lazy").setup({
         },
         config = function()
             require("lsp-setup").setup({
+                -- capabilities = capabilities,
+                capabilities = require("blink.cmp").get_lsp_capabilities(),
                 servers = {
                     pyright = {},
                     rust_analyzer = {},
@@ -161,7 +183,7 @@ require("lazy").setup({
                     marksman = {},
                     dockerls = {},
                     helm_ls = {},
-                    biome = {},
+                    ts_ls = {},
                     yamlls = {
                         settings = {
                             yaml = {
@@ -187,17 +209,17 @@ require("lazy").setup({
                             RepeatedWords = true,
                             Spaces = true,
                             Matcher = true,
-                            CorrectNumberSuffix = true
+                            CorrectNumberSuffix = true,
                         },
                         codeActions = {
-                            ForceStable = false
+                            ForceStable = false,
                         },
                         markdown = {
-                            IgnoreLinkTitle = false
+                            IgnoreLinkTitle = false,
                         },
                         diagnosticSeverity = "hint",
                         isolateEnglish = false,
-                        dialect = "American"
+                        dialect = "American",
                     },
                 },
                 inlay_hints = {
@@ -216,15 +238,21 @@ require("lazy").setup({
             "rafamadriz/friendly-snippets",
         },
     },
+
+    -- {
+    --     "hrsh7th/nvim-cmp",
+    --     dependencies = {
+    --         "L3MON4D3/LuaSnip",
+    --         "saadparwaiz1/cmp_luasnip",
+    --         "hrsh7th/cmp-nvim-lsp",
+    --         "hrsh7th/cmp-buffer",
+    --         "hrsh7th/cmp-path",
+    --     },
+    -- },
+
     {
-        "hrsh7th/nvim-cmp",
-        dependencies = {
-            "L3MON4D3/LuaSnip",
-            "saadparwaiz1/cmp_luasnip",
-            "hrsh7th/cmp-nvim-lsp",
-            "hrsh7th/cmp-buffer",
-            "hrsh7th/cmp-path",
-        },
+        "mason-org/mason.nvim",
+        opts = {},
     },
 
     -- Fuzzy finder
@@ -286,6 +314,14 @@ require("lazy").setup({
         event = "VeryLazy",
         opts = {},
     },
+    -- Pair matching characters
+    {
+        "windwp/nvim-autopairs",
+        event = "InsertEnter",
+        opts = {
+            disable_filetype = { "TelescopePrompt", "vim" },
+        },
+    },
 
     -- For formatting code
     {
@@ -304,15 +340,6 @@ require("lazy").setup({
                 rust = { "rustfmt" },
             },
             -- format_on_save = {}, == this needs to be uncommented for the prebufwrite to work
-        },
-    },
-
-    -- Pair matching characters
-    {
-        "windwp/nvim-autopairs",
-        event = "InsertEnter",
-        opts = {
-            disable_filetype = { "TelescopePrompt", "vim" },
         },
     },
 
@@ -420,11 +447,11 @@ require("lazy").setup({
         config = function()
             -- vim.cmd.highlight('IndentLine guifg=#8b8c80')
             -- vim.cmd.highlight('IndentLineCurrent guifg=#8b8c80')
-            vim.cmd.highlight('IndentLine guifg=#43393c')
-            vim.cmd.highlight('IndentLineCurrent guifg=#43393c')
+            vim.cmd.highlight("IndentLine guifg=#43393c")
+            vim.cmd.highlight("IndentLineCurrent guifg=#43393c")
             require("indentmini").setup({
                 exclude = { "markdown", "startify" },
-                only_current = true
+                only_current = true,
             })
         end,
     },
@@ -476,7 +503,7 @@ require("lazy").setup({
     {
         "datsfilipe/vesper.nvim",
         config = function()
-            require('vesper').setup({
+            require("vesper").setup({
                 transparent = false,   -- Boolean: Sets the background to transparent
                 italics = {
                     comments = false,  -- Boolean: Italicizes comments
@@ -486,9 +513,9 @@ require("lazy").setup({
                     variables = false, -- Boolean: Italicizes variables
                 },
                 overrides = {},        -- A dictionary of group names, can be a function returning a dictionary or a table.
-                palette_overrides = {}
+                palette_overrides = {},
             })
-        end
+        end,
     },
     {
         "wnkz/monoglow.nvim",
@@ -543,10 +570,10 @@ require("lazy").setup({
         "Wansmer/treesj",
         dependencies = { "nvim-treesitter/nvim-treesitter" },
         -- keys = { '<space>m', '<space>j', '<space>s' },
-        keys = { '<space>m', '<space>j' },
+        keys = { "<space>m", "<space>j" },
         config = function()
             require("treesj").setup({
-                max_join_length = 2400,
+                max_join_length = 4800,
             })
         end,
     },
@@ -631,7 +658,10 @@ require("lazy").setup({
     { "mfussenegger/nvim-dap" },
     {
         "rcarriga/nvim-dap-ui",
-        dependencies = { "mfussenegger/nvim-dap", "nvim-neotest/nvim-nio" },
+        dependencies = {
+            "mfussenegger/nvim-dap",
+            "nvim-neotest/nvim-nio",
+        },
         config = function()
             require("dapui").setup()
         end,
@@ -742,13 +772,13 @@ require("lazy").setup({
             -- "3rd/image.nvim", -- Optional image support in preview window: See `# Preview Mode` for more information
         },
         config = function()
-            require('neo-tree').setup({
+            require("neo-tree").setup({
                 filesystem = {
                     follow_current_file = {
                         enabled = true,         -- This will find and focus the file in the active buffer every time
                         leave_dirs_open = true, -- `false` closes auto expanded dirs, such as with `:Neotree reveal`
                     },
-                }
+                },
             })
         end,
         keys = {
@@ -805,7 +835,7 @@ require("lazy").setup({
                 },
                 icons = {
                     files = {
-                        enabled = false, -- show file icons
+                        enabled = true, -- show file icons
                     },
                 },
                 formatters = {
@@ -813,42 +843,212 @@ require("lazy").setup({
                         filename_first = true, -- display filename before the file path
                     },
                 },
-            }
+            },
         },
         keys = {
-            { "<leader>lg",       function() Snacks.lazygit.open() end,                                   desc = "Lazygit", },
-            { "<leader>ll",       function() Snacks.lazygit.log() end,                                    desc = "Lazygit logs", },
-            { "<leader>lf",       function() Snacks.lazygit.log_file() end,                               desc = "Lazygit file logs", },
-
-            { "<leader>gb",       function() Snacks.picker.git_branches() end,                            desc = "Git Branches" },
-            { "<leader>gl",       function() Snacks.picker.git_log() end,                                 desc = "Git Log" },
-            { "<leader>gL",       function() Snacks.picker.git_log_line() end,                            desc = "Git Log Line" },
-            { "<leader>gs",       function() Snacks.picker.git_status() end,                              desc = "Git Status" },
-            { "<leader>gS",       function() Snacks.picker.git_stash() end,                               desc = "Git Stash" },
-            { "<leader>gd",       function() Snacks.picker.git_diff() end,                                desc = "Git Diff (Hunks)" },
-            { "<leader>gf",       function() Snacks.picker.git_log_file() end,                            desc = "Git Log File" },
-
-            { "<leader>ff",       function() Snacks.picker.files() end,                                   desc = "Find Files" },
-            { "<leader>fc",       function() Snacks.picker.files({ cwd = vim.fn.stdpath("config") }) end, desc = "Find Config File" },
-            { "<leader>fg",       function() Snacks.picker.git_files() end,                               desc = "Find Git Files" },
-            { "<leader>fp",       "<cmd>Telescope projects<cr>",                                          desc = "Projects" },
-            { "<leader>fr",       function() Snacks.picker.recent() end,                                  desc = "Recent" },
-            { "<leader>fR",       function() Snacks.picker.resume() end,                                  desc = "Resume", },
-            { "<leader>fi",       function() Snacks.picker.icons() end,                                   desc = "Icons", },
-
-            { "<leader>a",        function() Snacks.picker.lines() end,                                   desc = "Buffer Lines" },
-            { "<leader>z",        "<cmd>BLines<cr>",                                                      desc = "FZF Buffer Lines" },
-            { "<leader><leader>", function() Snacks.picker.buffers() end,                                 desc = "Buffers" },
-            { "<leader>sb",       function() Snacks.picker.grep_buffers() end,                            desc = "Grep Open Buffers" },
-            { "<leader>sz",       "<cmd>Lines<cr>",                                                       desc = "FZF Buffer Lines" },
-            { "<leader>sg",       function() Snacks.picker.grep() end,                                    desc = "Grep" },
-            { "<leader>sw",       function() Snacks.picker.grep_word() end,                               desc = "Visual selection or word", mode = { "n", "x" } },
-            { "<leader>su",       function() Snacks.picker.undo() end,                                    desc = "Undotree", },
-            { "<leader>sl",       function() Snacks.picker.colorschemes() end,                            desc = "Colorschemes", },
-
-            { "<leader>x",        function() Snacks.explorer() end,                                       desc = "File Explorer" },
-            { "<leader>cs",       function() Snacks.picker.lsp_symbols() end,                             desc = "Code Symbols" },
-            { "<leader>cz",       "<cmd>ZenMode<cr>",                                                     desc = "Zen mode" },
+            {
+                "<leader>lg",
+                function()
+                    Snacks.lazygit.open()
+                end,
+                desc = "Lazygit",
+            },
+            {
+                "<leader>ll",
+                function()
+                    Snacks.lazygit.log()
+                end,
+                desc = "Lazygit logs",
+            },
+            {
+                "<leader>lf",
+                function()
+                    Snacks.lazygit.log_file()
+                end,
+                desc = "Lazygit file logs",
+            },
+            {
+                "<leader>gb",
+                function()
+                    Snacks.picker.git_branches()
+                end,
+                desc = "Git Branches",
+            },
+            {
+                "<leader>gl",
+                function()
+                    Snacks.picker.git_log()
+                end,
+                desc = "Git Log",
+            },
+            {
+                "<leader>gL",
+                function()
+                    Snacks.picker.git_log_line()
+                end,
+                desc = "Git Log Line",
+            },
+            {
+                "<leader>gs",
+                function()
+                    Snacks.picker.git_status()
+                end,
+                desc = "Git Status",
+            },
+            {
+                "<leader>gS",
+                function()
+                    Snacks.picker.git_stash()
+                end,
+                desc = "Git Stash",
+            },
+            {
+                "<leader>gd",
+                function()
+                    Snacks.picker.git_diff()
+                end,
+                desc = "Git Diff (Hunks)",
+            },
+            {
+                "<leader>gf",
+                function()
+                    Snacks.picker.git_log_file()
+                end,
+                desc = "Git Log File",
+            },
+            {
+                "<leader>ff",
+                function()
+                    Snacks.picker.files()
+                end,
+                desc = "Find Files",
+            },
+            {
+                "<leader>fn",
+                function()
+                    require("telescope.builtin").find_files({ cwd = vim.fn.expand("%:p:h") })
+                end,
+                desc = "Find Dir Files",
+            },
+            {
+                "<leader>fc",
+                function()
+                    Snacks.picker.files({ cwd = vim.fn.stdpath("config") })
+                end,
+                desc = "Find Config File",
+            },
+            {
+                "<leader>fg",
+                function()
+                    Snacks.picker.git_files()
+                end,
+                desc = "Find Git Files",
+            },
+            {
+                "<leader>fp",
+                "<cmd>Telescope projects<cr>",
+                desc = "Projects",
+            },
+            {
+                "<leader>fr",
+                function()
+                    Snacks.picker.recent()
+                end,
+                desc = "Recent",
+            },
+            {
+                "<leader>fR",
+                function()
+                    Snacks.picker.resume()
+                end,
+                desc = "Resume",
+            },
+            {
+                "<leader>fi",
+                function()
+                    Snacks.picker.icons()
+                end,
+                desc = "Icons",
+            },
+            {
+                "<leader>a",
+                function()
+                    Snacks.picker.lines()
+                end,
+                desc = "Buffer Lines",
+            },
+            {
+                "<leader>z",
+                "<cmd>BLines<cr>",
+                desc = "FZF Buffer Lines",
+            },
+            {
+                "<leader><leader>",
+                function()
+                    Snacks.picker.buffers()
+                end,
+                desc = "Buffers",
+            },
+            {
+                "<leader>sb",
+                function()
+                    Snacks.picker.grep_buffers()
+                end,
+                desc = "Grep Open Buffers",
+            },
+            {
+                "<leader>sz",
+                "<cmd>Lines<cr>",
+                desc = "FZF Buffer Lines",
+            },
+            {
+                "<leader>sg",
+                function()
+                    Snacks.picker.grep()
+                end,
+                desc = "Grep",
+            },
+            {
+                "<leader>sw",
+                function()
+                    Snacks.picker.grep_word()
+                end,
+                desc = "Visual selection or word",
+                mode = { "n", "x" },
+            },
+            {
+                "<leader>su",
+                function()
+                    Snacks.picker.undo()
+                end,
+                desc = "Undotree",
+            },
+            {
+                "<leader>sl",
+                function()
+                    Snacks.picker.colorschemes()
+                end,
+                desc = "Colorschemes",
+            },
+            {
+                "<leader>x",
+                function()
+                    Snacks.explorer()
+                end,
+                desc = "File Explorer",
+            },
+            {
+                "<leader>cs",
+                function()
+                    Snacks.picker.lsp_symbols()
+                end,
+                desc = "Code Symbols",
+            },
+            {
+                "<leader>cz",
+                "<cmd>ZenMode<cr>",
+                desc = "Zen mode",
+            },
         },
     },
 
@@ -862,7 +1062,7 @@ require("lazy").setup({
                 respect_buf_cwd = true,
                 update_focused_file = {
                     enable = true,
-                    update_root = true
+                    update_root = true,
                 },
             })
         end,
@@ -873,19 +1073,19 @@ require("lazy").setup({
         dependencies = "nvim-telescope/telescope.nvim",
     },
 
-    {
-        "neovim/nvim-lspconfig",
-        dependencies = {
-            {
-                "SmiteshP/nvim-navbuddy",
-                dependencies = {
-                    "SmiteshP/nvim-navic",
-                    "MunifTanjim/nui.nvim",
-                },
-                opts = { lsp = { auto_attach = true } },
-            },
-        },
-    },
+    -- {
+    --     "neovim/nvim-lspconfig",
+    --     dependencies = {
+    --         {
+    --             "SmiteshP/nvim-navbuddy",
+    --             dependencies = {
+    --                 "SmiteshP/nvim-navic",
+    --                 "MunifTanjim/nui.nvim",
+    --             },
+    --             opts = { lsp = { auto_attach = true } },
+    --         },
+    --     },
+    -- },
 
     {
         "rachartier/tiny-inline-diagnostic.nvim",
@@ -973,25 +1173,46 @@ require("lazy").setup({
         opts = {}, -- for default options, refer to the configuration section for custom setup.
         cmd = "Trouble",
         keys = {
-            { "<leader>ce", "<cmd>Trouble diagnostics toggle<cr>",                        desc = "Diagnostics (Trouble)", },
-            { "<leader>cd", "<cmd>Trouble diagnostics toggle filter.buf=0<cr>",           desc = "Buffer Diagnostics (Trouble)", },
-            { "<leader>cl", "<cmd>Trouble lsp toggle focus=false win.position=right<cr>", desc = "LSP Definitions / references / ... (Trouble)", },
-            { "<leader>xL", "<cmd>Trouble loclist toggle<cr>",                            desc = "Location List (Trouble)", },
-            { "<leader>xQ", "<cmd>Trouble qflist toggle<cr>",                             desc = "Quickfix List (Trouble)", },
+            {
+                "<leader>ce",
+                "<cmd>Trouble diagnostics toggle<cr>",
+                desc = "Diagnostics (Trouble)",
+            },
+            {
+                "<leader>cd",
+                "<cmd>Trouble diagnostics toggle filter.buf=0<cr>",
+                desc = "Buffer Diagnostics (Trouble)",
+            },
+            {
+                "<leader>cl",
+                "<cmd>Trouble lsp toggle focus=false win.position=right<cr>",
+                desc = "LSP Definitions / references / ... (Trouble)",
+            },
+            {
+                "<leader>xL",
+                "<cmd>Trouble loclist toggle<cr>",
+                desc = "Location List (Trouble)",
+            },
+            {
+                "<leader>xQ",
+                "<cmd>Trouble qflist toggle<cr>",
+                desc = "Quickfix List (Trouble)",
+            },
         },
     },
 
     {
-        'MeanderingProgrammer/render-markdown.nvim',
-        dependencies = { "nvim-treesitter/nvim-treesitter", "nvim-tree/nvim-web-devicons" }, -- if you prefer nvim-web-devicons
-        ---@module 'render-markdown'
-        ---@type render.md.UserConfig
+        "MeanderingProgrammer/render-markdown.nvim",
+        dependencies = {
+            "nvim-treesitter/nvim-treesitter",
+            "nvim-tree/nvim-web-devicons",
+        },
         opts = {},
         config = function()
             require("render-markdown").setup({
                 completions = { lsp = { enabled = true } },
             })
-        end
+        end,
     },
 
     {
@@ -1014,7 +1235,7 @@ require("lazy").setup({
         "bullets-vim/bullets.vim",
         config = function()
             vim.g.bullets_delete_last_bullet_if_empty = 0
-        end
+        end,
     },
 
     -- search ahead
@@ -1023,15 +1244,28 @@ require("lazy").setup({
         event = "VeryLazy",
         opts = {},
         keys = {
-            { "s", mode = { "n", "x", "o" }, function() require("flash").jump() end,              desc = "Flash" },
-            { "R", mode = { "o", "x" },      function() require("flash").treesitter_search() end, desc = "Treesitter Search" },
+            {
+                "s",
+                mode = { "n", "x", "o" },
+                function()
+                    require("flash").jump()
+                end,
+                desc = "Flash",
+            },
+            {
+                "R",
+                mode = { "o", "x" },
+                function()
+                    require("flash").treesitter_search()
+                end,
+                desc = "Treesitter Search",
+            },
         },
     },
 
     {
         "folke/twilight.nvim",
-        opts = {
-        }
+        opts = {},
     },
     {
         "folke/zen-mode.nvim",
@@ -1056,30 +1290,17 @@ require("lazy").setup({
                 },
                 twilight = { enabled = true }, -- enable to start Twilight when zen mode opens
             },
-
-        }
+        },
     },
-
-    -- {
-    --     "vague2k/huez.nvim",
-    --     -- if you want registry related features, uncomment this
-    --     -- import = "huez-manager.import"
-    --     branch = "stable",
-    --     event = "UIEnter",
-    --     config = function()
-    --         require("huez").setup({})
-    --     end,
-    -- },
-    --
 
     {
         "javiorfo/nvim-soil",
-        dependencies = { 'javiorfo/nvim-nyctophilia' },
+        dependencies = { "javiorfo/nvim-nyctophilia" },
         lazy = true,
         ft = "plantuml",
         opts = {
             actions = {
-                redraw = false
+                redraw = false,
             },
             puml_jar = "~/projects/software/plantuml-1.2025.2.jar",
             image = {
@@ -1087,10 +1308,9 @@ require("lazy").setup({
                 format = "png",   -- Choose between png or svg
                 execute_to_open = function(img)
                     return "feh " .. img
-                end
-            }
+                end,
+            },
         },
-
     },
 
     {
@@ -1106,6 +1326,31 @@ require("lazy").setup({
         end,
     },
 
+    {
+        "claydugo/browsher.nvim",
+        event = "VeryLazy",
+        config = function()
+            require("browsher").setup({
+                providers = {
+                    ["github.ibm.com"] = {
+                        url_template = "%s/blob/%s/%s",
+                        single_line_format = "#L%d",
+                        multi_line_format = "#L%d-L%d",
+                    },
+                },
+            })
+        end,
+    },
+
+    {
+        "HakonHarnes/img-clip.nvim",
+        event = "VeryLazy",
+        opts = {},
+        keys = {
+            { "<leader>xi", "<cmd>PasteImage<cr>", desc = "Paste image from system clipboard" },
+        },
+    },
+
     --- plugin end
     ---
 })
@@ -1114,63 +1359,6 @@ require("lazy").setup({
 require("Comment").setup({
     pre_hook = require("ts_context_commentstring.integrations.comment_nvim").create_pre_hook(),
 })
-
--- Set up nvim-cmp
-local cmp_autopairs = require("nvim-autopairs.completion.cmp")
-local luasnip = require("luasnip")
-local cmp = require("cmp")
-
-cmp.setup({
-    snippet = {
-        expand = function(args)
-            luasnip.lsp_expand(args.body)
-        end,
-    },
-    mapping = cmp.mapping.preset.insert({
-        ["<C-Space>"] = cmp.mapping.complete(),
-        ["<CR>"] = cmp.mapping.confirm({
-            behavior = cmp.ConfirmBehavior.Replace,
-            select = true,
-        }),
-        ["<Tab>"] = cmp.mapping(function(fallback)
-            if cmp.visible() then
-                cmp.select_next_item()
-            elseif luasnip.expand_or_jumpable() then
-                luasnip.expand_or_jump()
-            else
-                fallback()
-            end
-        end, { "i", "s" }),
-        ["<S-Tab>"] = cmp.mapping(function(fallback)
-            if cmp.visible() then
-                cmp.select_prev_item()
-            elseif luasnip.jumpable(-1) then
-                luasnip.jump(-1)
-            else
-                fallback()
-            end
-        end, { "i", "s" }),
-    }),
-    sources = {
-        { name = "nvim_lsp",        max_item_count = 15 },
-        { name = "luasnip",         max_item_count = 5 },
-        { name = "buffer",          max_item_count = 8 },
-        { name = "path",            max_item_count = 5 },
-        { name = "render-markdown", max_item_count = 5 },
-    },
-    formatting = {
-        format = function(_, vim_item)
-            vim_item.abbr = string.sub(vim_item.abbr, 1, 20)
-            return vim_item
-        end,
-    },
-    window = {
-        completion = cmp.config.window.bordered(),
-        documentation = cmp.config.window.bordered(),
-    },
-})
-
-cmp.event:on("confirm_done", cmp_autopairs.on_confirm_done())
 
 -- -- Autoformat
 -- vim.api.nvim_create_autocmd("BufWritePre", {
@@ -1360,15 +1548,19 @@ require("telescope").load_extension("import")
 require("luasnip.loaders.from_vscode").lazy_load()
 
 -- Mapping selecting mappings
-vim.keymap.set('n', '<leader><Tab>', '<plug>(fzf-maps-n)', { desc = "Normal maps", silent = true })
-vim.keymap.set('x', '<leader><Tab>', '<plug>(fzf-maps-x)', { desc = "Visual maps", silent = true })
-vim.keymap.set('o', '<leader><Tab>', '<plug>(fzf-maps-o)', { desc = "o mode", silent = true })
+vim.keymap.set("n", "<leader><Tab>", "<plug>(fzf-maps-n)", { desc = "Normal maps", silent = true })
+vim.keymap.set("x", "<leader><Tab>", "<plug>(fzf-maps-x)", { desc = "Visual maps", silent = true })
+vim.keymap.set("o", "<leader><Tab>", "<plug>(fzf-maps-o)", { desc = "o mode", silent = true })
 
 -- Insert mode completion
-vim.keymap.set('i', '<C-x><C-k>', '<plug>(fzf-complete-word)', { desc = "Complete Word", silent = true })
-vim.keymap.set('i', '<C-x><C-f>', '<plug>(fzf-complete-path)', { desc = "Complete Path", silent = true })
-vim.keymap.set('i', '<C-x><C-b>', '<plug>(fzf-complete-buffer-line)', { desc = "Complete BLines", silent = true })
-vim.keymap.set('i', '<C-x><C-l>', '<plug>(fzf-complete-line)', { desc = "Complete Lines", silent = true })
+vim.keymap.set("i", "<C-x><C-k>", "<plug>(fzf-complete-word)", { desc = "Complete Word", silent = true })
+vim.keymap.set("i", "<C-x><C-f>", "<plug>(fzf-complete-path)", { desc = "Complete Path", silent = true })
+vim.keymap.set("i", "<C-x><C-b>", "<plug>(fzf-complete-buffer-line)", { desc = "Complete BLines", silent = true })
+vim.keymap.set("i", "<C-x><C-l>", "<plug>(fzf-complete-line)", { desc = "Complete Lines", silent = true })
+
+vim.keymap.set("n", "<leader>xl", '"*yy', { desc = "Yank line to clipboard" })
+vim.keymap.set("v", "<leader>xx", '"*y', { desc = "Yank selection to clipboard" })
+vim.keymap.set("v", "<leader>xp", '"*p', { desc = "Paste selection to buffer" })
 
 local function go_to_project_root()
     local root_markers = { ".git", "package.json", "Makefile" }
@@ -1382,7 +1574,9 @@ local function go_to_project_root()
                 break
             end
         end
-        if root then break end
+        if root then
+            break
+        end
         path = vim.fn.fnamemodify(path, ":h")
     end
 
@@ -1395,3 +1589,98 @@ local function go_to_project_root()
 end
 
 vim.api.nvim_create_user_command("ProjectRoot", go_to_project_root, {})
+
+vim.keymap.set("n", "<leader>td", function()
+    local current = vim.diagnostic.is_enabled()
+    vim.diagnostic.enable(not current)
+end, { desc = "Toggle Diagnostics" })
+
+vim.api.nvim_set_keymap("n", "<leader>tr", ':<C-u>call setreg("r", "$o|    |    |    |<Esc>^f|l")<CR>@r', {
+    noremap = true,
+    silent = true,
+    desc = "Insert new Markdown table row",
+})
+
+vim.diagnostic.config({
+    virtual_text = false, -- Set to true if you want inline diagnostics
+    signs = {
+        active = false, -- Enable signs
+        text = {
+            [vim.diagnostic.severity.ERROR] = "", -- UTF-8 character for cross/error symbol
+            [vim.diagnostic.severity.WARN] = "", -- UTF-8 character for warning symbol
+            [vim.diagnostic.severity.INFO] = "", -- UTF-8 character for info symbol
+            -- [vim.diagnostic.severity.HINT] = "",
+            -- [vim.diagnostic.severity.HINT] = "",
+            -- [vim.diagnostic.severity.HINT] = "",
+            -- [vim.diagnostic.severity.HINT] = "",
+            [vim.diagnostic.severity.HINT] = "󰛩",
+        },
+        linehl = {
+            [vim.diagnostic.severity.ERROR] = "DiagnosticSignError",
+            [vim.diagnostic.severity.WARN] = "NONE",
+            [vim.diagnostic.severity.INFO] = "NONE",
+            [vim.diagnostic.severity.HINT] = "NONE",
+        },
+    },
+})
+
+-- Example of how you might link custom highlight groups if your colorscheme doesn't define them
+-- (Add this to your init.lua after your colorscheme is loaded or in an autocmd for ColorScheme)
+vim.cmd([[highlight DiagnosticSignError guifg=#e51b5c guibg=NONE]]) -- Reddish
+vim.cmd([[highlight DiagnosticSignWarn guifg=#ff9900 guibg=NONE]])  -- Orangish
+vim.cmd([[highlight DiagnosticSignInfo guifg=#0088ff guibg=NONE]])  -- Bluish
+vim.cmd([[highlight DiagnosticSignHint guifg=#d1ce40 guibg=NONE]])  -- Greenish
+
+-- You might also want to set keymaps for navigating diagnostics
+vim.keymap.set("n", "[d", vim.diagnostic.goto_prev, { desc = "Go to previous diagnostic message" })
+vim.keymap.set("n", "]d", vim.diagnostic.goto_next, { desc = "Go to next diagnostic message" })
+vim.keymap.set("n", "gl", vim.diagnostic.open_float, { desc = "Open floating diagnostic message" })
+vim.keymap.set("n", "gq", vim.diagnostic.setloclist, { desc = "Open diagnostics in loclist" })
+
+local function insert_markdown_table_row()
+    local current_line = vim.api.nvim_get_current_line()
+    local row_pattern = "^%s*|.*|"            -- Matches lines that look like markdown table rows
+    local separator_pattern = "^%s*|%s*[-=:]" -- Matches the separator line
+
+    -- Check if the current line is part of a Markdown table
+    if not current_line:match(row_pattern) and not current_line:match(separator_pattern) then
+        print("Not on a Markdown table row.")
+        return
+    end
+
+    -- Save current cursor position
+    local current_col = vim.api.nvim_win_get_cursor(0)[2]
+    local current_row = vim.api.nvim_win_get_cursor(0)[1]
+
+    vim.api.nvim_feedkeys(vim.api.nvim_replace_termcodes("$", true, true, true), "n", false)
+    vim.api.nvim_feedkeys(vim.api.nvim_replace_termcodes("o", true, true, true), "n", false)
+    vim.api.nvim_feedkeys(vim.api.nvim_replace_termcodes("<Esc>", true, true, true), "n", false)
+
+    local line_to_copy = vim.api.nvim_get_current_line()
+    if line_to_copy:match(separator_pattern) then
+        vim.api.nvim_feedkeys(vim.api.nvim_replace_termcodes("k", true, true, true), "n", false)
+        line_to_copy = vim.api.nvim_get_current_line()
+        vim.api.nvim_feedkeys(vim.api.nvim_replace_termcodes("j", true, true, true), "n", false)
+    end
+
+    -- Extract just the pipes and spaces
+    local new_row_content = ""
+    for char in line_to_copy:gmatch("[|%s]") do
+        new_row_content = new_row_content .. char
+    end
+
+    new_row_content = new_row_content:gsub("([^|]+)", function(match)
+        return string.rep(" ", #match)
+    end)
+    new_row_content = new_row_content:gsub("^%s*|", "|"):gsub("|%s*$", "|")
+    new_row_content = new_row_content:gsub("|%s*", "| ")
+    vim.api.nvim_put({ new_row_content }, "l", false, true) -- 'l' for line-wise, false for not after, true for retain position
+    vim.api.nvim_feedkeys(vim.api.nvim_replace_termcodes("^f|l", true, true, true), "n", false)
+    vim.api.nvim_feedkeys(vim.api.nvim_replace_termcodes("i", true, true, true), "n", false)
+end
+
+vim.keymap.set("n", "<leader>tr", insert_markdown_table_row, {
+    noremap = true,
+    silent = true,
+    desc = "Insert new Markdown table row",
+})
