@@ -3,7 +3,6 @@ local vim = vim
 -- Basic settings
 vim.g.mapleader = " "
 vim.g.maplocalleader = " "
-vim.wo.wrap = false
 vim.opt.cursorline = true
 vim.opt.ignorecase = true
 vim.opt.incsearch = true
@@ -24,6 +23,9 @@ vim.opt.pumheight = 10
 vim.opt.scrolloff = 5
 vim.opt.sidescrolloff = 3
 vim.opt.clipboard:append("unnamedplus")
+vim.opt.autochdir = false
+vim.opt.wrap = false
+vim.opt.winborder = "rounded"
 
 vim.opt.tabstop = 4       -- 4 spaces for tabs (prettier default)
 vim.opt.shiftwidth = 4    -- 4 spaces for indent width
@@ -80,6 +82,8 @@ vim.keymap.set("n", "vs", ":vs<CR>")
 vim.keymap.set("n", "<leader>j", ":cnext<CR>", { silent = true })
 vim.keymap.set("n", "<leader>k", ":cprevious<CR>", { silent = true })
 vim.keymap.set("n", "<leader>o", ":tabonly<cr>:only<CR>", { silent = true })
+vim.keymap.set("v", "<leader>j", ":m '>+1<CR>gv=gv", { silent = true })
+vim.keymap.set("v", "<leader>k", ":m '>-2<CR>gv=gv", { silent = true })
 
 -- for type, icon in pairs(icons.diagnostics) do
 --     local hl = "DiagnosticSign" .. type
@@ -159,6 +163,45 @@ require("lazy").setup({
                 nerd_font_variant = "mono",
             },
             signature = { enabled = true },
+            completion = {
+                menu = {
+                    draw = {
+                        components = {
+                            kind_icon = {
+                                text = function(ctx)
+                                    local icon = ctx.kind_icon
+                                    if vim.tbl_contains({ "Path" }, ctx.source_name) then
+                                        local dev_icon, _ = require("nvim-web-devicons").get_icon(ctx.label)
+                                        if dev_icon then
+                                            icon = dev_icon
+                                        end
+                                    else
+                                        icon = require("lspkind").symbolic(ctx.kind, {
+                                            mode = "symbol",
+                                        })
+                                    end
+
+                                    return icon .. ctx.icon_gap
+                                end,
+
+                                -- Optionally, use the highlight groups from nvim-web-devicons
+                                -- You can also add the same function for `kind.highlight` if you want to
+                                -- keep the highlight groups in sync with the icons.
+                                highlight = function(ctx)
+                                    local hl = ctx.kind_hl
+                                    if vim.tbl_contains({ "Path" }, ctx.source_name) then
+                                        local dev_icon, dev_hl = require("nvim-web-devicons").get_icon(ctx.label)
+                                        if dev_icon then
+                                            hl = dev_hl
+                                        end
+                                    end
+                                    return hl
+                                end,
+                            }
+                        }
+                    }
+                }
+            }
         },
     },
 
@@ -1031,7 +1074,7 @@ require("lazy").setup({
                 desc = "Colorschemes",
             },
             {
-                "<leader>x",
+                "<leader>ee",
                 function()
                     Snacks.explorer()
                 end,
@@ -1345,10 +1388,47 @@ require("lazy").setup({
     {
         "HakonHarnes/img-clip.nvim",
         event = "VeryLazy",
-        opts = {},
         keys = {
             { "<leader>xi", "<cmd>PasteImage<cr>", desc = "Paste image from system clipboard" },
         },
+        config = function()
+            require("img-clip").setup({
+                default = {
+                    dir_path = "imgs",
+                    relative_to_current_file = true,
+                }
+            })
+        end
+    },
+
+    {
+        "onsails/lspkind.nvim",
+        enabled = not vim.g.fallback_icons_enabled,
+        opts = {
+            mode = "symbol",
+            symbol_map = {
+                Array = "󰅪",
+                Boolean = "⊨",
+                Class = "󰌗",
+                Constructor = "",
+                Key = "󰌆",
+                Namespace = "󰅪",
+                Null = "NULL",
+                Number = "#",
+                Object = "󰀚",
+                Package = "󰏗",
+                Property = "",
+                Reference = "",
+                Snippet = "",
+                String = "󰀬",
+                TypeParameter = "󰊄",
+                Unit = "",
+            },
+            menu = {},
+        },
+        config = function(_, opts)
+            require("lspkind").init(opts)
+        end,
     },
 
     --- plugin end
@@ -1560,7 +1640,7 @@ vim.keymap.set("i", "<C-x><C-l>", "<plug>(fzf-complete-line)", { desc = "Complet
 
 vim.keymap.set("n", "<leader>xl", '"*yy', { desc = "Yank line to clipboard" })
 vim.keymap.set("v", "<leader>xx", '"*y', { desc = "Yank selection to clipboard" })
-vim.keymap.set("v", "<leader>xp", '"*p', { desc = "Paste selection to buffer" })
+vim.keymap.set("n", "<leader>xp", '"*p', { desc = "Paste selection from buffer" })
 
 local function go_to_project_root()
     local root_markers = { ".git", "package.json", "Makefile" }
