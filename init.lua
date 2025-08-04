@@ -334,6 +334,7 @@ require("lazy").setup({
     {
         "nvim-telescope/telescope-fzf-native.nvim",
         build = "make",
+        cond = vim.fn.executable 'make' == 1,
     },
 
     -- Better syntax highlighting & much more
@@ -343,7 +344,12 @@ require("lazy").setup({
         config = function()
             local configs = require("nvim-treesitter.configs")
             configs.setup({
-                ensure_installed = "all",
+                ensure_installed = {
+                    "html", "css", "javascript", "typescript", "tsx", "json", "python", "go",
+                    "rust", "lua", "bash", "yaml", "toml", "dockerfile", "json", "csv", "markdown",
+                    "markdown_inline", "gitcommit", "git_rebase", "gitattributes", "gitignore",
+                    "make", "cmake", "sql", "regex", "vim", "vimdoc", "lua", "query",
+                },
                 highlight = { enable = true },
                 indent = { enable = true },
                 autotag = { enable = true, enable_close_on_slash = false },
@@ -993,14 +999,14 @@ require("lazy").setup({
                 desc = "Projects",
             },
             {
-                "<leader>fr",
+                "<leader>ft",
                 function()
                     Snacks.picker.recent()
                 end,
                 desc = "Recent",
             },
             {
-                "<leader>fR",
+                "<leader>fr",
                 function()
                     Snacks.picker.resume()
                 end,
@@ -1084,6 +1090,13 @@ require("lazy").setup({
                 "<leader>cs",
                 function()
                     Snacks.picker.lsp_symbols()
+                end,
+                desc = "Code Symbols",
+            },
+            {
+                "<leader>sh",
+                function()
+                    Snacks.picker.help()
                 end,
                 desc = "Code Symbols",
             },
