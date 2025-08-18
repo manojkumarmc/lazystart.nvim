@@ -8,6 +8,7 @@ vim.o.swapfile = false
 vim.g.mapleader = " "
 vim.o.winborder = "rounded"
 vim.o.clipboard = "unnamedplus"
+vim.env.NODE_OPTIONS = "--openssl-legacy-provider" -- for markdown-preview
 
 vim.keymap.set('n', '<leader>o', ':update<CR> :source<CR>')
 vim.keymap.set('n', '<leader>w', ':write<CR>')
@@ -27,7 +28,15 @@ vim.pack.add({
 	{ src = "https://github.com/WhoIsSethDaniel/mason-tool-installer.nvim" },
 	{ src = "https://github.com/numToStr/Comment.nvim" },
 	{ src = "https://github.com/nvim-tree/nvim-web-devicons" },
-	{ src = "https://github.com/ibhagwan/fzf-lua" }
+	{ src = "https://github.com/ibhagwan/fzf-lua" },
+	{ src = "https://github.com/kevinhwang91/nvim-bqf",                    { ft = "qf" } },
+	{ src = "https://github.com/iamcco/markdown-preview.nvim",             { ft = "markdown" } },
+	{ src = "https://github.com/MeanderingProgrammer/render-markdown.nvim" },
+	{ src = "https://github.com/cappyzawa/trim.nvim" },
+	{ src = "https://github.com/kg8m/vim-simple-align" },
+	{ src = "https://github.com/Wansmer/treesj",                           { keys = { '<space>m', '<space>j', '<space>s' } } },
+	{ src = "https://github.com/ahmedkhalf/project.nvim" }
+
 })
 
 vim.cmd("set completeopt+=noselect")
@@ -37,15 +46,39 @@ require "nvim-treesitter.configs".setup({
 	build = ":TSUpdate",
 	event = { "BufReadPost", "BufNewFile" },
 	ensure_installed = {
-		"html", "css", "javascript", "typescript", "tsx", "json", "python", "go",
-		"rust", "lua", "bash", "yaml", "toml", "dockerfile", "json", "csv", "markdown",
-		"markdown_inline", "gitcommit", "git_rebase", "gitattributes", "gitignore",
-		"make", "cmake", "sql", "regex", "vim", "vimdoc", "lua", "query",
+		"html", "css", "javascript", "typescript", "tsx", "json", "python", "go", "rust", "lua", "bash", "yaml",
+		"toml", "dockerfile", "json", "csv", "markdown", "markdown_inline", "gitcommit", "git_rebase",
+		"gitattributes", "gitignore", "make", "cmake", "sql", "regex", "vim", "vimdoc", "lua", "query",
 	},
 	highlight = { enable = true }
 })
-require "oil".setup()
+require "oil".setup({
+	restore_win_config = true,              -- keeps your window layout when opening/closing Oil
+	skip_confirm_for_simple_edits = true,
+	--
+	-- Respect the buffer’s cwd
+	-- Oil automatically updates the working directory based on navigation
+	float = {
+		-- optional: open Oil in a floating window
+		win_options = {
+			winblend = 10,
+		},
+	},
+
+	-- Focused file tracking
+	-- Oil automatically updates the root when you open or navigate to a file
+	keymaps = {
+		["<CR>"] = "actions.select",
+		["-"] = "actions.parent",
+	},
+})
 require "Comment".setup()
+require "render-markdown".setup()
+require "treesj".setup({
+	max_join_length = 2400,
+})
+require "project_nvim".setup()
+
 
 -- vim.keymap.set('n', '<leader>f', ":Pick files<CR>")
 vim.keymap.set('n', '<leader>f', ":FzfLua files<CR>")
@@ -53,10 +86,47 @@ vim.keymap.set('n', '<leader>z', ":FzfLua grep_curbuf<CR>")
 vim.keymap.set('n', '<leader>b', ":FzfLua buffers<CR>")
 vim.keymap.set('n', '<leader>h', ":FzfLua helptags<CR>")
 vim.keymap.set('n', '<leader>r', ":FzfLua resume<CR>")
+vim.keymap.set('n', '<leader>cj', ":FzfLua jumps<CR>")
+vim.keymap.set('n', '<leader>cm', ":FzfLua marks<CR>")
+vim.keymap.set('n', '<leader>g', ":FzfLua grep<CR>")
 vim.keymap.set('n', '<leader>w', ":FzfLua grep_cword<CR>")
 vim.keymap.set('v', '<leader>w', ":FzfLua grep_visual<CR>")
 vim.keymap.set('n', '-', ":Oil<CR>")
 vim.keymap.set('n', '<leader>cf', vim.lsp.buf.format)
+vim.keymap.set("n", "<leader>cd", function()
+	local diagnostics = vim.diagnostic.get(0)
+	local qf_items = vim.diagnostic.toqflist(diagnostics, { title = "Buffer Diagnostics" })
+	vim.fn.setqflist({}, " ", { items = qf_items })
+	vim.cmd("copen")
+end, { desc = "Populate quickfix with buffer diagnostics" })
+
+local fzf = require("fzf-lua")
+local project = require("project_nvim")
+-- Create a custom picker for recent projects
+local function recent_projects_picker()
+	-- Get recent projects from project_nvim
+	local projects = project.get_recent_projects() or {}
+	print(projects)
+	-- FzfLua picker
+	fzf.fzf_exec(projects, {
+		prompt = "Recent Projects> ",
+		actions = {
+			["default"] = function(selected)
+				local path = selected[1]
+				-- Change directory to the selected project
+				vim.cmd("cd " .. path)
+				print("Switched to project: " .. path)
+				fzf.files({
+                    cwd = path,          -- set cwd to the project path
+                    prompt = "Files> ",
+                })
+			end,
+		},
+	})
+end
+-- Keymap to open recent projects picker
+vim.keymap.set("n", "<leader>pr", recent_projects_picker, { desc = "Recent Projects" })
+
 
 -- vim.api.nvim_create_autocmd('LspAttach', {
 --     callback = function(ev)
@@ -137,7 +207,10 @@ vim.lsp.config('lua_ls', {
 })
 
 vim.diagnostic.config({
-	virtual_text = { current_line = true }
+	virtual_text = { current_line = false }
+	-- virtual_lines = true
 })
 
+
+vim.cmd(":colorscheme zaibatsu")
 vim.cmd(":hi statusline guibg=NONE")
