@@ -15,6 +15,7 @@ vim.keymap.set('n', '<leader>w', ':write<CR>')
 vim.keymap.set('n', '<leader>q', ':quit<CR>')
 
 vim.keymap.set({ 'n', 'v', 'x' }, '<leader>y', '"+y<CR>')
+vim.keymap.set({ 'n', 'v', 'x' }, '<leader>p', '"+p<CR>')
 vim.keymap.set({ 'n', 'v', 'x' }, '<leader>d', '"+d<CR>')
 
 vim.pack.add({
@@ -38,7 +39,11 @@ vim.pack.add({
 	{ src = "https://github.com/kelly-lin/ranger.nvim",                    { opt = false } },
 	{ src = "https://github.com/echasnovski/mini.pairs" },
 	{ src = "https://github.com/echasnovski/mini.ai" },
+	{ src = "https://github.com/echasnovski/mini.surround" },
 	{ src = "https://github.com/folke/flash.nvim" },
+	{ src = "https://github.com/echasnovski/mini.statusline" },
+	{ src = "https://github.com/lewis6991/gitsigns.nvim" },
+	{ src = "https://github.com/kdheepak/lazygit.nvim" }
 })
 
 vim.cmd("set completeopt+=noselect")
@@ -81,7 +86,21 @@ require "treesj".setup({
 require "project_nvim".setup()
 require "mini.pairs".setup()
 require "mini.ai".setup()
+require "mini.surround".setup({
+	mappings = {
+		add = "gsa", -- add surrounding
+		delete = "gsd", -- delete surrounding
+		replace = "gsr", -- replace surrounding
+		find = "gsf", -- find surrounding
+		find_left = "gsl", -- find left
+		highlight = "gsh", -- highlight surrounding
+		update_n_lines = "gsu",
+		-- operator = "gs"  -- original s operator; comment it out if using s for flash
+	},
+})
 require "flash".setup()
+-- require('feline').setup()
+require "mini.statusline".setup()
 
 vim.keymap.set('n', '<leader>f', ":FzfLua files<CR>")
 vim.keymap.set('n', '<leader>z', ":FzfLua grep_curbuf<CR>")
@@ -95,13 +114,11 @@ vim.keymap.set('n', '<leader>w', ":FzfLua grep_cword<CR>")
 vim.keymap.set('v', '<leader>w', ":FzfLua grep_visual<CR>")
 vim.keymap.set('n', '-', ":Oil<CR>")
 vim.keymap.set('n', '<leader>cf', vim.lsp.buf.format)
+vim.keymap.set('n', '<leader>lg', ":LazyGit<CR>")
 
 vim.keymap.set("n", "s", function()
-    require("flash").jump()
+	require("flash").jump()
 end, { noremap = true, silent = true, desc = "Flash jump" })
-vim.keymap.set("x", "S", function()
-    require("flash").jump()
-end, { noremap = true, silent = true, desc = "Flash jump (visual)" })
 
 vim.keymap.set("n", "<leader>cd", function()
 	local diagnostics = vim.diagnostic.get(0)
@@ -157,6 +174,42 @@ end
 -- Keymap to open recent projects picker
 vim.keymap.set("n", "<leader>pr", recent_projects_picker, { desc = "Recent Projects" })
 
+local actions = require('fzf-lua.actions')
+require('fzf-lua').setup({
+	winopts = { backdrop = 85 },
+	keymap = {
+		builtin = {
+			["<C-f>"] = "preview-page-down",
+			["<C-b>"] = "preview-page-up",
+			["<C-v>"] = "toggle-preview",
+		},
+		fzf = {
+			["ctrl-a"] = "toggle-all",
+			["ctrl-t"] = "first",
+			["ctrl-g"] = "last",
+			["ctrl-d"] = "half-page-down",
+			["ctrl-u"] = "half-page-up",
+		}
+	},
+	actions = {
+		files = {
+			-- ["ctrl-q"] = actions.file_sel_to_qf,
+			-- ["ctrl-q"] = actions.files_to_qf,
+			["ctrl-q"] = function(_, query, items)
+				-- items contains all results, not just selected
+				local qf_items = {}
+				for _, file in ipairs(items) do
+					table.insert(qf_items, { filename = file })
+				end
+				vim.fn.setqflist({}, " ", { title = "FzfLua Files", items = qf_items })
+				vim.cmd("copen")
+			end,
+			-- ["ctrl-n"] = actions.toggle_ignore,
+			["ctrl-h"] = actions.toggle_hidden,
+			["enter"]  = actions.file_edit_or_qf,
+		}
+	}
+})
 
 -- vim.api.nvim_create_autocmd('LspAttach', {
 --     callback = function(ev)
@@ -243,4 +296,4 @@ vim.diagnostic.config({
 
 
 vim.cmd(":colorscheme zaibatsu")
-vim.cmd(":hi statusline guibg=NONE")
+-- vim.cmd(":hi statusline guibg=NONE")
