@@ -10,18 +10,18 @@ vim.o.winborder = "rounded"
 vim.o.clipboard = "unnamedplus"
 vim.env.NODE_OPTIONS = "--openssl-legacy-provider" -- for markdown-preview
 
-vim.keymap.set('n', '<leader>o', ':update<CR> :source<CR>')
-vim.keymap.set('n', '<leader>w', ':write<CR>')
-vim.keymap.set('n', '<leader>q', ':quit<CR>')
+vim.keymap.set("n", "<leader>o", ":update<CR> :source<CR>")
+vim.keymap.set("n", "<leader>w", ":write<CR>")
+vim.keymap.set("n", "<leader>q", ":quit<CR>")
 
-vim.keymap.set({ 'n', 'v', 'x' }, '<leader>y', '"+y<CR>')
-vim.keymap.set({ 'n', 'v', 'x' }, '<leader>p', '"+p<CR>')
-vim.keymap.set({ 'n', 'v', 'x' }, '<leader>d', '"+d<CR>')
+vim.keymap.set({ "n", "v", "x" }, "<leader>y", '"+y<CR>')
+vim.keymap.set({ "n", "v", "x" }, "<leader>p", '"+p<CR>')
+vim.keymap.set({ "n", "v", "x" }, "<leader>d", '"+d<CR>')
 
 vim.pack.add({
 	{ src = "https://github.com/vague2k/vague.nvim" },
 	{ src = "https://github.com/stevearc/oil.nvim" },
-	{ src = "https://github.com/nvim-treesitter/nvim-treesitter", },
+	{ src = "https://github.com/nvim-treesitter/nvim-treesitter" },
 	{ src = "https://github.com/neovim/nvim-lspconfig" },
 	{ src = "https://github.com/mason-org/mason.nvim" },
 	{ src = "https://github.com/mason-org/mason-lspconfig.nvim" },
@@ -31,10 +31,12 @@ vim.pack.add({
 	{ src = "https://github.com/ibhagwan/fzf-lua" },
 	{ src = "https://github.com/kevinhwang91/nvim-bqf",                    { ft = "qf" } },
 	{ src = "https://github.com/iamcco/markdown-preview.nvim",             { ft = "markdown" } },
-	{ src = "https://github.com/MeanderingProgrammer/render-markdown.nvim" },
 	{ src = "https://github.com/cappyzawa/trim.nvim" },
 	{ src = "https://github.com/kg8m/vim-simple-align" },
-	{ src = "https://github.com/Wansmer/treesj",                           { keys = { '<space>m', '<space>j', '<space>s' } } },
+	{
+		src = "https://github.com/Wansmer/treesj",
+		{ keys = { "<space>m", "<space>j", "<space>s" } },
+	},
 	{ src = "https://github.com/ahmedkhalf/project.nvim" },
 	{ src = "https://github.com/kelly-lin/ranger.nvim",                    { opt = false } },
 	{ src = "https://github.com/echasnovski/mini.pairs" },
@@ -43,22 +45,56 @@ vim.pack.add({
 	{ src = "https://github.com/folke/flash.nvim" },
 	{ src = "https://github.com/echasnovski/mini.statusline" },
 	{ src = "https://github.com/lewis6991/gitsigns.nvim" },
-	{ src = "https://github.com/kdheepak/lazygit.nvim" }
+	{ src = "https://github.com/kdheepak/lazygit.nvim" },
+	{ src = "https://github.com/nvim-lua/plenary.nvim" },
+	{ src = "https://github.com/nvimtools/none-ls-extras.nvim" },
+	{ src = "https://github.com/nvimtools/none-ls.nvim" },
+	{ src = "https://github.com/3rd/image.nvim" },
+	{ src = "https://github.com/HakonHarnes/img-clip.nvim" },
+	{ src = "https://github.com/MeanderingProgrammer/render-markdown.nvim" },
 })
 
 vim.cmd("set completeopt+=noselect")
 
-require "nvim-treesitter.configs".setup({
+require("nvim-treesitter.configs").setup({
 	build = ":TSUpdate",
 	event = { "BufReadPost", "BufNewFile" },
 	ensure_installed = {
-		"html", "css", "javascript", "typescript", "tsx", "json", "python", "go", "rust", "lua", "bash", "yaml",
-		"toml", "dockerfile", "json", "csv", "markdown", "markdown_inline", "gitcommit", "git_rebase",
-		"gitattributes", "gitignore", "make", "cmake", "sql", "regex", "vim", "vimdoc", "lua", "query",
+		"html",
+		"css",
+		"javascript",
+		"typescript",
+		"tsx",
+		"json",
+		"python",
+		"go",
+		"rust",
+		"lua",
+		"bash",
+		"yaml",
+		"toml",
+		"dockerfile",
+		"json",
+		"csv",
+		"markdown",
+		"markdown_inline",
+		"gitcommit",
+		"git_rebase",
+		"gitattributes",
+		"gitignore",
+		"make",
+		"cmake",
+		"sql",
+		"regex",
+		"vim",
+		"vimdoc",
+		"lua",
+		"query",
 	},
-	highlight = { enable = true }
+	highlight = { enable = true },
 })
-require "oil".setup({
+
+require("oil").setup({
 	restore_win_config = true, -- keeps your window layout when opening/closing Oil
 	skip_confirm_for_simple_edits = true,
 	--
@@ -78,15 +114,16 @@ require "oil".setup({
 		["-"] = "actions.parent",
 	},
 })
-require "Comment".setup()
-require "render-markdown".setup()
-require "treesj".setup({
+require("Comment").setup()
+require("render-markdown").setup()
+require("treesj").setup({
 	max_join_length = 2400,
 })
-require "project_nvim".setup()
-require "mini.pairs".setup()
-require "mini.ai".setup()
-require "mini.surround".setup({
+require("project_nvim").setup()
+require("mini.pairs").setup()
+require("mini.ai").setup()
+
+require("mini.surround").setup({
 	mappings = {
 		add = "gsa", -- add surrounding
 		delete = "gsd", -- delete surrounding
@@ -98,23 +135,62 @@ require "mini.surround".setup({
 		-- operator = "gs"  -- original s operator; comment it out if using s for flash
 	},
 })
-require "flash".setup()
+require("flash").setup()
 -- require('feline').setup()
-require "mini.statusline".setup()
+require("mini.statusline").setup()
 
-vim.keymap.set('n', '<leader>f', ":FzfLua files<CR>")
-vim.keymap.set('n', '<leader>z', ":FzfLua grep_curbuf<CR>")
-vim.keymap.set('n', '<leader>b', ":FzfLua buffers<CR>")
-vim.keymap.set('n', '<leader>h', ":FzfLua helptags<CR>")
-vim.keymap.set('n', '<leader>r', ":FzfLua resume<CR>")
-vim.keymap.set('n', '<leader>cj', ":FzfLua jumps<CR>")
-vim.keymap.set('n', '<leader>cm', ":FzfLua marks<CR>")
-vim.keymap.set('n', '<leader>g', ":FzfLua grep<CR>")
-vim.keymap.set('n', '<leader>w', ":FzfLua grep_cword<CR>")
-vim.keymap.set('v', '<leader>w', ":FzfLua grep_visual<CR>")
-vim.keymap.set('n', '-', ":Oil<CR>")
-vim.keymap.set('n', '<leader>cf', vim.lsp.buf.format)
-vim.keymap.set('n', '<leader>lg', ":LazyGit<CR>")
+local null_ls = require("null-ls")
+null_ls.setup({
+	sources = {
+		null_ls.builtins.formatting.stylua,
+		null_ls.builtins.completion.spell,
+		-- require("none-ls.diagnostics.eslint"), -- requires none-ls-extras.nvim
+	},
+})
+
+require("render-markdown").setup({ latex = { enabled = false } })
+
+require("image").setup()
+require("img-clip").setup({
+	default = {
+		dir_path = "imgs",
+		relative_to_current_file = true,
+	},
+})
+
+require('gitsigns').setup {
+    signs = {
+        add          = {hl = 'GitGutterAdd',    text = '+'},
+        change       = {hl = 'GitGutterChange', text = '~'},
+        delete       = {hl = 'GitGutterDelete', text = '_'},
+        topdelete    = {hl = 'GitGutterDeleteChange', text = '‾'},
+        changedelete = {hl = 'GitGutterChange', text = '~'},
+    },
+    current_line_blame = true,  -- enable inline blame
+    current_line_blame_opts = {
+        virt_text = true,
+        virt_text_pos = 'eol',    -- show at end of line
+        delay = 500,              -- delay in ms
+    },
+    current_line_blame_formatter = '<author>, <author_time:%Y-%m-%d> - <summary>',
+}
+vim.keymap.set("n", "<leader>gb", "<cmd>Gitsigns toggle_current_line_blame<CR>")
+
+
+vim.keymap.set("n", "<leader>f", ":FzfLua files<CR>")
+vim.keymap.set("n", "<leader>z", ":FzfLua grep_curbuf<CR>")
+vim.keymap.set("n", "<leader>b", ":FzfLua buffers<CR>")
+vim.keymap.set("n", "<leader>h", ":FzfLua helptags<CR>")
+vim.keymap.set("n", "<leader>r", ":FzfLua resume<CR>")
+vim.keymap.set("n", "<leader>cj", ":FzfLua jumps<CR>")
+vim.keymap.set("n", "<leader>cm", ":FzfLua marks<CR>")
+vim.keymap.set("n", "<leader>g", ":FzfLua grep<CR>")
+vim.keymap.set("n", "<leader>w", ":FzfLua grep_cword<CR>")
+vim.keymap.set("v", "<leader>w", ":FzfLua grep_visual<CR>")
+vim.keymap.set("n", "-", ":Oil<CR>")
+vim.keymap.set("n", "<leader>cf", vim.lsp.buf.format)
+vim.keymap.set("n", "<leader>lg", ":LazyGit<CR>")
+vim.keymap.set("n", "<leader>pi", ":PasteImage<CR>")
 
 vim.keymap.set("n", "s", function()
 	require("flash").jump()
@@ -174,8 +250,8 @@ end
 -- Keymap to open recent projects picker
 vim.keymap.set("n", "<leader>pr", recent_projects_picker, { desc = "Recent Projects" })
 
-local actions = require('fzf-lua.actions')
-require('fzf-lua').setup({
+local actions = require("fzf-lua.actions")
+require("fzf-lua").setup({
 	winopts = { backdrop = 85 },
 	keymap = {
 		builtin = {
@@ -189,7 +265,7 @@ require('fzf-lua').setup({
 			["ctrl-g"] = "last",
 			["ctrl-d"] = "half-page-down",
 			["ctrl-u"] = "half-page-up",
-		}
+		},
 	},
 	actions = {
 		files = {
@@ -206,9 +282,9 @@ require('fzf-lua').setup({
 			end,
 			-- ["ctrl-n"] = actions.toggle_ignore,
 			["ctrl-h"] = actions.toggle_hidden,
-			["enter"]  = actions.file_edit_or_qf,
-		}
-	}
+			["enter"] = actions.file_edit_or_qf,
+		},
+	},
 })
 
 -- vim.api.nvim_create_autocmd('LspAttach', {
@@ -220,22 +296,22 @@ require('fzf-lua').setup({
 --     end,
 -- })
 
-vim.api.nvim_create_autocmd('LspAttach', {
+vim.api.nvim_create_autocmd("LspAttach", {
 	callback = function(ev)
 		local client = vim.lsp.get_client_by_id(ev.data.client_id)
 		if client and client:supports_method(vim.lsp.protocol.Methods.textDocument_completion) then
-			vim.opt.completeopt = { 'menu', 'menuone', 'noinsert', 'fuzzy', 'popup' }
+			vim.opt.completeopt = { "menu", "menuone", "noinsert", "fuzzy", "popup" }
 			vim.lsp.completion.enable(true, client.id, ev.buf, { autotrigger = true })
-			vim.keymap.set('i', '<C-Space>', function()
+			vim.keymap.set("i", "<C-Space>", function()
 				vim.lsp.completion.get()
 			end)
 		end
 	end,
 })
 
-require('mason').setup()
-require('mason-lspconfig').setup()
-require('mason-tool-installer').setup({
+require("mason").setup()
+require("mason-lspconfig").setup()
+require("mason-tool-installer").setup({
 	ensure_installed = {
 		"lua_ls",
 		"stylua",
@@ -249,7 +325,7 @@ require('mason-tool-installer').setup({
 		"helm_ls",
 		"ts_ls",
 		"yamlls",
-	}
+	},
 })
 
 vim.lsp.enable({
@@ -267,16 +343,16 @@ vim.lsp.enable({
 	"yamlls",
 })
 
-vim.lsp.config('lua_ls', {
+vim.lsp.config("lua_ls", {
 	settings = {
 		Lua = {
 			runtime = {
-				version = 'LuaJIT',
+				version = "LuaJIT",
 			},
 			diagnostics = {
 				globals = {
-					'vim',
-					'require'
+					"vim",
+					"require",
 				},
 			},
 			workspace = {
@@ -290,10 +366,10 @@ vim.lsp.config('lua_ls', {
 })
 
 vim.diagnostic.config({
-	virtual_text = { current_line = false }
+	virtual_text = { current_line = false },
 	-- virtual_lines = true
 })
 
-
 vim.cmd(":colorscheme zaibatsu")
 -- vim.cmd(":hi statusline guibg=NONE")
+
