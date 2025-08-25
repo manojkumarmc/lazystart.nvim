@@ -158,25 +158,24 @@ require("img-clip").setup({
 	},
 })
 
-require('gitsigns').setup {
-    signs = {
-        add          = {hl = 'GitGutterAdd',    text = '+'},
-        change       = {hl = 'GitGutterChange', text = '~'},
-        delete       = {hl = 'GitGutterDelete', text = '_'},
-        topdelete    = {hl = 'GitGutterDeleteChange', text = '‾'},
-        changedelete = {hl = 'GitGutterChange', text = '~'},
-    },
-    current_line_blame = true,  -- enable inline blame
-    current_line_blame_opts = {
-        virt_text = true,
-        virt_text_pos = 'eol',    -- show at end of line
-        delay = 500,              -- delay in ms
-    },
-    current_line_blame_formatter = '<author>, <author_time:%Y-%m-%d> - <summary>',
-}
+require("gitsigns").setup({
+	signs = {
+		add = { hl = "GitGutterAdd", text = "+" },
+		change = { hl = "GitGutterChange", text = "~" },
+		delete = { hl = "GitGutterDelete", text = "_" },
+		topdelete = { hl = "GitGutterDeleteChange", text = "‾" },
+		changedelete = { hl = "GitGutterChange", text = "~" },
+	},
+	current_line_blame = true, -- enable inline blame
+	current_line_blame_opts = {
+		virt_text = true,
+		virt_text_pos = "eol", -- show at end of line
+		delay = 500, -- delay in ms
+	},
+	current_line_blame_formatter = "<author>, <author_time:%Y-%m-%d> - <summary>",
+})
+
 vim.keymap.set("n", "<leader>gb", "<cmd>Gitsigns toggle_current_line_blame<CR>")
-
-
 vim.keymap.set("n", "<leader>f", ":FzfLua files<CR>")
 vim.keymap.set("n", "<leader>z", ":FzfLua grep_curbuf<CR>")
 vim.keymap.set("n", "<leader>b", ":FzfLua buffers<CR>")
@@ -287,15 +286,6 @@ require("fzf-lua").setup({
 	},
 })
 
--- vim.api.nvim_create_autocmd('LspAttach', {
---     callback = function(ev)
---         local client = vim.lsp.get_client_by_id(ev.data.client_id)
---         if client:supports_method('textDocument/completion') then
---             vim.lsp.completion.enable(true, client.id, ev.buf, { autotrigger = true })
---         end
---     end,
--- })
-
 vim.api.nvim_create_autocmd("LspAttach", {
 	callback = function(ev)
 		local client = vim.lsp.get_client_by_id(ev.data.client_id)
@@ -328,21 +318,6 @@ require("mason-tool-installer").setup({
 	},
 })
 
-vim.lsp.enable({
-	"lua_ls",
-	"stylua",
-	"biome",
-	"pyright",
-	"rust-analyzer",
-	"gopls",
-	"jsonls",
-	"marksman",
-	"dockerls",
-	"helm_ls",
-	"ts_ls",
-	"yamlls",
-})
-
 vim.lsp.config("lua_ls", {
 	settings = {
 		Lua = {
@@ -365,6 +340,22 @@ vim.lsp.config("lua_ls", {
 	},
 })
 
+vim.lsp.enable({
+	"lua_ls",
+	"stylua",
+	"biome",
+	"pyright",
+	"rust-analyzer",
+	"gopls",
+	"jsonls",
+	"marksman",
+	"dockerls",
+	"helm_ls",
+	"ts_ls",
+	"yamlls",
+})
+
+
 vim.diagnostic.config({
 	virtual_text = { current_line = false },
 	-- virtual_lines = true
@@ -372,4 +363,3 @@ vim.diagnostic.config({
 
 vim.cmd(":colorscheme zaibatsu")
 -- vim.cmd(":hi statusline guibg=NONE")
-
