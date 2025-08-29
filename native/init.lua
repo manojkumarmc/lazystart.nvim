@@ -26,6 +26,7 @@ vim.pack.add({
 	{ src = "https://github.com/mason-org/mason.nvim" },
 	{ src = "https://github.com/mason-org/mason-lspconfig.nvim" },
 	{ src = "https://github.com/WhoIsSethDaniel/mason-tool-installer.nvim" },
+	{ src = "https://github.com/junnplus/lsp-setup.nvim" },
 	{ src = "https://github.com/numToStr/Comment.nvim" },
 	{ src = "https://github.com/nvim-tree/nvim-web-devicons" },
 	{ src = "https://github.com/ibhagwan/fzf-lua" },
@@ -52,7 +53,13 @@ vim.pack.add({
 	{ src = "https://github.com/3rd/image.nvim" },
 	{ src = "https://github.com/HakonHarnes/img-clip.nvim" },
 	{ src = "https://github.com/MeanderingProgrammer/render-markdown.nvim" },
-})
+	{ src = "https://github.com/norcalli/nvim-colorizer.lua" },
+	{ src = "https://github.com/nvim-tree/nvim-tree.lua" },
+	{ src = "https://github.com/SmiteshP/nvim-navic" },
+	{ src = "https://github.com/utilyre/barbecue.nvim",                    { name = "barbecue" } },
+	{ src = "https://github.com/itchyny/calendar.vim" },
+
+}) --plugin end
 
 vim.cmd("set completeopt+=noselect")
 
@@ -142,7 +149,7 @@ require("mini.statusline").setup()
 local null_ls = require("null-ls")
 null_ls.setup({
 	sources = {
-		null_ls.builtins.formatting.stylua,
+		-- null_ls.builtins.formatting.stylua,
 		null_ls.builtins.completion.spell,
 		-- require("none-ls.diagnostics.eslint"), -- requires none-ls-extras.nvim
 	},
@@ -175,8 +182,15 @@ require("gitsigns").setup({
 	current_line_blame_formatter = "<author>, <author_time:%Y-%m-%d> - <summary>",
 })
 
+require("colorizer").setup()
+require("nvim-tree").setup()
+
+vim.opt.updatetime = 200
+require("barbecue").setup()
+
+
 vim.keymap.set("n", "<leader>gb", "<cmd>Gitsigns toggle_current_line_blame<CR>")
-vim.keymap.set("n", "<leader>f", ":FzfLua files<CR>")
+vim.keymap.set("n", "<leader>ff", ":FzfLua files<CR>")
 vim.keymap.set("n", "<leader>z", ":FzfLua grep_curbuf<CR>")
 vim.keymap.set("n", "<leader>b", ":FzfLua buffers<CR>")
 vim.keymap.set("n", "<leader>h", ":FzfLua helptags<CR>")
@@ -190,6 +204,7 @@ vim.keymap.set("n", "-", ":Oil<CR>")
 vim.keymap.set("n", "<leader>cf", vim.lsp.buf.format)
 vim.keymap.set("n", "<leader>lg", ":LazyGit<CR>")
 vim.keymap.set("n", "<leader>pi", ":PasteImage<CR>")
+vim.keymap.set("n", "<leader>sc", ":Calendar<CR>")
 
 vim.keymap.set("n", "s", function()
 	require("flash").jump()
@@ -205,18 +220,13 @@ end, { desc = "Populate quickfix with buffer diagnostics" })
 vim.api.nvim_set_keymap("n", "<leader>ef", "", {
 	noremap = true,
 	callback = function()
-		-- Load the plugin
 		vim.cmd("packadd ranger.nvim")
-
-		-- Setup only once (optional)
 		if not vim.g.ranger_nvim_loaded then
 			require("ranger-nvim").setup({
 				replace_netrw = true,
 			})
 			vim.g.ranger_nvim_loaded = true
 		end
-
-		-- Open ranger
 		require("ranger-nvim").open(true)
 	end,
 	desc = "Open Ranger File Explorer",
@@ -249,48 +259,11 @@ end
 -- Keymap to open recent projects picker
 vim.keymap.set("n", "<leader>pr", recent_projects_picker, { desc = "Recent Projects" })
 
-local actions = require("fzf-lua.actions")
-require("fzf-lua").setup({
-	winopts = { backdrop = 85 },
-	keymap = {
-		builtin = {
-			["<C-f>"] = "preview-page-down",
-			["<C-b>"] = "preview-page-up",
-			["<C-v>"] = "toggle-preview",
-		},
-		fzf = {
-			["ctrl-a"] = "toggle-all",
-			["ctrl-t"] = "first",
-			["ctrl-g"] = "last",
-			["ctrl-d"] = "half-page-down",
-			["ctrl-u"] = "half-page-up",
-		},
-	},
-	actions = {
-		files = {
-			-- ["ctrl-q"] = actions.file_sel_to_qf,
-			-- ["ctrl-q"] = actions.files_to_qf,
-			["ctrl-q"] = function(_, query, items)
-				-- items contains all results, not just selected
-				local qf_items = {}
-				for _, file in ipairs(items) do
-					table.insert(qf_items, { filename = file })
-				end
-				vim.fn.setqflist({}, " ", { title = "FzfLua Files", items = qf_items })
-				vim.cmd("copen")
-			end,
-			-- ["ctrl-n"] = actions.toggle_ignore,
-			["ctrl-h"] = actions.toggle_hidden,
-			["enter"] = actions.file_edit_or_qf,
-		},
-	},
-})
-
 vim.api.nvim_create_autocmd("LspAttach", {
 	callback = function(ev)
 		local client = vim.lsp.get_client_by_id(ev.data.client_id)
 		if client and client:supports_method(vim.lsp.protocol.Methods.textDocument_completion) then
-			vim.opt.completeopt = { "menu", "menuone", "noinsert", "fuzzy", "popup" }
+			-- vim.opt.completeopt = { "menu", "menuone", "noinsert", "fuzzy", "popup" }
 			vim.lsp.completion.enable(true, client.id, ev.buf, { autotrigger = true })
 			vim.keymap.set("i", "<C-Space>", function()
 				vim.lsp.completion.get()
@@ -301,20 +274,38 @@ vim.api.nvim_create_autocmd("LspAttach", {
 
 require("mason").setup()
 require("mason-lspconfig").setup()
-require("mason-tool-installer").setup({
-	ensure_installed = {
-		"lua_ls",
-		"stylua",
-		"biome",
-		"pyright",
-		"rust-analyzer",
-		"gopls",
-		"jsonls",
-		"marksman",
-		"dockerls",
-		"helm_ls",
-		"ts_ls",
-		"yamlls",
+-- require("mason-tool-installer").setup({
+-- 	ensure_installed = {
+-- 		"lua_ls",
+-- 		"stylua",
+-- 		"biome",
+-- 		"pyright",
+-- 		"rust-analyzer",
+-- 		"gopls",
+-- 		"jsonls",
+-- 		"marksman",
+-- 		"dockerls",
+-- 		"helm_ls",
+-- 		"ts_ls",
+-- 		"yamlls",
+-- 	},
+-- })
+
+
+require("lsp-setup").setup({
+	servers = {
+		lua_ls = {},
+		biome = {},
+		pyright = {},
+		-- pylsp = {},
+		rust_analyzer = {},
+		gopls = {},
+		jsonls = {},
+		marksman = {},
+		dockerls = {},
+		helm_ls = {},
+		ts_ls = {},
+		yamlls = {},
 	},
 })
 
@@ -342,7 +333,6 @@ vim.lsp.config("lua_ls", {
 
 vim.lsp.enable({
 	"lua_ls",
-	"stylua",
 	"biome",
 	"pyright",
 	"rust-analyzer",
@@ -355,11 +345,29 @@ vim.lsp.enable({
 	"yamlls",
 })
 
-
 vim.diagnostic.config({
 	virtual_text = { current_line = false },
 	-- virtual_lines = true
 })
 
-vim.cmd(":colorscheme zaibatsu")
--- vim.cmd(":hi statusline guibg=NONE")
+-- vim.cmd(":colorscheme zaibatsu")
+-- vim.api.nvim_set_hl(0, "Normal", { bg = "#1e1e2e", fg = "#cdd6f4" }) -- soothing background
+
+vim.cmd(":colorscheme unokai")
+-- vim.api.nvim_set_hl(0, "Normal", { bg = "none" })
+-- vim.api.nvim_set_hl(0, "NormalFloat", { bg = "none" })
+-- Main editor
+vim.api.nvim_set_hl(0, "Normal", { bg = "none" })
+vim.api.nvim_set_hl(0, "NormalNC", { bg = "none" }) -- non-current windows
+-- Floating windows
+vim.api.nvim_set_hl(0, "NormalFloat", { bg = "none" })
+vim.api.nvim_set_hl(0, "FloatBorder", { bg = "none" })
+-- Popups & completion
+vim.api.nvim_set_hl(0, "Pmenu", { bg = "none" })
+vim.api.nvim_set_hl(0, "PmenuSel", { bg = "#44475a", fg = "#ffffff", bold = true }) -- keep visible
+vim.api.nvim_set_hl(0, "PmenuSbar", { bg = "none" })
+vim.api.nvim_set_hl(0, "PmenuThumb", { bg = "#888888" })
+-- Statusline, Tabline, etc. (optional)
+vim.api.nvim_set_hl(0, "StatusLine", { bg = "none" })
+vim.api.nvim_set_hl(0, "StatusLineNC", { bg = "none" })
+vim.api.nvim_set_hl(0, "TabLineFill", { bg = "none" })
