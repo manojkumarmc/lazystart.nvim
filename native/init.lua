@@ -186,23 +186,40 @@ require("nvim-tree").setup()
 vim.opt.updatetime = 200
 require("barbecue").setup()
 
+require("fzf-lua").setup({
+	winopts = {
+		fullscreen = false,
+		preview = {
+			layout = "vertical",
+			vertical = "up:70%"
+		}
+	},
+	keymap = {
+		fzf = {
+			["ctrl-q"] = "select-all+accept"
+		}
+	}
+})
 
-vim.keymap.set("n", "<leader>gb", "<cmd>Gitsigns toggle_current_line_blame<CR>")
-vim.keymap.set("n", "<leader>ff", ":FzfLua files<CR>")
-vim.keymap.set("n", "<leader>z", ":FzfLua grep_curbuf<CR>")
-vim.keymap.set("n", "<leader>b", ":FzfLua buffers<CR>")
-vim.keymap.set("n", "<leader>h", ":FzfLua helptags<CR>")
-vim.keymap.set("n", "<leader>r", ":FzfLua resume<CR>")
-vim.keymap.set("n", "<leader>cj", ":FzfLua jumps<CR>")
-vim.keymap.set("n", "<leader>cm", ":FzfLua marks<CR>")
-vim.keymap.set("n", "<leader>g", ":FzfLua grep<CR>")
-vim.keymap.set("n", "<leader>w", ":FzfLua grep_cword<CR>")
-vim.keymap.set("v", "<leader>w", ":FzfLua grep_visual<CR>")
+
 vim.keymap.set("n", "-", ":Oil<CR>")
+vim.keymap.set("n", "<leader><space>", ":FzfLua buffers<CR>")
 vim.keymap.set("n", "<leader>cf", vim.lsp.buf.format)
+vim.keymap.set("n", "<leader>ff", ":FzfLua files<CR>")
+vim.keymap.set("n", "<leader>fg", ":FzfLua grep<CR>")
+vim.keymap.set("n", "<leader>fh", ":FzfLua helptags<CR>")
+vim.keymap.set("n", "<leader>fj", ":FzfLua jumps<CR>")
+vim.keymap.set("n", "<leader>fm", ":FzfLua marks<CR>")
+vim.keymap.set("n", "<leader>fq", ":FzfLua quickfix<CR>")
+vim.keymap.set("n", "<leader>fw", ":FzfLua grep_cword<CR>")
+vim.keymap.set("n", "<leader>fc", ":FzfLua command_history<CR>")
+vim.keymap.set("n", "<leader>gb", "<cmd>Gitsigns toggle_current_line_blame<CR>")
 vim.keymap.set("n", "<leader>lg", ":LazyGit<CR>")
 vim.keymap.set("n", "<leader>pi", ":PasteImage<CR>")
-vim.keymap.set("n", "<leader>sc", ":Calendar<CR>")
+vim.keymap.set("n", "<leader>r", ":FzfLua resume<CR>")
+vim.keymap.set("n", "<leader>cc", ":Calendar<CR>")
+vim.keymap.set("n", "<leader>z", ":FzfLua grep_curbuf<CR>")
+vim.keymap.set("v", "<leader>fv", ":FzfLua grep_visual<CR>")
 
 vim.keymap.set("n", "s", function()
 	require("flash").jump()
@@ -255,9 +272,9 @@ local function recent_projects_picker()
 	})
 end
 -- Keymap to open recent projects picker
-vim.keymap.set("n", "<leader>pr", recent_projects_picker, { desc = "Recent Projects" })
+vim.keymap.set("n", "<leader>fp", recent_projects_picker, { desc = "Recent Projects" })
 
-vim.keymap.set("n", "<leader>fd", function()
+vim.keymap.set("n", "<leader>fn", function()
 	require("fzf-lua").files({
 		cwd = vim.fn.expand("%:p:h"),
 		prompt = "Files in current dir> ",
