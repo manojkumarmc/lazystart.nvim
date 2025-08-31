@@ -10,6 +10,9 @@ vim.o.winborder = "rounded"
 vim.o.clipboard = "unnamedplus"
 vim.env.NODE_OPTIONS = "--openssl-legacy-provider" -- for markdown-preview
 
+vim.o.cursorline = true
+vim.api.nvim_set_hl(0, "CursorLine", { underline = true })
+
 vim.keymap.set("n", "<leader>o", ":update<CR> :source<CR>")
 vim.keymap.set("n", "<leader>w", ":write<CR>")
 vim.keymap.set("n", "<leader>q", ":quit<CR>")
@@ -104,18 +107,13 @@ require("nvim-treesitter.configs").setup({
 require("oil").setup({
 	restore_win_config = true, -- keeps your window layout when opening/closing Oil
 	skip_confirm_for_simple_edits = true,
-	--
-	-- Respect the buffer’s cwd
 	-- Oil automatically updates the working directory based on navigation
 	float = {
-		-- optional: open Oil in a floating window
 		win_options = {
 			winblend = 10,
 		},
 	},
-
-	-- Focused file tracking
-	-- Oil automatically updates the root when you open or navigate to a file
+	-- Focused file tracking Oil automatically updates the root when you open or navigate to a file
 	keymaps = {
 		["<CR>"] = "actions.select",
 		["-"] = "actions.parent",
@@ -258,6 +256,13 @@ local function recent_projects_picker()
 end
 -- Keymap to open recent projects picker
 vim.keymap.set("n", "<leader>pr", recent_projects_picker, { desc = "Recent Projects" })
+
+vim.keymap.set("n", "<leader>fd", function()
+	require("fzf-lua").files({
+		cwd = vim.fn.expand("%:p:h"),
+		prompt = "Files in current dir> ",
+	})
+end, { desc = "Find files in current file's directory" })
 
 vim.api.nvim_create_autocmd("LspAttach", {
 	callback = function(ev)
