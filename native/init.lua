@@ -21,6 +21,10 @@ vim.keymap.set({ "n", "v", "x" }, "<leader>y", '"+y<CR>')
 vim.keymap.set({ "n", "v", "x" }, "<leader>p", '"+p<CR>')
 vim.keymap.set({ "n", "v", "x" }, "<leader>d", '"+d<CR>')
 
+vim.keymap.set("n", "[q", "<cmd>cnext<CR>", { noremap = true, silent = true })
+vim.keymap.set("n", "]q", "<cmd>cprev<CR>", { noremap = true, silent = true })
+
+
 vim.pack.add({
 	{ src = "https://github.com/vague2k/vague.nvim" },
 	{ src = "https://github.com/stevearc/oil.nvim" },
@@ -61,6 +65,7 @@ vim.pack.add({
 	{ src = "https://github.com/SmiteshP/nvim-navic" },
 	{ src = "https://github.com/utilyre/barbecue.nvim",                    { name = "barbecue" } },
 	{ src = "https://github.com/itchyny/calendar.vim" },
+	{ src = "https://github.com/mhinz/vim-startify" },
 
 }) --plugin end
 
@@ -211,7 +216,7 @@ vim.keymap.set("n", "<leader>fh", ":FzfLua helptags<CR>")
 vim.keymap.set("n", "<leader>fj", ":FzfLua jumps<CR>")
 vim.keymap.set("n", "<leader>fm", ":FzfLua marks<CR>")
 vim.keymap.set("n", "<leader>fq", ":FzfLua quickfix<CR>")
-vim.keymap.set("n", "<leader>fw", ":FzfLua grep_cword<CR>")
+vim.keymap.set("n", "<leader>gw", ":FzfLua grep_cword<CR>")
 vim.keymap.set("n", "<leader>fc", ":FzfLua command_history<CR>")
 vim.keymap.set("n", "<leader>gb", "<cmd>Gitsigns toggle_current_line_blame<CR>")
 vim.keymap.set("n", "<leader>lg", ":LazyGit<CR>")
@@ -219,7 +224,9 @@ vim.keymap.set("n", "<leader>pi", ":PasteImage<CR>")
 vim.keymap.set("n", "<leader>r", ":FzfLua resume<CR>")
 vim.keymap.set("n", "<leader>cc", ":Calendar<CR>")
 vim.keymap.set("n", "<leader>z", ":FzfLua grep_curbuf<CR>")
-vim.keymap.set("v", "<leader>fv", ":FzfLua grep_visual<CR>")
+vim.keymap.set("v", "<leader>gv", ":FzfLua grep_visual<CR>")
+vim.keymap.set("n", "<leader>fz", ":find **/")
+vim.keymap.set("n", "<leader>km", ":FzfLua keymaps<CR>")
 
 vim.keymap.set("n", "s", function()
 	require("flash").jump()
