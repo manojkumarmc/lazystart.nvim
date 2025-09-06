@@ -254,6 +254,24 @@ vim.api.nvim_set_keymap("n", "<leader>ef", "", {
 	desc = "Open Ranger File Explorer",
 })
 
+-- search for curent word and put to qf in the buffer
+vim.keymap.set('n', '<leader>*', function()
+	local word = vim.fn.expand('<cword>')
+	if word then
+		vim.cmd('vimgrep /' .. word .. '/g %')
+		vim.cmd('copen')
+	end
+end, { noremap = true, silent = true, desc = 'Search word and add to quickfix list' })
+--
+-- search for curent word and put to qf of all files
+vim.keymap.set('n', '<leader>**', function()
+	local word = vim.fn.expand('<cword>')
+	if word then
+		vim.cmd('vimgrep /' .. word .. '/g **')
+		vim.cmd('copen')
+	end
+end, { noremap = true, silent = true, desc = 'Search word and add to quickfix list' })
+
 local fzf = require("fzf-lua")
 local project = require("project_nvim")
 -- Create a custom picker for recent projects
