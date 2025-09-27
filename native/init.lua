@@ -66,6 +66,10 @@ vim.pack.add({
 	{ src = "https://github.com/utilyre/barbecue.nvim",                    { name = "barbecue" } },
 	{ src = "https://github.com/itchyny/calendar.vim" },
 	{ src = "https://github.com/mhinz/vim-startify" },
+	{ src = "https://github.com/tummetott/unimpaired.nvim" },
+	{ src = "https://github.com/mhinz/vim-grepper" },
+	{ src = "https://github.com/hiphish/rainbow-delimiters.nvim" },
+	{ src = "https://github.com/wincent/command-t" },
 
 }) --plugin end
 
@@ -186,7 +190,14 @@ require("gitsigns").setup({
 })
 
 require("colorizer").setup()
-require("nvim-tree").setup()
+require("nvim-tree").setup(
+	{
+		view = {
+			side = "right", -- "left" (default) | "right"
+			width = 30,
+		}
+	}
+)
 
 vim.opt.updatetime = 200
 require("barbecue").setup()
@@ -203,14 +214,20 @@ require("fzf-lua").setup({
 		fzf = {
 			["ctrl-q"] = "select-all+accept"
 		}
-	}
+	},
 })
 
+
+require("rainbow-delimiters.setup").setup()
+
+require("wincent.commandt").setup()
 
 vim.keymap.set("n", "-", ":Oil<CR>")
 vim.keymap.set("n", "<leader><space>", ":FzfLua buffers<CR>")
 vim.keymap.set("n", "<leader>cf", vim.lsp.buf.format)
-vim.keymap.set("n", "<leader>ff", ":FzfLua files<CR>")
+-- vim.keymap.set("n", "<leader>ff", ":FzfLua files<CR>")
+vim.keymap.set("n", "<leader>ff", function() require("fzf-lua").files({ no_icons = true }) end,
+	{ desc = "FzfLua Files (no icons)" })
 vim.keymap.set("n", "<leader>fg", ":FzfLua grep<CR>")
 vim.keymap.set("n", "<leader>fh", ":FzfLua helptags<CR>")
 vim.keymap.set("n", "<leader>fj", ":FzfLua jumps<CR>")
@@ -227,6 +244,9 @@ vim.keymap.set("n", "<leader>z", ":FzfLua grep_curbuf<CR>")
 vim.keymap.set("v", "<leader>gv", ":FzfLua grep_visual<CR>")
 vim.keymap.set("n", "<leader>fz", ":find **/")
 vim.keymap.set("n", "<leader>km", ":FzfLua keymaps<CR>")
+vim.keymap.set("n", "<leader>fl", ":FzfLua colorschemes<CR>")
+vim.keymap.set("n", "<leader>mp", ":MarkdownPreview<CR>")
+vim.keymap.set("n", "<leader>ee", ":NvimTreeToggle<CR>")
 
 vim.keymap.set("n", "s", function()
 	require("flash").jump()
@@ -274,12 +294,9 @@ end, { noremap = true, silent = true, desc = 'Search word and add to quickfix li
 
 local fzf = require("fzf-lua")
 local project = require("project_nvim")
--- Create a custom picker for recent projects
 local function recent_projects_picker()
-	-- Get recent projects from project_nvim
 	local projects = project.get_recent_projects() or {}
 	print(projects)
-	-- FzfLua picker
 	fzf.fzf_exec(projects, {
 		prompt = "Recent Projects> ",
 		actions = {
@@ -305,6 +322,18 @@ vim.keymap.set("n", "<leader>fn", function()
 		prompt = "Files in current dir> ",
 	})
 end, { desc = "Find files in current file's directory" })
+
+vim.keymap.set("n", "<leader>gc", function()
+	local line = vim.api.nvim_get_current_line()
+	if line:find("☐") then
+		line = line:gsub("☐", "☑")
+	elseif line:find("☑") then
+		line = line:gsub("☑", "☐")
+	else
+		line = "☐ " .. line
+	end
+	vim.api.nvim_set_current_line(line)
+end, { noremap = true, desc = "Toggle checkbox" })
 
 vim.api.nvim_create_autocmd("LspAttach", {
 	callback = function(ev)
@@ -345,6 +374,7 @@ require("lsp-setup").setup({
 		biome = {},
 		pyright = {},
 		-- pylsp = {},
+		-- pyrefly = {},
 		rust_analyzer = {},
 		gopls = {},
 		jsonls = {},
@@ -382,6 +412,7 @@ vim.lsp.enable({
 	"lua_ls",
 	"biome",
 	"pyright",
+	-- "pyrefly",
 	"rust-analyzer",
 	"gopls",
 	"jsonls",
@@ -397,24 +428,9 @@ vim.diagnostic.config({
 	-- virtual_lines = true
 })
 
--- vim.cmd(":colorscheme zaibatsu")
--- vim.api.nvim_set_hl(0, "Normal", { bg = "#1e1e2e", fg = "#cdd6f4" }) -- soothing background
-
-vim.cmd(":colorscheme unokai")
--- vim.api.nvim_set_hl(0, "Normal", { bg = "none" })
--- vim.api.nvim_set_hl(0, "NormalFloat", { bg = "none" })
--- Main editor
-vim.api.nvim_set_hl(0, "Normal", { bg = "none" })
-vim.api.nvim_set_hl(0, "NormalNC", { bg = "none" }) -- non-current windows
--- Floating windows
-vim.api.nvim_set_hl(0, "NormalFloat", { bg = "none" })
-vim.api.nvim_set_hl(0, "FloatBorder", { bg = "none" })
--- Popups & completion
-vim.api.nvim_set_hl(0, "Pmenu", { bg = "none" })
-vim.api.nvim_set_hl(0, "PmenuSel", { bg = "#44475a", fg = "#ffffff", bold = true }) -- keep visible
-vim.api.nvim_set_hl(0, "PmenuSbar", { bg = "none" })
-vim.api.nvim_set_hl(0, "PmenuThumb", { bg = "#888888" })
--- Statusline, Tabline, etc. (optional)
-vim.api.nvim_set_hl(0, "StatusLine", { bg = "none" })
-vim.api.nvim_set_hl(0, "StatusLineNC", { bg = "none" })
-vim.api.nvim_set_hl(0, "TabLineFill", { bg = "none" })
+vim.cmd([[colorscheme murphy]])
+-- vim.cmd([[highlight String guifg=#39FF14 ctermfg=46]])
+vim.cmd([[highlight Function guifg= #6699ff ctermfg=46]])
+-- -- vim.cmd([[highlight Keyword guifg= #ffffcc ctermfg=46]])
+-- vim.cmd([[highlight Identifier guifg=#ccccff ctermfg=46]])
+vim.cmd([[highlight String guifg=#ccccff ctermfg=46]])
