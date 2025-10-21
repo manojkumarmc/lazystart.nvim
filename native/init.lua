@@ -69,7 +69,6 @@ vim.pack.add({
 	{ src = "https://github.com/tummetott/unimpaired.nvim" },
 	{ src = "https://github.com/mhinz/vim-grepper" },
 	{ src = "https://github.com/hiphish/rainbow-delimiters.nvim" },
-	{ src = "https://github.com/wincent/command-t" },
 
 }) --plugin end
 
@@ -220,12 +219,10 @@ require("fzf-lua").setup({
 
 require("rainbow-delimiters.setup").setup()
 
-require("wincent.commandt").setup()
-
 vim.keymap.set("n", "-", ":Oil<CR>")
 vim.keymap.set("n", "<leader><space>", ":FzfLua buffers<CR>")
 vim.keymap.set("n", "<leader>cf", vim.lsp.buf.format)
-vim.keymap.set("n", "<leader>ff", ":FzfLua files file_icons=false<CR>")
+vim.keymap.set("n", "<leader>ff", ":FzfLua files file_icons=false previewer=false<CR>")
 vim.keymap.set("n", "<leader>fg", ":FzfLua grep<CR>")
 vim.keymap.set("n", "<leader>fh", ":FzfLua helptags<CR>")
 vim.keymap.set("n", "<leader>fj", ":FzfLua jumps<CR>")
@@ -233,12 +230,12 @@ vim.keymap.set("n", "<leader>fm", ":FzfLua marks<CR>")
 vim.keymap.set("n", "<leader>fq", ":FzfLua quickfix<CR>")
 vim.keymap.set("n", "<leader>gw", ":FzfLua grep_cword<CR>")
 vim.keymap.set("n", "<leader>fc", ":FzfLua command_history<CR>")
-vim.keymap.set("n", "<leader>gb", "<cmd>Gitsigns toggle_current_line_blame<CR>")
+vim.keymap.set("n", "<leader>gb", ":FzfLua git_blame<CR>")
 vim.keymap.set("n", "<leader>lg", ":LazyGit<CR>")
 vim.keymap.set("n", "<leader>pi", ":PasteImage<CR>")
 vim.keymap.set("n", "<leader>r", ":FzfLua resume<CR>")
 vim.keymap.set("n", "<leader>cc", ":Calendar<CR>")
-vim.keymap.set("n", "<leader>z", ":FzfLua grep_curbuf<CR>")
+vim.keymap.set("n", "<leader>z", ":FzfLua grep_curbuf previewer=false<CR>")
 vim.keymap.set("v", "<leader>gv", ":FzfLua grep_visual<CR>")
 vim.keymap.set("n", "<leader>fz", ":find **/")
 vim.keymap.set("n", "<leader>km", ":FzfLua keymaps<CR>")
@@ -333,6 +330,7 @@ vim.keymap.set("n", "<leader>gc", function()
 	vim.api.nvim_set_current_line(line)
 end, { noremap = true, desc = "Toggle checkbox" })
 
+
 vim.api.nvim_create_autocmd("LspAttach", {
 	callback = function(ev)
 		local client = vim.lsp.get_client_by_id(ev.data.client_id)
@@ -426,7 +424,8 @@ vim.diagnostic.config({
 	-- virtual_lines = true
 })
 
-vim.cmd([[colorscheme murphy]])
+-- vim.cmd([[colorscheme murphy]])
+vim.cmd([[colorscheme retrobox]])
 -- vim.cmd([[highlight String guifg=#39FF14 ctermfg=46]])
 vim.cmd([[highlight Function guifg= #6699ff ctermfg=46]])
 -- -- vim.cmd([[highlight Keyword guifg= #ffffcc ctermfg=46]])
